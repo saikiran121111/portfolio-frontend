@@ -16,7 +16,6 @@ const API_PREFIX = '/api';
 export const paths = {
   portfolio: {
     user: () => `${API_PREFIX}/portfolio/user`, // e.g. GET user portfolio
-    userById: (id: string) => `${API_PREFIX}/portfolio/user/${id}`,
   },
 };
 
