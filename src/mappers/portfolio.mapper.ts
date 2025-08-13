@@ -1,7 +1,6 @@
 import { PortfolioDto } from "@/dto/portfolio.dto";
 import { IPortfolio } from "@/interfaces/portfolio.interface";
 
-// Map only fields present in current DTO/interface set.
 export function mapPortfolio(dto: PortfolioDto): IPortfolio {
   return {
     name: dto.name,
@@ -10,8 +9,8 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
     summary: dto.summary,
     location: dto.location,
     phone: dto.phone,
-    socials: dto.socials, // same shape
-    skills: dto.skills, // no date transformation needed
+    socials: dto.socials,
+    skills: dto.skills,
     experiences: dto.experiences.map(e => ({
       ...e,
       startDate: new Date(e.startDate),
@@ -35,7 +34,7 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
       ...a,
       date: a.date ? new Date(a.date) : null,
     })),
-    languages: dto.languages, // plain copy
+    languages: dto.languages,
     scanReports: dto.scanReports?.map(r => ({
       ...r,
       runAt: new Date(r.runAt),
