@@ -26,6 +26,7 @@ export interface IPortfolio {
   achievements?: IAchievements[];
   languages?: ILanguages[];
   scanReports?: IscanReports[];
+  bottomHeadline?: string[]; // NEW
 }
 
 export interface ISocials {

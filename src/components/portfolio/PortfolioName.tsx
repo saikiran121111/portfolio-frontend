@@ -1,4 +1,5 @@
 import { fetchUserPortfolio } from "@/services/portfolio.service";
+import type { CSSProperties } from "react";
 
 interface PortfolioNameProps {
   className?: string;
@@ -7,6 +8,9 @@ interface PortfolioNameProps {
   // horizontal: left | center | right
   h?: "left" | "center" | "right";
   // pixel offsets applied via translate (mobile/default)
+  // new extra-small breakpoint (≤346px)
+  xsOffsetX?: number; // ≤ 346px
+  xsOffsetY?: number; // ≤ 346px
   offsetX?: number;
   offsetY?: number;
   // optional overrides per breakpoint
@@ -21,10 +25,27 @@ interface PortfolioNameProps {
   portfolioText?: string;
 }
 
+// Strongly-typed CSS custom properties used by this component
+type PNVars = Record<
+  | "--pn-x-xs"
+  | "--pn-y-xs"
+  | "--pn-x"
+  | "--pn-y"
+  | "--pn-x-md"
+  | "--pn-y-md"
+  | "--pn-x-desktop"
+  | "--pn-y-desktop"
+  | "--pn-x-xl"
+  | "--pn-y-xl",
+  string
+>;
+
 export async function PortfolioName({
   className,
   v = "center",
   h = "center",
+  xsOffsetX,
+  xsOffsetY,
   offsetX = 0,
   offsetY = 0,
   tabletOffsetX,
@@ -52,25 +73,27 @@ export async function PortfolioName({
 
   const aboveText = portfolioText ?? headline;
 
+  // Build typed CSS variables for offsets per breakpoint
+  const styleVars: CSSProperties & PNVars = {
+    "--pn-x-xs": `${(xsOffsetX ?? offsetX)}px`,
+    "--pn-y-xs": `${(xsOffsetY ?? offsetY)}px`,
+    "--pn-x": `${offsetX}px`,
+    "--pn-y": `${offsetY}px`,
+    "--pn-x-md": `${(tabletOffsetX ?? offsetX)}px`,
+    "--pn-y-md": `${(tabletOffsetY ?? offsetY)}px`,
+    "--pn-x-desktop": `${(desktopOffsetX ?? tabletOffsetX ?? offsetX)}px`,
+    "--pn-y-desktop": `${(desktopOffsetY ?? tabletOffsetY ?? offsetY)}px`,
+    "--pn-x-xl": `${(xlOffsetX ?? desktopOffsetX ?? tabletOffsetX ?? offsetX)}px`,
+    "--pn-y-xl": `${(xlOffsetY ?? desktopOffsetY ?? tabletOffsetY ?? offsetY)}px`,
+  };
+
   return (
     <div
       className={`intro-gate flex h-full w-full px-4 ${alignY} ${alignX}`}
     >
       <div
-        className="pn-transform translate-x-[var(--pn-x)] translate-y-[var(--pn-y)] md:translate-x-[var(--pn-x-md)] md:translate-y-[var(--pn-y-md)] lg:translate-x-[var(--pn-x-desktop)] lg:translate-y-[var(--pn-y-desktop)] xl:translate-x-[var(--pn-x-xl)] xl:translate-y-[var(--pn-y-xl)]"
-        style={
-          {
-            // Set variables for each breakpoint once; utilities pick the right one per screen size
-            ["--pn-x" as any]: `${offsetX}px`,
-            ["--pn-y" as any]: `${offsetY}px`,
-            ["--pn-x-md" as any]: `${(tabletOffsetX ?? offsetX)}px`,
-            ["--pn-y-md" as any]: `${(tabletOffsetY ?? offsetY)}px`,
-            ["--pn-x-desktop" as any]: `${(desktopOffsetX ?? tabletOffsetX ?? offsetX)}px`,
-            ["--pn-y-desktop" as any]: `${(desktopOffsetY ?? tabletOffsetY ?? offsetY)}px`,
-            ["--pn-x-xl" as any]: `${(xlOffsetX ?? desktopOffsetX ?? tabletOffsetX ?? offsetX)}px`,
-            ["--pn-y-xl" as any]: `${(xlOffsetY ?? desktopOffsetY ?? tabletOffsetY ?? offsetY)}px`,
-          } as any
-        }
+        className="pn-transform max-[346px]:!translate-x-[var(--pn-x-xs)] max-[346px]:!translate-y-[var(--pn-y-xs)] translate-x-[var(--pn-x)] translate-y-[var(--pn-y)] md:translate-x-[var(--pn-x-md)] md:translate-y-[var(--pn-y-md)] lg:translate-x-[var(--pn-x-desktop)] lg:translate-y-[var(--pn-y-desktop)] xl:translate-x-[var(--pn-x-xl)] xl:translate-y-[var(--pn-y-xl)]"
+        style={styleVars}
       >
         {aboveText && (
           <p className="mb-1 text-center text-[15px] md:text-[20px] lg:text-[22px] xl:text-[22px] font-medium tracking-wide uppercase opacity-80">

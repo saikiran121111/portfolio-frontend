@@ -12,6 +12,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* XS overrides: ensure ≤346px uses the xs CSS variables for transforms */
+@media (max-width: 346px) {
+  .pn-transform { transform: translate(var(--pn-x-xs), var(--pn-y-xs)) !important; }
+  .bh-transform { transform: translate(var(--bh-x-xs), var(--bh-y-xs)) !important; }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
