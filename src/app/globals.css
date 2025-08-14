@@ -5,17 +5,11 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 /* XS overrides: ensure ≤346px uses the xs CSS variables for transforms */
 @media (max-width: 346px) {
   .pn-transform { transform: translate(var(--pn-x-xs), var(--pn-y-xs)) !important; }
   .bh-transform { transform: translate(var(--bh-x-xs), var(--bh-y-xs)) !important; }
+  .logo-transform { transform: translate(var(--logo-x-xs), var(--logo-y-xs)) !important; }
 }
 
 @media (prefers-color-scheme: dark) {
