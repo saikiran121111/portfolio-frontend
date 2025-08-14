@@ -23,8 +23,10 @@ export default function IntroLoader({
   const [outlined, setOutlined] = useState(false); // outline the same number at 100
   const [reveal, setReveal] = useState(false); // triggers overlay zoom+fade
 
-  // Compute a scale from 0 -> 1.25 across the animation
-  const scale = useMemo(() => 0.5 + (progress / 100) * 0.75, [progress]);
+  // Scale the whole content smoothly from smaller to larger as progress increases
+  const contentScale = useMemo(() => 0.85 + (progress / 100) * 0.65, [progress]); // 0.85 -> 1.5
+  // Apply inverse scale to keep the progress bar visually fixed in size
+  const inverseScale = useMemo(() => 1 / contentScale, [contentScale]);
 
   useEffect(() => {
     const start = performance.now();
@@ -73,16 +75,17 @@ export default function IntroLoader({
           transformOrigin: "50% 50%",
         }}
       >
-        <div className="flex w-full max-w-[720px] flex-col items-center gap-6 px-6">
-          <div className="select-none will-change-transform" style={{ transition: "transform 75ms ease-out" }}>
+        <div
+          className="flex w-full max-w-[720px] flex-col items-center gap-6 px-6"
+          style={{ transform: `scale(${contentScale})`, transition: "transform 150ms ease-out" }}
+        >
+          <div className="select-none">
             <span
               className="font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] text-[10vw] sm:text-[8vw] md:text-[6vw] leading-none tracking-tight"
               style={{
-                transform: `scale(${scale})`,
                 color: outlined ? "transparent" : "#ffffff",
                 WebkitTextStroke: outlined ? "0.8px rgba(255,255,255,0.4)" : "0px transparent",
-                // Smoothly fade from filled to outlined
-                transition: "transform 75ms ease-out, color 300ms ease, -webkit-text-stroke 300ms ease",
+                transition: "color 300ms ease, -webkit-text-stroke 300ms ease",
               } as any}
             >
               {progress}%
@@ -91,7 +94,7 @@ export default function IntroLoader({
 
           {/* Loading bar shows only while loading */}
           {progress < 100 && (
-            <div className="w-full">
+            <div className="w-full" style={{ transform: `scale(${inverseScale})`, transformOrigin: "50% 50%" }}>
               <div className="h-2 rounded-full bg-white/20 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-white/90 shadow-[0_0_24px_rgba(255,255,255,0.35)] transition-[width] duration-150 ease-out"
