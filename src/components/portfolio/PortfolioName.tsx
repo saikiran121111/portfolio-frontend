@@ -9,7 +9,7 @@ export async function PortfolioName({ className }: PortfolioNameProps) {
   return (
     <h1
       className=
-        "text-2xl font-bold tracking-tight md:text-4xl desktop:text-5xl md:leading-tight mt-[402px] sm:mt-0"
+        {`intro-gate text-2xl font-bold tracking-tight md:text-4xl desktop:text-5xl md:leading-tight mt-[402px] sm:mt-0 ${className ?? ''}`.trim()}
     >
       {name}
     </h1>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
+import IntroLoader from "@/components/portfolio/intro/IntroLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +28,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <HomepageBackground />
-        <div className="relative z-10 min-h-dvh">{children}</div>
+        {/* Intro Loader sits above content and background */}
+        <IntroLoader />
+        <div className="relative z-10 min-h-dvh">
+          {children}
+        </div>
       </body>
     </html>
   );
