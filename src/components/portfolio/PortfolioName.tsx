@@ -17,6 +17,8 @@ interface PortfolioNameProps {
   // xl ≥ 1280px
   xlOffsetX?: number;
   xlOffsetY?: number;
+  // optional text shown above the name; falls back to API headline
+  portfolioText?: string;
 }
 
 export async function PortfolioName({
@@ -31,8 +33,9 @@ export async function PortfolioName({
   desktopOffsetY,
   xlOffsetX,
   xlOffsetY,
+  portfolioText,
 }: PortfolioNameProps) {
-  const { name } = await fetchUserPortfolio();
+  const { name, headline } = await fetchUserPortfolio();
 
   const alignY =
     v === "top"
@@ -46,6 +49,8 @@ export async function PortfolioName({
       : h === "right"
       ? "justify-end"
       : "justify-center";
+
+  const aboveText = portfolioText ?? headline;
 
   return (
     <div
@@ -67,8 +72,13 @@ export async function PortfolioName({
           } as any
         }
       >
+        {aboveText && (
+          <p className="mb-1 text-center text-[15px] md:text-[20px] lg:text-[22px] xl:text-[22px] font-medium tracking-wide uppercase opacity-80">
+            {aboveText}
+          </p>
+        )}
         <h1
-          className={`font-saol text-center text-xl font-bold tracking-tight md:text-2xl lg:text-3xl xl:text-4xl md:leading-tight ${
+          className={`font-saol text-center text-xl font-bold tracking-tight md:text-2xl lg:text-3xl xl:text-3xl md:leading-tight ${
             className ?? ""
           }`.trim()}
         >
