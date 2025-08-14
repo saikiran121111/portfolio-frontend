@@ -68,7 +68,7 @@ export async function PortfolioName({
         }
       >
         <h1
-          className={`text-center text-xl font-bold tracking-tight md:text-2xl lg:text-3xl xl:text-3xl md:leading-tight ${
+          className={`font-saol text-center text-xl font-bold tracking-tight md:text-2xl lg:text-3xl xl:text-4xl md:leading-tight ${
             className ?? ""
           }`.trim()}
         >

@@ -28,3 +28,6 @@ body {
 /* Intro gate: hide marked elements until intro completes */
 .intro-gate { opacity: 0; transform: translateY(8px); transition: opacity .4s ease, transform .4s ease; }
 html[data-intro-done="true"] .intro-gate { opacity: 1; transform: translateY(0); }
+
+/* Force Saol Display font on demand */
+.font-saol { font-family: "Saol Display", serif !important; }
