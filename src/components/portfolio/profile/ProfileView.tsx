@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   MapPin,
   Mail,
@@ -19,6 +19,7 @@ import {
   Calendar,
   Link as LinkIcon,
   ExternalLink,
+  Menu,
 } from "lucide-react";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import type { IPortfolio, ISocials } from "@/interfaces/portfolio.interface";
@@ -36,13 +37,48 @@ const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 },
+    transition: { 
+      staggerChildren: 0.08,
+      delayChildren: 0.1
+    },
   },
 } as const;
 
 const fadeUpVariants = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE_OUT } },
+  hidden: { opacity: 0, y: 24, scale: 0.98 },
+  show: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1,
+    transition: { 
+      duration: 0.6, 
+      ease: EASE_OUT 
+    } 
+  },
+} as const;
+
+const slideInRightVariants = {
+  hidden: { opacity: 0, x: 20 },
+  show: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { 
+      duration: 0.5, 
+      ease: EASE_OUT 
+    } 
+  },
+} as const;
+
+const scaleVariants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: { 
+    opacity: 1, 
+    scale: 1, 
+    transition: { 
+      duration: 0.4, 
+      ease: EASE_OUT 
+    } 
+  },
 } as const;
 
 function mapSkillLevelToPercent(level: string): number {
@@ -87,20 +123,188 @@ function SocialIcon({ socials, className }: { socials?: ISocials; className?: st
   if (!items.length) return null;
   return (
     <div className={classNames("flex items-center gap-3", className)}>
-      {items.map(({ href, label, Icon }) => (
-        <a
+      {items.map(({ href, label, Icon }, index) => (
+        <motion.a
           key={href}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors"
           title={label}
+          initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ 
+            duration: 0.4, 
+            delay: index * 0.1,
+            type: "spring",
+            stiffness: 200,
+            damping: 15
+          }}
+          whileHover={{ scale: 1.1, rotate: 2 }}
+          whileTap={{ scale: 0.95 }}
         >
           <Icon className="size-4" />
           <ArrowUpRight className="size-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
-        </a>
+        </motion.a>
       ))}
     </div>
+  );
+}
+
+// Navigation Tab Component
+function NavigationTab({ sections }: { sections: Array<{ id: string; label: string; icon: React.ComponentType<{ className?: string }> }> }) {
+  const [activeSection, setActiveSection] = useState<string>("");
+  const [isTabOpen, setIsTabOpen] = useState(false);
+
+  useEffect(() => {
+    const observers = sections.map(({ id }) => {
+      const element = document.getElementById(id);
+      if (!element) return null;
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveSection(id);
+          }
+        },
+        { threshold: 0.3, rootMargin: "-20% 0px -60% 0px" }
+      );
+
+      observer.observe(element);
+      return observer;
+    });
+
+    return () => {
+      observers.forEach(observer => observer?.disconnect());
+    };
+  }, [sections]);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest"
+      });
+    }
+    setIsTabOpen(false);
+  };
+
+  return (
+    <motion.div
+      initial={{ x: 100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.6, delay: 0.8, ease: EASE_OUT }}
+      className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
+    >
+      <div className="relative">
+        {/* Tab Toggle Button */}
+        <motion.button
+          onClick={() => setIsTabOpen(!isTabOpen)}
+          className={classNames(
+            "flex items-center justify-center w-14 h-14 rounded-l-2xl border border-r-0 border-white/20 backdrop-blur-xl transition-all duration-300 shadow-lg",
+            isTabOpen 
+              ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white border-cyan-500/30 shadow-cyan-500/20" 
+              : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:shadow-xl"
+          )}
+          whileHover={{ 
+            scale: 1.05,
+            boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)"
+          }}
+          whileTap={{ scale: 0.95 }}
+          animate={isTabOpen ? { 
+            background: "linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.2))",
+            rotate: [0, 5, -5, 0]
+          } : {}}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            animate={{ rotate: isTabOpen ? 90 : 0 }}
+            transition={{ duration: 0.3, ease: EASE_OUT }}
+          >
+            <Menu className="size-5" />
+          </motion.div>
+        </motion.button>
+
+        {/* Navigation Panel */}
+        <motion.div
+          initial={false}
+          animate={{
+            x: isTabOpen ? -280 : 0,
+            opacity: isTabOpen ? 1 : 0,
+            pointerEvents: isTabOpen ? "auto" : "none"
+          }}
+          transition={{ duration: 0.4, ease: EASE_OUT }}
+          className="absolute right-14 top-0 w-72 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-l-2xl border border-r-0 border-white/20 shadow-2xl shadow-black/40"
+        >
+          <motion.div 
+            className="p-6"
+            initial={false}
+            animate={isTabOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.3, delay: isTabOpen ? 0.2 : 0 }}
+          >
+            <motion.h3 
+              className="text-sm font-semibold text-white/90 mb-4 flex items-center gap-2"
+              initial={false}
+              animate={isTabOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+              transition={{ duration: 0.3, delay: isTabOpen ? 0.3 : 0 }}
+            >
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              Quick Navigation
+            </motion.h3>
+            <nav className="space-y-1">
+              {sections.map(({ id, label, icon: Icon }, index) => (
+                <motion.button
+                  key={id}
+                  onClick={() => scrollToSection(id)}
+                  className={classNames(
+                    "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300 group",
+                    activeSection === id
+                      ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/20 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-500/20"
+                      : "text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md"
+                  )}
+                  initial={false}
+                  animate={isTabOpen ? { 
+                    opacity: 1, 
+                    x: 0,
+                    transition: { delay: 0.1 + (index * 0.05) }
+                  } : { 
+                    opacity: 0, 
+                    x: -20 
+                  }}
+                  whileHover={{ x: 6, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <motion.div
+                    whileHover={{ rotate: 10, scale: 1.1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Icon className="size-4 flex-shrink-0" />
+                  </motion.div>
+                  <span className="truncate font-medium">{label}</span>
+                  {activeSection === id && (
+                    <motion.div
+                      layoutId="activeIndicator"
+                      className="w-2 h-2 rounded-full bg-cyan-400 ml-auto shadow-lg shadow-cyan-400/50"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    />
+                  )}
+                  <motion.div
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
+                    initial={false}
+                    whileHover={{ x: 2 }}
+                  >
+                    <ArrowUpRight className="size-3" />
+                  </motion.div>
+                </motion.button>
+              ))}
+            </nav>
+          </motion.div>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -108,6 +312,40 @@ export default function ProfileView() {
   const [data, setData] = useState<IPortfolio | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll hooks - must be called unconditionally
+  const { scrollY, scrollYProgress } = useScroll();
+  const headerOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
+  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
+
+  // Define navigation sections based on available data
+  const navigationSections = useMemo(() => {
+    if (!data) return [];
+    
+    const sections = [
+      { id: "header", label: "Profile", icon: MapPin },
+      { id: "skills", label: "Skills", icon: BadgeCheck },
+    ];
+
+    if (data.experiences?.length) {
+      sections.push({ id: "experience", label: "Experience", icon: BriefcaseBusiness });
+    }
+    if (data.projects?.length) {
+      sections.push({ id: "projects", label: "Projects", icon: Globe });
+    }
+    if (data.education?.length || data.certifications?.length) {
+      sections.push({ id: "education", label: "Education & Certifications", icon: GraduationCap });
+    }
+    if (data.achievements?.length || data.languages?.length) {
+      sections.push({ id: "achievements", label: "Achievements & Languages", icon: Trophy });
+    }
+    if (data.scanReports?.length) {
+      sections.push({ id: "reports", label: "Security Reports", icon: ShieldCheck });
+    }
+
+    return sections;
+  }, [data]);
 
   useEffect(() => {
     let mounted = true;
@@ -171,22 +409,58 @@ export default function ProfileView() {
     : null;
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 py-10">
-      {/* Header */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-1 gap-6 md:grid-cols-[1.3fr_.7fr]"
-      >
+    <>
+      {/* Scroll Progress Indicator */}
+      <motion.div 
+        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 z-50 origin-left shadow-lg shadow-cyan-500/50"
+        style={{ scaleX: scrollYProgress }}
+        initial={{ scaleX: 0 }}
+      />
+      
+      <div ref={containerRef} className="container mx-auto max-w-6xl px-4 py-10">
+        {/* Header */}
+        <motion.section
+          id="header"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          style={{ opacity: headerOpacity, scale: headerScale }}
+          className="grid grid-cols-1 gap-6 md:grid-cols-[1.3fr_.7fr]"
+        >
         <motion.div variants={fadeUpVariants} className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <motion.div 
+            className="flex flex-wrap items-center justify-between gap-4"
+            whileHover={{ scale: 1.01 }}
+            transition={{ duration: 0.2 }}
+          >
             <div>
-              <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">{data.name}</h1>
-              {data.headline && <p className="mt-1 text-white/70">{data.headline}</p>}
+              <motion.h1 
+                className="text-2xl md:text-3xl font-semibold tracking-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                {data.name}
+              </motion.h1>
+              {data.headline && (
+                <motion.p 
+                  className="mt-1 text-white/70"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                  {data.headline}
+                </motion.p>
+              )}
             </div>
-            <SocialIcon socials={data.socials} />
-          </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
+              <SocialIcon socials={data.socials} />
+            </motion.div>
+          </motion.div>
           {data.summary && <p className="mt-4 text-white/80 leading-relaxed">{data.summary}</p>}
 
           <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-white/80">
@@ -223,40 +497,52 @@ export default function ProfileView() {
         </motion.div>
       </motion.section>
 
-      {/* Skills */}
-      <motion.section
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: "-80px" }}
-        className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur"
-      >
-        <motion.h2 variants={fadeUpVariants} className="mb-4 flex items-center gap-2 text-lg font-semibold">
-          <BadgeCheck className="size-5 text-cyan-300" /> Skills
-        </motion.h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          {skillsByCat.map(([cat, items]) => (
-            <motion.div key={cat} variants={fadeUpVariants}>
-              <h3 className="mb-3 text-white/80 font-medium">{cat}</h3>
-              <div className="space-y-3">
-                {items.map((s, idx) => {
-                  const pct = mapSkillLevelToPercent(s.level);
-                  return (
-                    <div key={`${s.name}-${idx}`} className="group">
-                      <div className="mb-1 flex items-center justify-between text-sm">
-                        <span className="text-white/90">{s.name}</span>
-                        <span className="text-white/60">{s.level}</span>
-                      </div>
-                      <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-                        <motion.div
-                          className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_16px_rgba(34,211,238,0.35)]"
-                          initial={{ width: 0 }}
-                          whileInView={{ width: `${pct}%` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.9, ease: EASE_OUT }}
-                        />
-                      </div>
-                    </div>
+        {/* Skills */}
+        <motion.section
+          id="skills"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur"
+        >
+          <motion.h2 variants={fadeUpVariants} className="mb-4 flex items-center gap-2 text-lg font-semibold">
+            <BadgeCheck className="size-5 text-cyan-300" /> Skills
+          </motion.h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            {skillsByCat.map(([cat, items], catIndex) => (
+              <motion.div 
+                key={cat} 
+                variants={slideInRightVariants}
+                transition={{ delay: catIndex * 0.1 }}
+              >
+                <h3 className="mb-3 text-white/80 font-medium">{cat}</h3>
+                <div className="space-y-3">
+                  {items.map((s, idx) => {
+                    const pct = mapSkillLevelToPercent(s.level);
+                    return (
+                      <motion.div 
+                        key={`${s.name}-${idx}`} 
+                        className="group"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: (catIndex * 0.1) + (idx * 0.05) }}
+                        viewport={{ once: true }}
+                      >
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <span className="text-white/90">{s.name}</span>
+                          <span className="text-white/60">{s.level}</span>
+                        </div>
+                        <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                          <motion.div
+                            className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_16px_rgba(34,211,238,0.35)]"
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${pct}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.9, ease: EASE_OUT }}
+                          />
+                        </div>
+                      </motion.div>
                   );
                 })}
               </div>
@@ -268,6 +554,7 @@ export default function ProfileView() {
       {/* Experience */}
       {data.experiences?.length ? (
         <motion.section
+          id="experience"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -279,7 +566,13 @@ export default function ProfileView() {
           </motion.h2>
           <div className="space-y-6">
             {data.experiences.map((e, i) => (
-              <motion.div key={i} variants={fadeUpVariants} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
+              <motion.div 
+                key={i} 
+                variants={scaleVariants}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                className="rounded-xl border border-white/10 bg-white/[.03] p-4 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <h3 className="font-medium">
@@ -319,6 +612,7 @@ export default function ProfileView() {
       {/* Projects */}
       {data.projects?.length ? (
         <motion.section
+          id="projects"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -330,7 +624,13 @@ export default function ProfileView() {
           </motion.h2>
           <div className="grid gap-6 md:grid-cols-2">
             {data.projects.map((p, i) => (
-              <motion.div key={i} variants={fadeUpVariants} className="rounded-xl border border-white/10 bg-white/[.03] p-4">
+              <motion.div 
+                key={i} 
+                variants={scaleVariants}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ scale: 1.03, y: -6 }}
+                className="rounded-xl border border-white/10 bg-white/[.03] p-4 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/10"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="font-medium">{p.title}</h3>
@@ -390,6 +690,7 @@ export default function ProfileView() {
       {/* Education and Certifications */}
       {(data.education?.length || data.certifications?.length) ? (
         <motion.section
+          id="education"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -460,6 +761,7 @@ export default function ProfileView() {
       {/* Achievements and Languages */}
       {(data.achievements?.length || data.languages?.length) ? (
         <motion.section
+          id="achievements"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -522,6 +824,7 @@ export default function ProfileView() {
       {/* Scan Reports */}
       {data.scanReports?.length ? (
         <motion.section
+          id="reports"
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
@@ -610,6 +913,10 @@ export default function ProfileView() {
           </div>
         </motion.section>
       ) : null}
-    </div>
+      </div>
+
+      {/* Navigation Tab */}
+      <NavigationTab sections={navigationSections} />
+    </>
   );
 }
