@@ -1,11 +1,15 @@
 import { PortfolioName } from "@/components/portfolio/PortfolioName";
 import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline";
 import Logo from "@/components/portfolio/logo/Logo";
+import IntroLoader from "@/components/portfolio/intro/IntroLoader";
 
 // Server Component by default (App Router)
 export default function Home() {
   return (
     <div className="container mx-auto max-w-4xl px-4 h-dvh xl:overflow-visible relative">
+      {/* Intro effect only on homepage */}
+      <IntroLoader />
+
       <PortfolioName portfolioText="Portfolio" xsOffsetX={1} xsOffsetY={-20} offsetX={5} offsetY={-27} tabletOffsetX={-1} tabletOffsetY={-33} desktopOffsetX={-13} desktopOffsetY={-5} xlOffsetX={-13} xlOffsetY={-5} />
 
       {/* Clickable logo overlay (pointer-events enabled only on the logo) */}

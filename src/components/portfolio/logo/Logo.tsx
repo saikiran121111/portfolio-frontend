@@ -25,6 +25,8 @@ interface LogoProps {
   tabletMinLeftPx?: number; // md ≥ 768
   desktopMinLeftPx?: number; // lg ≥ 1024
   xlMinLeftPx?: number; // xl ≥ 1280
+  /** Apply the intro fade/slide gate. Default true (homepage). Set false on other routes. */
+  introGate?: boolean;
 }
 
 // Typed CSS custom properties used by this component
@@ -67,6 +69,7 @@ export function Logo({
   tabletMinLeftPx,
   desktopMinLeftPx,
   xlMinLeftPx,
+  introGate = true,
 }: LogoProps) {
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
@@ -98,7 +101,7 @@ export function Logo({
     : "max-[346px]:!translate-x-[var(--logo-x-xs)] translate-x-[var(--logo-x)] md:translate-x-[var(--logo-x-md)] lg:translate-x-[var(--logo-x-lg)] xl:translate-x-[var(--logo-x-xl)]";
 
   return (
-    <div className={`intro-gate flex h-full w-full ${alignY} ${alignX}`}>
+    <div className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}>
       <Link href="/" className="pointer-events-auto">
         <div
           className={`logo-transform ${translateXClasses} max-[346px]:!translate-y-[var(--logo-y-xs)] translate-y-[var(--logo-y)] md:translate-y-[var(--logo-y-md)] lg:translate-y-[var(--logo-y-lg)] xl:translate-y-[var(--logo-y-xl)]`}

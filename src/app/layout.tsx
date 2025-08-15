@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
-import IntroLoader from "@/components/portfolio/intro/IntroLoader";
 import CustomCursor from "@/components/cursor/CustomCursor";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
@@ -39,8 +38,6 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <HomepageBackground />
-        {/* Intro Loader sits above content and background */}
-        <IntroLoader />
         {/* Custom cursor above content */}
         <CustomCursor />
         <div className="relative z-10 min-h-dvh">
