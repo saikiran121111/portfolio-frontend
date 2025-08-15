@@ -28,4 +28,5 @@ export interface PortfolioDto {
   languages?: LanguageDto[];
   scanReports?: ScanReportDto[];
   bottomHeadline?: string[]; // NEW
+  copyrights?: string; 
 }

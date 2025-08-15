@@ -27,6 +27,7 @@ export interface IPortfolio {
   languages?: ILanguages[];
   scanReports?: IscanReports[];
   bottomHeadline?: string[]; // NEW
+  copyrights?: string; 
 }
 
 export interface ISocials {
