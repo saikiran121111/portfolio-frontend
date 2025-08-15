@@ -2,11 +2,14 @@
 import { useEffect, useRef } from "react";
 
 type Props = {
-  baseSize?: number; // px diameter of the default cursor dot
-  expandPadding?: number; // extra px added around target when expanding
-  ease?: number; // 0..1 lerp factor
-  zIndexClassName?: string; // override stacking
-  interactiveSelector?: string; // override selector for expand targets
+  baseSize?: number; // big ball diameter (px)
+  expandPadding?: number; // unused (kept for backwards compat)
+  ease?: number; // big ball lerp factor 0..1
+  zIndexClassName?: string; // unused in new approach, kept for compat
+  interactiveSelector?: string; // selector for hoverables
+  smallSize?: number; // small ball diameter (px)
+  smallEase?: number; // small ball lerp factor 0..1
+  hoverScale?: number; // scale for big ball on hover
 };
 
 const DEFAULT_SELECTOR = [
@@ -17,67 +20,77 @@ const DEFAULT_SELECTOR = [
   'input[type="submit"]',
   ".sk-logo",
   "[data-cursor-expand]",
+  ".hoverable",
 ].join(",");
 
-export default function CustomCursor({
-  baseSize = 14,
-  expandPadding = 8,
-  ease = 0.2,
-  zIndexClassName = "z-[9999]",
-  interactiveSelector = DEFAULT_SELECTOR,
-}: Props) {
-  const cursorRef = useRef<HTMLDivElement | null>(null);
+const LOGO_SELECTOR = ".sk-logo";
 
-  const pos = useRef({ x: 0, y: 0 }); // rendered position
-  const targetPos = useRef({ x: 0, y: 0 }); // desired position
-  const scaleRef = useRef(1);
-  const lockedRef = useRef(false);
-  const activeElRef = useRef<Element | null>(null);
+export default function CustomCursor({
+  baseSize = 30,
+  expandPadding = 8, // kept for compat
+  ease = 0.2, // big ball ease
+  zIndexClassName = "z-[9999]", // kept for compat
+  interactiveSelector = DEFAULT_SELECTOR,
+  smallSize = 10,
+  smallEase = 0.5,
+  hoverScale = 4,
+}: Props) {
+  const bigRef = useRef<HTMLDivElement | null>(null);
+  const smallRef = useRef<HTMLDivElement | null>(null);
+
+  // positions
+  const target = useRef({ x: 0, y: 0 });
+  const bigPos = useRef({ x: 0, y: 0 });
+  const smallPos = useRef({ x: 0, y: 0 });
+
+  // scales (logical)
+  const bigScale = useRef(1);
+  const bigScaleTarget = useRef(1);
+
+  // cached diameters to keep DOM updates minimal
+  const bigDiameterApplied = useRef(baseSize);
+  const smallDiameterRef = useRef(smallSize);
+
+  // state
   const rafRef = useRef<number | null>(null);
 
   // Helpers
-  const setTransform = (x: number, y: number, scale: number) => {
-    const el = cursorRef.current;
+  // Apply only translate3d; avoid CSS scale to prevent anti-aliasing blur.
+  const setTransform = (el: HTMLDivElement | null, x: number, y: number, size: number) => {
     if (!el) return;
-    const half = baseSize / 2;
-    el.style.transform = `translate3d(${x - half}px, ${y - half}px, 0) scale(${scale})`;
-  };
-
-  const setActiveStyles = (active: boolean) => {
-    const el = cursorRef.current;
-    if (!el) return;
-    if (active) {
-      el.style.background = "white";
-      el.style.boxShadow = "0 0 0 2px rgba(255,255,255,0.9) inset, 0 8px 28px rgba(0,0,0,0.45)";
-      el.style.outline = "0px solid transparent";
-      el.style.mixBlendMode = "normal";
-    } else {
-      // High-contrast silver idle
-      el.style.background =
-        "radial-gradient(60% 60% at 35% 35%, rgba(255,255,255,0.95) 0%, rgba(246,248,250,0.95) 48%, rgba(216,222,228,0.92) 72%, rgba(70,76,84,0.95) 100%), #d7dce1";
-      el.style.boxShadow =
-        "0 6px 18px rgba(0,0,0,0.35), inset 0 0 14px rgba(255,255,255,0.45), inset 0 -12px 24px rgba(0,0,0,0.22)";
-      el.style.outline = "1.5px solid rgba(255,255,255,0.5)";
-      el.style.mixBlendMode = "normal";
-    }
-  };
-
-  const computeTargetCenterAndScale = (el: Element) => {
-    const rect = el.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const diameter = Math.max(rect.width, rect.height) + expandPadding * 2; // cover target bounds
-    const scale = Math.max(1, diameter / baseSize);
-    return { cx, cy, scale };
+    const half = size / 2;
+    const dpr = window.devicePixelRatio || 1;
+    // Pixel-snapped translate for crisp edges
+    const tx = Math.round((x - half) * dpr) / dpr;
+    const ty = Math.round((y - half) * dpr) / dpr;
+    el.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
   };
 
   const animate = () => {
-    const { x: tx, y: ty } = targetPos.current;
-    const dx = tx - pos.current.x;
-    const dy = ty - pos.current.y;
-    pos.current.x += dx * ease;
-    pos.current.y += dy * ease;
-    setTransform(pos.current.x, pos.current.y, scaleRef.current);
+    // Lerp positions
+    bigPos.current.x += (target.current.x - bigPos.current.x) * ease;
+    bigPos.current.y += (target.current.y - bigPos.current.y) * ease;
+
+    smallPos.current.x += (target.current.x - smallPos.current.x) * smallEase;
+    smallPos.current.y += (target.current.y - smallPos.current.y) * smallEase;
+
+    // Lerp scale (logical)
+    bigScale.current += (bigScaleTarget.current - bigScale.current) * Math.min(1, ease * 1.25);
+
+    // Convert scale into an even integer diameter to avoid half-pixel radii
+    const desired = baseSize * bigScale.current;
+    const bigDiameter = Math.max(2, 2 * Math.round(desired / 2)); // quantize to even px
+
+    // Update element size only when it changes
+    if (bigRef.current && bigDiameterApplied.current !== bigDiameter) {
+      bigRef.current.style.width = `${bigDiameter}px`;
+      bigRef.current.style.height = `${bigDiameter}px`;
+      bigDiameterApplied.current = bigDiameter;
+    }
+
+    setTransform(bigRef.current, bigPos.current.x, bigPos.current.y, bigDiameter);
+    setTransform(smallRef.current, smallPos.current.x, smallPos.current.y, smallDiameterRef.current);
+
     rafRef.current = requestAnimationFrame(animate);
   };
 
@@ -86,80 +99,110 @@ export default function CustomCursor({
     const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
     if (isCoarse) return;
 
-    const el = document.createElement("div");
-    el.setAttribute("aria-hidden", "true");
-    el.className = `pointer-events-none fixed ${zIndexClassName} left-0 top-0 will-change-transform rounded-full transition-[background,box-shadow] duration-200 ease-out`;
-    el.style.width = `${baseSize}px`;
-    el.style.height = `${baseSize}px`;
-    el.style.transformOrigin = "50% 50%";
-    el.style.zIndex = "2147483647"; // ensure on top of everything
+    // Quantize initial diameters to even integers for crisp edges
+    const initialBigDiameter = Math.max(2, 2 * Math.round(baseSize / 2));
+    const initialSmallDiameter = Math.max(2, 2 * Math.round(smallSize / 2));
+    smallDiameterRef.current = initialSmallDiameter;
+    bigDiameterApplied.current = initialBigDiameter;
 
-    document.body.appendChild(el);
-    cursorRef.current = el;
-    // Apply idle styles AFTER ref is set so they're not skipped
-    setActiveStyles(false);
+    // Create big ball
+    const big = document.createElement("div");
+    big.setAttribute("aria-hidden", "true");
+    big.className = `pointer-events-none fixed left-0 top-0 rounded-full`;
+    big.style.width = `${initialBigDiameter}px`;
+    big.style.height = `${initialBigDiameter}px`;
+    big.style.borderRadius = "50%";
+    big.style.background = "#f7f8fa"; // solid light
+    big.style.mixBlendMode = "difference"; // high contrast
+    big.style.zIndex = "2147483647";
+    big.style.willChange = "transform, width, height";
+    big.style.backfaceVisibility = "hidden";
+    big.style.contain = "layout paint style";
+    // Slightly promote to its own layer for stability
+    (big.style as any).transform = "translate3d(0,0,0)";
 
-    // Initialize at screen center so it's visible even before the first move
-    const initX = window.innerWidth / 2;
-    const initY = window.innerHeight / 2;
-    targetPos.current.x = initX;
-    targetPos.current.y = initY;
-    pos.current.x = initX;
-    pos.current.y = initY;
-    setTransform(initX, initY, 1);
+    // Create small ball
+    const small = document.createElement("div");
+    small.setAttribute("aria-hidden", "true");
+    small.className = `pointer-events-none fixed left-0 top-0 rounded-full`;
+    small.style.width = `${initialSmallDiameter}px`;
+    small.style.height = `${initialSmallDiameter}px`;
+    small.style.borderRadius = "50%";
+    small.style.background = "#f7f8fa";
+    small.style.mixBlendMode = "difference";
+    small.style.zIndex = "2147483647";
+    small.style.willChange = "transform";
+    small.style.backfaceVisibility = "hidden";
+    small.style.contain = "layout paint style";
+    (small.style as any).transform = "translate3d(0,0,0)";
+
+    document.body.appendChild(big);
+    document.body.appendChild(small);
+    bigRef.current = big;
+    smallRef.current = small;
+
+    // Init at center
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    target.current = { x: cx, y: cy };
+    bigPos.current = { x: cx, y: cy };
+    smallPos.current = { x: cx, y: cy };
+    bigScale.current = 1;
+    bigScaleTarget.current = 1;
+    setTransform(big, cx, cy, initialBigDiameter);
+    setTransform(small, cx, cy, initialSmallDiameter);
+
+    const supportsPointer = typeof window !== "undefined" && "onpointermove" in window;
 
     const onMove = (e: MouseEvent | PointerEvent) => {
-      const mx = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
-      const my = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
-      if (!lockedRef.current) {
-        targetPos.current.x = mx;
-        targetPos.current.y = my;
-      }
+      const x = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
+      const y = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
+      target.current.x = x;
+      target.current.y = y;
 
-      const target = document.elementFromPoint(mx, my);
-      const interactive = target?.closest?.(interactiveSelector) ?? null;
-      if (interactive !== activeElRef.current) {
-        activeElRef.current = interactive;
-        if (interactive) {
-          const { cx, cy, scale } = computeTargetCenterAndScale(interactive);
-          lockedRef.current = true;
-          scaleRef.current = scale;
-          setActiveStyles(true);
-          targetPos.current.x = cx;
-          targetPos.current.y = cy;
-        } else {
-          lockedRef.current = false;
-          scaleRef.current = 1;
-          setActiveStyles(false);
-        }
-      }
+      const t = document.elementFromPoint(x, y);
+      const hoverable = t?.closest?.(interactiveSelector) ?? null;
+      bigScaleTarget.current = hoverable ? hoverScale : 1;
+
+      // If hovering logo, drop behind it to avoid visual obstruction
+      const overLogo = !!t?.closest?.(LOGO_SELECTOR);
+      const zi = overLogo ? "1" : "2147483647";
+      if (bigRef.current) bigRef.current.style.zIndex = zi;
+      if (smallRef.current) smallRef.current.style.zIndex = zi;
     };
 
-    const onScrollOrResize = () => {
-      if (!activeElRef.current) return;
-      const { cx, cy, scale } = computeTargetCenterAndScale(activeElRef.current);
-      scaleRef.current = scale;
-      targetPos.current.x = cx;
-      targetPos.current.y = cy;
+    const onLeave = () => {
+      bigScaleTarget.current = 1;
+      // Restore z-index to top when pointer leaves window
+      if (bigRef.current) bigRef.current.style.zIndex = "2147483647";
+      if (smallRef.current) smallRef.current.style.zIndex = "2147483647";
     };
 
-    window.addEventListener("pointermove", onMove as any, { passive: true });
-    window.addEventListener("mousemove", onMove as any, { passive: true }); // fallback
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize, { passive: true });
+    if (supportsPointer) {
+      window.addEventListener("pointermove", onMove as any, { passive: true });
+      window.addEventListener("pointerleave", onLeave as any, { passive: true });
+    } else {
+      window.addEventListener("mousemove", onMove as any, { passive: true });
+      window.addEventListener("mouseleave", onLeave as any, { passive: true });
+    }
 
     rafRef.current = requestAnimationFrame(animate);
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("pointermove", onMove as any);
-      window.removeEventListener("mousemove", onMove as any);
-      window.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
-      el.remove();
-      cursorRef.current = null;
+      if (supportsPointer) {
+        window.removeEventListener("pointermove", onMove as any);
+        window.removeEventListener("pointerleave", onLeave as any);
+      } else {
+        window.removeEventListener("mousemove", onMove as any);
+        window.removeEventListener("mouseleave", onLeave as any);
+      }
+      big.remove();
+      small.remove();
+      bigRef.current = null;
+      smallRef.current = null;
     };
-  }, [baseSize, ease, expandPadding, interactiveSelector, zIndexClassName]);
+  }, [baseSize, smallSize, ease, smallEase, hoverScale, interactiveSelector]);
 
   return null;
 }
