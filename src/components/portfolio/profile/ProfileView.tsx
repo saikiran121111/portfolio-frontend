@@ -20,6 +20,8 @@ import {
   Link as LinkIcon,
   ExternalLink,
   Menu,
+  Copy,
+  Check,
 } from "lucide-react";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import type { IPortfolio, ISocials } from "@/interfaces/portfolio.interface";
@@ -151,6 +153,64 @@ function SocialIcon({ socials, className }: { socials?: ISocials; className?: st
   );
 }
 
+// Copy Button Component
+function CopyButton({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <motion.button
+      onClick={handleCopy}
+      className="ml-2 relative inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-cyan-400/50 text-white/60 hover:text-cyan-300 transition-all duration-200 group"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.95 }}
+      title={copied ? "Copied!" : `Copy ${label}`}
+    >
+      <motion.div
+        animate={copied ? { scale: [1, 1.2, 1], rotate: [0, 360, 0] } : {}}
+        transition={{ duration: 0.5 }}
+      >
+        {copied ? (
+          <Check className="size-4 text-green-400" />
+        ) : (
+          <Copy className="size-4 group-hover:text-cyan-300" />
+        )}
+      </motion.div>
+      
+      {/* Tooltip */}
+      <motion.div
+        className={classNames(
+          "absolute -top-12 left-1/2 transform -translate-x-1/2 px-3 py-2 rounded-lg shadow-lg pointer-events-none whitespace-nowrap text-xs font-medium border transition-all duration-200",
+          copied 
+            ? "bg-green-500/90 text-white border-green-400/50 opacity-100" 
+            : "bg-gray-900/90 text-white border-white/20 opacity-0 group-hover:opacity-100"
+        )}
+        initial={{ opacity: 0, y: 5, scale: 0.8 }}
+        animate={copied 
+          ? { opacity: 1, y: 0, scale: 1 }
+          : { opacity: 0, y: 5, scale: 0.8 }
+        }
+        transition={{ duration: 0.2 }}
+      >
+        {copied ? "✓ Copied!" : `Copy ${label}`}
+        <div className={classNames(
+          "absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-transparent",
+          copied ? "border-t-green-500/90" : "border-t-gray-900/90"
+        )}></div>
+      </motion.div>
+    </motion.button>
+  );
+}
+
 // Navigation Tab Component
 function NavigationTab({ sections }: { sections: Array<{ id: string; label: string; icon: React.ComponentType<{ className?: string }> }> }) {
   const [activeSection, setActiveSection] = useState<string>("");
@@ -191,64 +251,64 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
     setIsTabOpen(false);
   };
 
+  // Fixed, anchored drawer: width equals the panel width. We translate the whole drawer by its
+  // own width when closed, so the button (attached to its left edge) remains perfectly flush
+  // with the viewport's right edge in both states.
+  const PANEL_WIDTH = 288; // w-72
+
   return (
     <motion.div
-      initial={{ x: 100, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ duration: 0.6, delay: 0.8, ease: EASE_OUT }}
-      className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.6, ease: EASE_OUT }}
+      className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
     >
-      <div className="relative">
-        {/* Tab Toggle Button */}
+      {/* Drawer track (anchored to right). When closed, shift by +100% (panel width). */}
+      <motion.div
+        className="relative w-72 pointer-events-auto"
+        style={{ width: PANEL_WIDTH }}
+        initial={false}
+        animate={{ x: isTabOpen ? 0 : PANEL_WIDTH }}
+        transition={{ duration: 0.45, ease: EASE_OUT }}
+      >
+        {/* Toggle Button: absolutely attached to drawer's left edge so it rides with the panel */}
         <motion.button
           onClick={() => setIsTabOpen(!isTabOpen)}
+          aria-label={isTabOpen ? "Close quick navigation" : "Open quick navigation"}
           className={classNames(
-            "flex items-center justify-center w-14 h-14 rounded-l-2xl border border-r-0 border-white/20 backdrop-blur-xl transition-all duration-300 shadow-lg",
-            isTabOpen 
-              ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white border-cyan-500/30 shadow-cyan-500/20" 
-              : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:shadow-xl"
+            "absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 flex items-center justify-center w-14 h-14 backdrop-blur-xl transition-all duration-300 shadow-lg border border-white/20 z-10",
+            isTabOpen
+              ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white border-cyan-500/30 shadow-cyan-500/20 rounded-l-2xl"
+              : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:shadow-xl rounded-l-2xl"
           )}
-          whileHover={{ 
-            scale: 1.05,
-            boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)"
-          }}
+          whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)" }}
           whileTap={{ scale: 0.95 }}
-          animate={isTabOpen ? { 
-            background: "linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.2))",
-            rotate: [0, 5, -5, 0]
-          } : {}}
+          animate={isTabOpen ? { rotate: [0, 5, -5, 0] } : {}}
           transition={{ duration: 0.3 }}
         >
-          <motion.div
-            animate={{ rotate: isTabOpen ? 90 : 0 }}
-            transition={{ duration: 0.3, ease: EASE_OUT }}
-          >
+          <motion.div animate={{ rotate: isTabOpen ? 90 : 0 }} transition={{ duration: 0.3, ease: EASE_OUT }}>
             <Menu className="size-5" />
           </motion.div>
         </motion.button>
 
-        {/* Navigation Panel */}
+        {/* Navigation Panel: flush with right edge when open */}
         <motion.div
           initial={false}
-          animate={{
-            x: isTabOpen ? -280 : 0,
-            opacity: isTabOpen ? 1 : 0,
-            pointerEvents: isTabOpen ? "auto" : "none"
-          }}
-          transition={{ duration: 0.4, ease: EASE_OUT }}
-          className="absolute right-14 top-0 w-72 bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-l-2xl border border-r-0 border-white/20 shadow-2xl shadow-black/40"
+          animate={{ opacity: isTabOpen ? 1 : 1 }}
+          className="max-w-[min(288px,calc(100vw-120px))] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 border-l-0 rounded-l-2xl shadow-2xl shadow-black/40 relative overflow-hidden"
+          style={{ width: PANEL_WIDTH }}
         >
-          <motion.div 
+          <motion.div
             className="p-6"
             initial={false}
-            animate={isTabOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-            transition={{ duration: 0.3, delay: isTabOpen ? 0.2 : 0 }}
+            animate={isTabOpen ? { opacity: 1, y: 0 } : { opacity: 0.85, y: 4 }}
+            transition={{ duration: 0.25 }}
           >
-            <motion.h3 
+            <motion.h3
               className="text-sm font-semibold text-white/90 mb-4 flex items-center gap-2"
               initial={false}
-              animate={isTabOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
-              transition={{ duration: 0.3, delay: isTabOpen ? 0.3 : 0 }}
+              animate={isTabOpen ? { opacity: 1, x: 0 } : { opacity: 0.9, x: -6 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
               Quick Navigation
@@ -265,21 +325,11 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
                       : "text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md"
                   )}
                   initial={false}
-                  animate={isTabOpen ? { 
-                    opacity: 1, 
-                    x: 0,
-                    transition: { delay: 0.1 + (index * 0.05) }
-                  } : { 
-                    opacity: 0, 
-                    x: -20 
-                  }}
+                  animate={isTabOpen ? { opacity: 1, x: 0, transition: { delay: 0.05 + index * 0.04 } } : { opacity: 0.85, x: -8 }}
                   whileHover={{ x: 6, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <motion.div
-                    whileHover={{ rotate: 10, scale: 1.1 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <motion.div whileHover={{ rotate: 10, scale: 1.1 }} transition={{ duration: 0.2 }}>
                     <Icon className="size-4 flex-shrink-0" />
                   </motion.div>
                   <span className="truncate font-medium">{label}</span>
@@ -291,11 +341,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     />
                   )}
-                  <motion.div
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    initial={false}
-                    whileHover={{ x: 2 }}
-                  >
+                  <motion.div className="opacity-0 group-hover:opacity-100 transition-opacity" initial={false} whileHover={{ x: 2 }}>
                     <ArrowUpRight className="size-3" />
                   </motion.div>
                 </motion.button>
@@ -303,7 +349,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
             </nav>
           </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -470,14 +516,20 @@ export default function ProfileView() {
               </span>
             )}
             {data.email && (
-              <a className="inline-flex items-center gap-2 hover:text-white" href={`mailto:${data.email}`}>
-                <Mail className="size-4 text-cyan-300" /> {data.email}
-              </a>
+              <div className="inline-flex items-center gap-2 group">
+                <a className="inline-flex items-center gap-2 hover:text-white transition-colors" href={`mailto:${data.email}`}>
+                  <Mail className="size-4 text-cyan-300" /> {data.email}
+                </a>
+                <CopyButton text={data.email} label="email" />
+              </div>
             )}
             {data.phone && (
-              <a className="inline-flex items-center gap-2 hover:text-white" href={`tel:${data.phone}`}>
-                <Phone className="size-4 text-cyan-300" /> {data.phone}
-              </a>
+              <div className="inline-flex items-center gap-2 group">
+                <a className="inline-flex items-center gap-2 hover:text-white transition-colors" href={`tel:${data.phone}`}>
+                  <Phone className="size-4 text-cyan-300" /> {data.phone}
+                </a>
+                <CopyButton text={data.phone} label="phone" />
+              </div>
             )}
           </div>
         </motion.div>
