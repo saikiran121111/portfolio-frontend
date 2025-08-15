@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
 import IntroLoader from "@/components/portfolio/intro/IntroLoader";
+import CustomCursor from "@/components/cursor/CustomCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,8 @@ export default function RootLayout({
         <HomepageBackground />
         {/* Intro Loader sits above content and background */}
         <IntroLoader />
+        {/* Custom cursor above content */}
+        <CustomCursor />
         <div className="relative z-10 min-h-dvh">
           {children}
         </div>

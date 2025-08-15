@@ -31,3 +31,8 @@ html[data-intro-done="true"] .intro-gate { opacity: 1; transform: translateY(0);
 
 /* Force Saol Display font on demand */
 .font-saol { font-family: "Saol Display", serif !important; }
+
+/* Replace native cursor on desktop (fine pointers). */
+@media (pointer: fine) {
+  html, body, * { cursor: none !important; }
+}
