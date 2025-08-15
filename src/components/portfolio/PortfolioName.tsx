@@ -23,6 +23,8 @@ interface PortfolioNameProps {
   xlOffsetY?: number;
   // optional text shown above the name; falls back to API headline
   portfolioText?: string;
+  // optionally disable intro gate on non-home pages
+  introGate?: boolean;
 }
 
 // Strongly-typed CSS custom properties used by this component
@@ -55,8 +57,15 @@ export async function PortfolioName({
   xlOffsetX,
   xlOffsetY,
   portfolioText,
+  introGate = true,
 }: PortfolioNameProps) {
-  const { name, headline } = await fetchUserPortfolio();
+  // Fetch server-side with no-store and be resilient to failures
+  const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null as unknown as {
+    name?: string;
+    headline?: string;
+  });
+  const name = portfolio?.name ?? "Portfolio";
+  const headline = portfolioText ?? portfolio?.headline ?? "";
 
   const alignY =
     v === "top"
@@ -71,7 +80,7 @@ export async function PortfolioName({
       ? "justify-end"
       : "justify-center";
 
-  const aboveText = portfolioText ?? headline;
+  const aboveText = headline;
 
   // Build typed CSS variables for offsets per breakpoint
   const styleVars: CSSProperties & PNVars = {
@@ -89,7 +98,7 @@ export async function PortfolioName({
 
   return (
     <div
-      className={`intro-gate flex h-full w-full px-4 ${alignY} ${alignX}`}
+      className={`${introGate ? "intro-gate" : ""} flex h-full w-full px-4 ${alignY} ${alignX}`.trim()}
     >
       <div
         className="pn-transform max-[346px]:!translate-x-[var(--pn-x-xs)] max-[346px]:!translate-y-[var(--pn-y-xs)] translate-x-[var(--pn-x)] translate-y-[var(--pn-y)] md:translate-x-[var(--pn-x-md)] md:translate-y-[var(--pn-y-md)] lg:translate-x-[var(--pn-x-desktop)] lg:translate-y-[var(--pn-y-desktop)] xl:translate-x-[var(--pn-x-xl)] xl:translate-y-[var(--pn-y-xl)]"

@@ -82,11 +82,11 @@ export default function IntroLoader({
           <div className="select-none">
             <span
               className="font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] text-[10vw] sm:text-[8vw] md:text-[6vw] leading-none tracking-tight"
-              style={{
-                color: outlined ? "transparent" : "#ffffff",
-                WebkitTextStroke: outlined ? "0.8px rgba(255,255,255,0.4)" : "0px transparent",
-                transition: "color 300ms ease, -webkit-text-stroke 300ms ease",
-              } as any}
+              style={
+                outlined
+                  ? { color: "transparent", WebkitTextStroke: "0.8px rgba(255,255,255,0.4)" }
+                  : { color: "#ffffff", WebkitTextStroke: "0px transparent" }
+              }
             >
               {progress}%
             </span>

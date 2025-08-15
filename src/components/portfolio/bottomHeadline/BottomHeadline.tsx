@@ -67,7 +67,7 @@ export default function BottomHeadline({
   showCursor = true,
 }: BottomHeadlineProps) {
   const [apiItems, setApiItems] = useState<string[] | null>(null);
-  const sourceItems = items ?? apiItems ?? [];
+  const sourceItems = useMemo(() => items ?? apiItems ?? [], [items, apiItems]);
 
   // Fetch from API if items not provided
   useEffect(() => {

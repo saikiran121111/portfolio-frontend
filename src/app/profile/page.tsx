@@ -1,5 +1,6 @@
 import Logo from "@/components/portfolio/logo/Logo";
 import { PortfolioName } from "@/components/portfolio/PortfolioName";
+import ProfileViewClient from "@/components/portfolio/profile/ProfileViewClient";
 
 // Server Component by default (App Router)
 export default function PortfolioPage() {
@@ -31,8 +32,9 @@ export default function PortfolioPage() {
         />
       </div>
 
-      <div className="container mx-auto max-w-4xl py-10 px-4 flex flex-col gap-10">
-        <PortfolioName />
+      <div className="container mx-auto max-w-6xl py-10 px-4 flex flex-col gap-10">
+        <PortfolioName introGate={false} />
+        <ProfileViewClient />
       </div>
     </div>
   );
