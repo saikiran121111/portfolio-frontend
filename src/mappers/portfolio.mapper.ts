@@ -39,5 +39,7 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
       ...r,
       runAt: new Date(r.runAt),
     })),
+    bottomHeadline: dto.bottomHeadline, 
+    copyrights: dto.copyrights, 
   };
 }

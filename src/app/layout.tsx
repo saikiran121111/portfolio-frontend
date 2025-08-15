@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
+import CustomCursor from "@/components/cursor/CustomCursor";
+import Copyright from "../components/portfolio/footer/Copyright";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +27,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <HomepageBackground />
+        {/* Custom cursor above content */}
+        <CustomCursor />
+        <div className="relative z-10 min-h-dvh">{children}</div>
+        {/* Copyright fetched client-side to avoid blocking SSR */}
+        <Copyright />
       </body>
     </html>
   );

@@ -27,4 +27,6 @@ export interface PortfolioDto {
   achievements?: AchievementDto[];
   languages?: LanguageDto[];
   scanReports?: ScanReportDto[];
+  bottomHeadline?: string[]; // NEW
+  copyrights?: string; 
 }
