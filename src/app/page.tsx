@@ -45,18 +45,21 @@ export default function Home() {
         <ToolsLink
           // default: top-right; provide per-breakpoint offsets if needed
           xsOffsetX={-12}
-          xsOffsetY={12}
+          xsOffsetY={30}
           offsetX={-16}
-          offsetY={16}
+          offsetY={75}
           tabletOffsetX={-24}
-          tabletOffsetY={18}
+          tabletOffsetY={70}
           desktopOffsetX={-28}
-          desktopOffsetY={22}
+          desktopOffsetY={75}
           xlOffsetX={-40}
-          xlOffsetY={26}
+          xlOffsetY={75}
           v="top"
           h="right"
           introGate
+          // overall size scaler for the control (circle + expanded width)
+          scale={0.7}
+          // icon-only size override (PNG)
           iconSizePx={45}
         />
       </div>
@@ -94,6 +97,8 @@ export default function Home() {
           v="bottom"
           h="right"
           introGate
+          // overall size scaler for the control (circle + expanded width)
+          scale={0.7}
         />
       </div>
     </div>

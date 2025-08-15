@@ -16,9 +16,9 @@ interface ToolsLinkProps {
   tabletOffsetX?: number; // md ≥ 768
   tabletOffsetY?: number;
   desktopOffsetX?: number; // lg ≥ 1024
-  desktopOffsetY?: number;
+  desktopOffsetY?: number; // lg ≥ 1024
   xlOffsetX?: number; // xl ≥ 1280
-  xlOffsetY?: number;
+  xlOffsetY?: number; // xl ≥ 1280
   // min-left clamps like Logo (only applied when h === "left")
   minLeftPx?: number; // default 50
   xsMinLeftPx?: number; // ≤346px
@@ -30,8 +30,10 @@ interface ToolsLinkProps {
   // visual sizing theming (overrides CSS defaults)
   sizePx?: number; // circle diameter, default 72
   expandedPx?: number; // width on hover, default 220
-  // png icon size only (does not change the circle)
-  iconSizePx?: number; // default 36
+  // png icon size only (does not change the circle). If omitted, scales with control.
+  iconSizePx?: number;
+  // global scaler to resize the whole control (circle + expanded width)
+  scale?: number; // default 1
 }
 
 type ProfVars = Record<
@@ -78,10 +80,15 @@ export function ToolsLink({
   introGate = true,
   sizePx = 72,
   expandedPx = 220,
-  iconSizePx = 36,
+  iconSizePx,
+  scale = 1,
 }: ToolsLinkProps) {
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
+
+  const computedSize = Math.round(sizePx * scale);
+  const computedExpanded = Math.round(expandedPx * scale);
+  const computedIcon = iconSizePx ?? Math.round(28 * scale);
 
   const styleVars: CSSProperties & ProfVars = {
     "--profile-x-xs": `${xsOffsetX ?? offsetX}px`,
@@ -101,9 +108,9 @@ export function ToolsLink({
     "--min-left-lg": `${desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
     "--min-left-xl": `${xlMinLeftPx ?? desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
 
-    // sizing for the control
-    "--pf-size": `${sizePx}px`,
-    "--pf-expanded": `${expandedPx}px`,
+    // sizing for the control (scaled)
+    "--pf-size": `${computedSize}px`,
+    "--pf-expanded": `${computedExpanded}px`,
   };
 
   // Mirror Logo's clamped negative-x behavior when left-aligned
@@ -119,8 +126,8 @@ export function ToolsLink({
         style={styleVars}
       >
         <Link href="/tools" className={`profile-link pointer-events-auto ${className ?? ""}`.trim()} aria-label="Open tools">
-          <span className="icon" aria-hidden="true" style={{ inlineSize: iconSizePx, blockSize: iconSizePx }}>
-            <Image src={toolIcon} alt="Tools" width={iconSizePx} height={iconSizePx} />
+          <span className="icon" aria-hidden="true" style={{ inlineSize: computedIcon, blockSize: computedIcon }}>
+            <Image src={toolIcon} alt="Tools" width={computedIcon} height={computedIcon} />
           </span>
           <span className="label">TOOLS</span>
         </Link>

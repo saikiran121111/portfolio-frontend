@@ -28,6 +28,10 @@ interface ProfileLinkProps {
   // visual sizing theming (overrides CSS defaults)
   sizePx?: number; // circle diameter, default 72
   expandedPx?: number; // width on hover, default 220
+  // global scaler to resize the whole control (circle + expanded width)
+  scale?: number; // default 1
+  // optional icon override (SVG size only)
+  iconSizePx?: number;
 }
 
 type ProfVars = Record<
@@ -74,9 +78,15 @@ export function ProfileLink({
   introGate = true,
   sizePx = 72,
   expandedPx = 220,
+  scale = 1,
+  iconSizePx,
 }: ProfileLinkProps) {
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
+
+  const computedSize = Math.round(sizePx * scale);
+  const computedExpanded = Math.round(expandedPx * scale);
+  const computedIcon = iconSizePx ?? Math.round(28 * scale);
 
   const styleVars: CSSProperties & ProfVars = {
     "--profile-x-xs": `${xsOffsetX ?? offsetX}px`,
@@ -96,9 +106,9 @@ export function ProfileLink({
     "--min-left-lg": `${desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
     "--min-left-xl": `${xlMinLeftPx ?? desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
 
-    // sizing for the control
-    "--pf-size": `${sizePx}px`,
-    "--pf-expanded": `${expandedPx}px`,
+    // sizing for the control (scaled)
+    "--pf-size": `${computedSize}px`,
+    "--pf-expanded": `${computedExpanded}px`,
   };
 
   // Mirror Logo's clamped negative-x behavior when left-aligned
@@ -115,7 +125,7 @@ export function ProfileLink({
       >
         <Link href="/profile" className={`profile-link pointer-events-auto ${className ?? ""}`.trim()} aria-label="Open profile">
           <span className="icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" role="img" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width={computedIcon} height={computedIcon} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" role="img" aria-hidden="true">
               <circle cx="12" cy="12" r="10"></circle>
               <path d="M16 17.5c-1.2-1.3-2.6-2-4-2s-2.8.7-4 2" />
               <circle cx="12" cy="10" r="3" />
