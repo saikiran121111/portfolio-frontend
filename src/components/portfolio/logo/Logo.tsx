@@ -105,7 +105,7 @@ export function Logo({
           style={styleVars}
         >
           <svg
-            className={`sk-logo text-white hover:text-cyan-400 transition-colors ease-out duration-200 hover:-translate-y-px hover:[filter:drop-shadow(0_0_8px_currentColor)] ${className ?? ""}`.trim()}
+            className={`sk-logo text-white hover:text-black transition-colors duration-200 ${className ?? ""}`.trim()}
             style={{ width: size, height: size }}
             viewBox="0 0 500 500"
             aria-label="SK logo"

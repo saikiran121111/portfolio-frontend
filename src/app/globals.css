@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Reference: default logo size var (used by .sk-logo if inline size not provided) */
+  --logo-size: 128px;
 }
 
 /* XS overrides: ensure ≤346px uses the xs CSS variables for transforms */
@@ -36,3 +38,12 @@ html[data-intro-done="true"] .intro-gate { opacity: 1; transform: translateY(0);
 @media (pointer: fine) {
   html, body, * { cursor: none !important; }
 }
+
+/* Reference-based logo styling */
+.sk-logo {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  color: #ffffff; /* base color like reference */
+  transition: color .2s ease;
+}
+.sk-logo:hover { color: #000000; }
