@@ -2,6 +2,7 @@ import { PortfolioName } from "@/components/portfolio/PortfolioName";
 import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline";
 import Logo from "@/components/portfolio/logo/Logo";
 import IntroLoader from "@/components/portfolio/intro/IntroLoader";
+import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 
 // Server Component by default (App Router)
 export default function Home() {
@@ -38,6 +39,7 @@ export default function Home() {
         />
       </div>
 
+      {/* Bottom headline positioning layer */}
       <div className="absolute inset-0 pointer-events-none">
         <BottomHeadline
           xsOffsetX={3}
@@ -50,6 +52,26 @@ export default function Home() {
           desktopOffsetY={55}
           xlOffsetX={-2}
           xlOffsetY={55}
+        />
+      </div>
+
+      {/* Profile link control (bottom-right by default) */}
+      <div className="fixed inset-0 pointer-events-none">
+        <ProfileLink
+          // default: bottom-right; provide per-breakpoint offsets if needed
+          xsOffsetX={-12}
+          xsOffsetY={-12}
+          offsetX={-16}
+          offsetY={-16}
+          tabletOffsetX={-24}
+          tabletOffsetY={-24}
+          desktopOffsetX={-28}
+          desktopOffsetY={-28}
+          xlOffsetX={-40}
+          xlOffsetY={-40}
+          v="bottom"
+          h="right"
+          introGate
         />
       </div>
     </div>
