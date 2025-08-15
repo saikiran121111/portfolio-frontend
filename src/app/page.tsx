@@ -5,11 +5,11 @@ import Logo from "@/components/portfolio/logo/Logo";
 // Server Component by default (App Router)
 export default function Home() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 h-dvh overflow-hidden xl:overflow-visible relative">
+    <div className="container mx-auto max-w-4xl px-4 h-dvh xl:overflow-visible relative">
       <PortfolioName portfolioText="Portfolio" xsOffsetX={1} xsOffsetY={-20} offsetX={5} offsetY={-27} tabletOffsetX={-1} tabletOffsetY={-33} desktopOffsetX={-13} desktopOffsetY={-5} xlOffsetX={-13} xlOffsetY={-5} />
 
       {/* Clickable logo overlay (pointer-events enabled only on the logo) */}
-      <div className="absolute inset-0">
+      <div className="fixed inset-0 pointer-events-none">
         <Logo
           className="text-white hover:text-cyan-400"
           size={45}
@@ -20,11 +20,13 @@ export default function Home() {
           tabletOffsetX={-4}
           tabletOffsetY={-4}
           desktopOffsetX={-6}
-          desktopOffsetY={-6}
-          xlOffsetX={-460}
+          desktopOffsetY={75}
+          xlOffsetX={-230}
           xlOffsetY={75}
           v="top"
           h="left"
+          // Clamp to 50px from the screen's left edge
+          minLeftPx={50}
         />
       </div>
 

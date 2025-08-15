@@ -18,6 +18,8 @@ interface LogoProps {
   desktopOffsetY?: number;
   xlOffsetX?: number; // xl ≥ 1280
   xlOffsetY?: number;
+  
+  minLeftPx?: number;
 }
 
 // Typed CSS custom properties used by this component
@@ -50,6 +52,7 @@ export function Logo({
   desktopOffsetY,
   xlOffsetX,
   xlOffsetY,
+  minLeftPx = 50,
 }: LogoProps) {
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
@@ -67,11 +70,19 @@ export function Logo({
     "--logo-y-xl": `${xlOffsetY ?? desktopOffsetY ?? tabletOffsetY ?? offsetY}px`,
   };
 
+  // When left-aligned, prevent negative X translations from pushing the logo closer than minLeftPx.
+  const clampLeft = h === "left";
+  const containerInlineStyle: CSSProperties | undefined = clampLeft ? { paddingLeft: minLeftPx } : undefined;
+
+  const translateXClasses = clampLeft
+    ? "max-[346px]:!translate-x-[max(0px,var(--logo-x-xs))] translate-x-[max(0px,var(--logo-x))] md:translate-x-[max(0px,var(--logo-x-md))] lg:translate-x-[max(0px,var(--logo-x-lg))] xl:translate-x-[max(0px,var(--logo-x-xl))]"
+    : "max-[346px]:!translate-x-[var(--logo-x-xs)] translate-x-[var(--logo-x)] md:translate-x-[var(--logo-x-md)] lg:translate-x-[var(--logo-x-lg)] xl:translate-x-[var(--logo-x-xl)]";
+
   return (
-    <div className={`intro-gate flex h-full w-full px-4 ${alignY} ${alignX}`}>
+    <div className={`intro-gate flex h-full w-full ${alignY} ${alignX}`} style={containerInlineStyle}>
       <Link href="/" className="pointer-events-auto">
         <div
-          className="logo-transform max-[346px]:!translate-x-[var(--logo-x-xs)] max-[346px]:!translate-y-[var(--logo-y-xs)] translate-x-[var(--logo-x)] translate-y-[var(--logo-y)] md:translate-x-[var(--logo-x-md)] md:translate-y-[var(--logo-y-md)] lg:translate-x-[var(--logo-x-lg)] lg:translate-y-[var(--logo-y-lg)] xl:translate-x-[var(--logo-x-xl)] xl:translate-y-[var(--logo-y-xl)]"
+          className={`logo-transform ${translateXClasses} max-[346px]:!translate-y-[var(--logo-y-xs)] translate-y-[var(--logo-y)] md:translate-y-[var(--logo-y-md)] lg:translate-y-[var(--logo-y-lg)] xl:translate-y-[var(--logo-y-xl)]`}
           style={styleVars}
         >
           <svg
