@@ -3,6 +3,7 @@ import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline
 import Logo from "@/components/portfolio/logo/Logo";
 import IntroLoader from "@/components/portfolio/intro/IntroLoader";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
+import ToolsLink from "@/components/portfolio/tool/ToolsLink";
 
 // Server Component by default (App Router)
 export default function Home() {
@@ -36,6 +37,27 @@ export default function Home() {
           tabletMinLeftPx={30}
           xsMinLeftPx={8}
 
+        />
+      </div>
+
+      {/* Tools link control (top-right) */}
+      <div className="fixed inset-0 pointer-events-none">
+        <ToolsLink
+          // default: top-right; provide per-breakpoint offsets if needed
+          xsOffsetX={-12}
+          xsOffsetY={12}
+          offsetX={-16}
+          offsetY={16}
+          tabletOffsetX={-24}
+          tabletOffsetY={18}
+          desktopOffsetX={-28}
+          desktopOffsetY={22}
+          xlOffsetX={-40}
+          xlOffsetY={26}
+          v="top"
+          h="right"
+          introGate
+          iconSizePx={45}
         />
       </div>
 
