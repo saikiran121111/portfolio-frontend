@@ -14,19 +14,23 @@ export default function Home() {
           className="text-white hover:text-cyan-400"
           size={45}
           xsOffsetX={-2}
-          xsOffsetY={-2}
+          xsOffsetY={30}
           offsetX={-2}
-          offsetY={-2}
+          offsetY={75}
           tabletOffsetX={-4}
-          tabletOffsetY={-4}
+          tabletOffsetY={70}
           desktopOffsetX={-6}
           desktopOffsetY={75}
-          xlOffsetX={-230}
           xlOffsetY={75}
           v="top"
           h="left"
           // Clamp to 50px from the screen's left edge
-          minLeftPx={50}
+          minLeftPx={30}
+          xlMinLeftPx={100}
+          desktopMinLeftPx={100}
+          tabletMinLeftPx={30}
+          xsMinLeftPx={8}
+
         />
       </div>
 

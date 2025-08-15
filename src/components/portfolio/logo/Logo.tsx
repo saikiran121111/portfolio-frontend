@@ -18,8 +18,13 @@ interface LogoProps {
   desktopOffsetY?: number;
   xlOffsetX?: number; // xl ≥ 1280
   xlOffsetY?: number;
-  
+  /** Base minimum left gap in px (when h === "left"). Default 50 */
   minLeftPx?: number;
+  /** Breakpoint-specific minimum left gaps in px */
+  xsMinLeftPx?: number; // ≤346px
+  tabletMinLeftPx?: number; // md ≥ 768
+  desktopMinLeftPx?: number; // lg ≥ 1024
+  xlMinLeftPx?: number; // xl ≥ 1280
 }
 
 // Typed CSS custom properties used by this component
@@ -33,7 +38,12 @@ type LVars = Record<
   | "--logo-x-lg"
   | "--logo-y-lg"
   | "--logo-x-xl"
-  | "--logo-y-xl",
+  | "--logo-y-xl"
+  | "--min-left-xs"
+  | "--min-left"
+  | "--min-left-md"
+  | "--min-left-lg"
+  | "--min-left-xl",
   string
 >;
 
@@ -53,6 +63,10 @@ export function Logo({
   xlOffsetX,
   xlOffsetY,
   minLeftPx = 50,
+  xsMinLeftPx,
+  tabletMinLeftPx,
+  desktopMinLeftPx,
+  xlMinLeftPx,
 }: LogoProps) {
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
@@ -68,18 +82,23 @@ export function Logo({
     "--logo-y-lg": `${desktopOffsetY ?? tabletOffsetY ?? offsetY}px`,
     "--logo-x-xl": `${xlOffsetX ?? desktopOffsetX ?? tabletOffsetX ?? offsetX}px`,
     "--logo-y-xl": `${xlOffsetY ?? desktopOffsetY ?? tabletOffsetY ?? offsetY}px`,
+    // per-breakpoint min-lefts with sensible fallback chains
+    "--min-left-xs": `${xsMinLeftPx ?? minLeftPx}px`,
+    "--min-left": `${minLeftPx}px`,
+    "--min-left-md": `${tabletMinLeftPx ?? minLeftPx}px`,
+    "--min-left-lg": `${desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
+    "--min-left-xl": `${xlMinLeftPx ?? desktopMinLeftPx ?? tabletMinLeftPx ?? minLeftPx}px`,
   };
 
-  // When left-aligned, prevent negative X translations from pushing the logo closer than minLeftPx.
+  // Clamp negative X only when left-aligned by adding the min-left gap and preventing negative shifts
   const clampLeft = h === "left";
-  const containerInlineStyle: CSSProperties | undefined = clampLeft ? { paddingLeft: minLeftPx } : undefined;
 
   const translateXClasses = clampLeft
-    ? "max-[346px]:!translate-x-[max(0px,var(--logo-x-xs))] translate-x-[max(0px,var(--logo-x))] md:translate-x-[max(0px,var(--logo-x-md))] lg:translate-x-[max(0px,var(--logo-x-lg))] xl:translate-x-[max(0px,var(--logo-x-xl))]"
+    ? "max-[346px]:!translate-x-[calc(var(--min-left-xs)+max(0px,var(--logo-x-xs)))] translate-x-[calc(var(--min-left)+max(0px,var(--logo-x)))] md:translate-x-[calc(var(--min-left-md)+max(0px,var(--logo-x-md)))] lg:translate-x-[calc(var(--min-left-lg)+max(0px,var(--logo-x-lg)))] xl:translate-x-[calc(var(--min-left-xl)+max(0px,var(--logo-x-xl)))]"
     : "max-[346px]:!translate-x-[var(--logo-x-xs)] translate-x-[var(--logo-x)] md:translate-x-[var(--logo-x-md)] lg:translate-x-[var(--logo-x-lg)] xl:translate-x-[var(--logo-x-xl)]";
 
   return (
-    <div className={`intro-gate flex h-full w-full ${alignY} ${alignX}`} style={containerInlineStyle}>
+    <div className={`intro-gate flex h-full w-full ${alignY} ${alignX}`}>
       <Link href="/" className="pointer-events-auto">
         <div
           className={`logo-transform ${translateXClasses} max-[346px]:!translate-y-[var(--logo-y-xs)] translate-y-[var(--logo-y)] md:translate-y-[var(--logo-y-md)] lg:translate-y-[var(--logo-y-lg)] xl:translate-y-[var(--logo-y-xl)]`}
