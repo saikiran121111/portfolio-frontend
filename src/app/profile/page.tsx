@@ -33,7 +33,6 @@ export default function PortfolioPage() {
       </div>
 
       <div className="container mx-auto max-w-6xl py-10 px-4 flex flex-col gap-10">
-        <PortfolioName introGate={false} />
         <ProfileViewClient />
       </div>
     </div>
