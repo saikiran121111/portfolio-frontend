@@ -4,7 +4,7 @@ import { MapPin, Mail, Phone } from "lucide-react";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import SocialIcon from "./SocialIcon";
 import CopyButton from "./CopyButton";
-import { fadeUpVariants, EASE_OUT } from "./utils";
+import { fadeUpVariants } from "./utils";
 
 export default function HeaderCard({ data }: { data: IPortfolio }) {
   return (
