@@ -5,6 +5,9 @@
   --foreground: #171717;
   /* Reference: default logo size var (used by .sk-logo if inline size not provided) */
   --logo-size: 128px;
+  /* Profile control defaults */
+  --pf-size: 72px; /* circle diameter */
+  --pf-expanded: 220px; /* width on hover/focus */
 }
 
 /* XS overrides: ensure ≤346px uses the xs CSS variables for transforms */
@@ -12,6 +15,8 @@
   .pn-transform { transform: translate(var(--pn-x-xs), var(--pn-y-xs)) !important; }
   .bh-transform { transform: translate(var(--bh-x-xs), var(--bh-y-xs)) !important; }
   .logo-transform { transform: translate(var(--logo-x-xs), var(--logo-y-xs)) !important; }
+  /* profile component */
+  .profile-transform { transform: translate(var(--profile-x-xs), var(--profile-y-xs)) !important; }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,3 +77,92 @@ html[data-intro-done="true"] .intro-gate { opacity: 1; transform: translateY(0);
   transition: color .2s ease;
 }
 .sk-logo:hover { color: #000000; }
+
+/* Profile link styles (translated from provided CSS) */
+.profile-link{
+  width: var(--pf-size);
+  height: var(--pf-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  text-decoration: none;
+  color: #000000;
+  background: linear-gradient(135deg, #c0c0c0, #e5e5e5);
+  background-size: 200% 200%;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18), 0 2px 6px rgba(0,0,0,.12);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    width .35s cubic-bezier(.2,.7,.2,1),
+    border-radius .35s cubic-bezier(.2,.7,.2,1),
+    box-shadow .25s ease,
+    transform .25s ease,
+    background-position .5s ease,
+    gap .35s cubic-bezier(.2,.7,.2,1);
+}
+.profile-link::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,.0) 30%, rgba(255,255,255,.25) 50%, rgba(255,255,255,.0) 70%);
+  transform: translateX(-120%);
+  transition: transform .6s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.profile-link:hover::after,
+.profile-link:focus-visible::after{ transform: translateX(0%); }
+.profile-link .icon, .profile-link .label{ position: relative; z-index: 1; }
+.profile-link .icon{
+  inline-size: 28px;
+  block-size: 28px;
+  display:grid; place-items:center;
+  flex: 0 0 auto;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), opacity .25s ease;
+}
+.profile-link .label{
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition:
+    max-width .35s cubic-bezier(.2,.7,.2,1),
+    opacity .25s ease .05s,
+    transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.profile-link:hover,
+.profile-link:focus-visible{
+  width: var(--pf-expanded);
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.22), 0 3px 10px rgba(0,0,0,.16);
+  background-position: 100% 0%;
+  gap: 12px;
+}
+.profile-link:hover .label,
+.profile-link:focus-visible .label{
+  max-width: 200px;
+  opacity: 1;
+  transform: translateX(0);
+}
+.profile-link:hover .icon,
+.profile-link:focus-visible .icon{
+  transform: translateX(-2px) scale(1.04);
+}
+.profile-link:focus-visible{
+  outline: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,.22), 0 3px 10px rgba(0,0,0,.16), 0 0 0 3px rgba(255,255,255,.15);
+}
+.profile-link:active{ transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce){
+  .profile-link,
+  .profile-link::after,
+  .profile-link .icon,
+  .profile-link .label{ transition: none !important; }
+}
