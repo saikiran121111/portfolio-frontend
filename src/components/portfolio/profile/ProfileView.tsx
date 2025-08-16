@@ -23,7 +23,6 @@ import ExperienceSection from "./sections/ExperienceSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import EducationCertsSection from "./sections/EducationCertsSection";
 import AchievementsLanguagesSection from "./sections/AchievementsLanguagesSection";
-import ReportsSection from "./sections/ReportsSection";
 
 // Navigation Tab Component
 function NavigationTab({ sections }: { sections: Array<{ id: string; label: string; icon: React.ComponentType<{ className?: string }> }> }) {
@@ -198,9 +197,6 @@ export default function ProfileView() {
     if (data.achievements?.length || data.languages?.length) {
       sections.push({ id: "achievements", label: "Achievements & Languages", icon: Trophy });
     }
-    if (data.scanReports?.length) {
-      sections.push({ id: "reports", label: "Security Reports", icon: ShieldCheck });
-    }
 
     return sections;
   }, [data]);
@@ -314,8 +310,6 @@ export default function ProfileView() {
         {/* Achievements and Languages */}
         <AchievementsLanguagesSection achievements={data.achievements ?? []} languages={data.languages ?? []} />
 
-        {/* Scan Reports */}
-        <ReportsSection reports={data.scanReports ?? []} />
       </div>
 
       {/* Navigation Tab */}
