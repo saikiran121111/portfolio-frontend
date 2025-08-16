@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue } from "framer-motion";
 import { 
   ChevronRight, 
   Star, 
@@ -15,7 +15,6 @@ import {
   Layers,
   Server,
   Globe,
-  Lock,
   Workflow,
   TrendingUp,
   Award,
@@ -26,7 +25,6 @@ import {
   Filter,
   ArrowUpDown,
   Grid3X3,
-  LayoutGrid,
   Eye,
   EyeOff
 } from "lucide-react";
@@ -596,7 +594,7 @@ export default function MainToolsShowcase() {
               <ArrowUpDown className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as "popularity" | "difficulty" | "year")}
                 className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all appearance-none cursor-pointer"
               >
                 <option value="popularity" className="bg-slate-900">Popularity</option>
