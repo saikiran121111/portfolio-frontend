@@ -80,3 +80,13 @@ export interface SocialsDto {
   linkedin?: string;
   portfolio?: string;
 }
+
+// NEW: ToolDoc DTO (mirrors backend ToolDocDto)
+export interface ToolDocDto {
+  key: string;
+  title: string;
+  icon: string;
+  summary?: string;
+  content: string;
+  order?: number;
+}

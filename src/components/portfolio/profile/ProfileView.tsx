@@ -9,7 +9,6 @@ import {
   GraduationCap,
   BadgeCheck,
   Trophy,
-  ShieldCheck,
   ArrowUpRight,
   Menu,
 } from "lucide-react";

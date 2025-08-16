@@ -1,6 +1,7 @@
 import Logo from "@/components/portfolio/logo/Logo";
 import ReportsSection from "@/components/portfolio/profile/sections/ReportsSection";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
+import SecurityScansViewClient from "@/components/portfolio/tool/SecurityScansViewClient";
 
 export default async function ToolsPage() {
   const data = await fetchUserPortfolio({ cache: "no-store" });
@@ -35,6 +36,10 @@ export default async function ToolsPage() {
       </div>
 
       <div className="container mx-auto max-w-6xl py-10 px-4">
+        {/* Security reports (client-rendered) */}
+        <SecurityScansViewClient />
+
+        {/* Fallback SSR render for reports if available */}
         {reports.length > 0 ? (
           <ReportsSection reports={reports} />
         ) : (
