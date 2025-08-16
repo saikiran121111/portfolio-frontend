@@ -758,34 +758,67 @@ export default function MainToolsShowcase() {
                           </div>
                         </div>
 
-                        {/* Logo with 3D Effect */}
+                        {/* Logo with Enhanced 3D Effect and Better Rendering */}
                         <div className="flex-1 flex items-center justify-center mb-4">
                           <motion.div 
-                            className="relative w-20 h-20 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center"
+                            className="logo-container relative w-24 h-24 rounded-2xl shadow-lg"
                             whileHover={animationEnabled ? { 
-                              scale: 1.15,
-                              rotateY: 180,
-                              transition: { duration: 0.6 }
+                              scale: 1.05,
+                              transition: { duration: 0.3, ease: "easeOut" }
                             } : {}}
                             style={{ transformStyle: "preserve-3d" }}
                           >
-                            <Image
-                              src={tool.logo}
-                              alt={`${tool.title} logo`}
-                              width={48}
-                              height={48}
-                              className="object-contain transition-transform duration-500"
-                            />
-                            {/* Back side of the card */}
+                            {/* Enhanced front side */}
+                            <div className="relative w-full h-full flex items-center justify-center rounded-2xl overflow-hidden">
+                              {/* Subtle glow behind logo */}
+                              <div 
+                                className="absolute inset-0 rounded-2xl opacity-20"
+                                style={{
+                                  background: `radial-gradient(circle at center, ${tool.color.glow}, transparent 60%)`
+                                }}
+                              />
+                              <Image
+                                src={tool.logo}
+                                alt={`${tool.title} logo`}
+                                width={80}
+                                height={80}
+                                className={`logo-image object-contain relative z-10 ${tool.key === 'git' ? 'git-logo-size' : ''}`}
+                                priority
+                                quality={100}
+                              />
+                              {/* Shine overlay */}
+                              <motion.div
+                                className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent rounded-2xl"
+                                animate={hoveredTool === tool.key ? {
+                                  x: ["-100%", "100%"]
+                                } : {}}
+                                transition={{ duration: 1, ease: "easeInOut" }}
+                              />
+                            </div>
+                            
+                            {/* Enhanced back side of the card */}
                             <motion.div
-                              className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/20"
+                              className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-white/30 shadow-2xl"
                               style={{ 
                                 rotateY: "180deg",
                                 backfaceVisibility: "hidden",
                                 transformStyle: "preserve-3d"
                               }}
                             >
-                              <Zap className="w-8 h-8 text-white" />
+                              <div className="relative">
+                                <motion.div
+                                  animate={{ scale: [1, 1.2, 1] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                >
+                                  <Zap className="w-10 h-10 text-white drop-shadow-lg" />
+                                </motion.div>
+                                {/* Pulsing glow */}
+                                <motion.div
+                                  className="absolute inset-0 bg-white/20 rounded-full blur-xl"
+                                  animate={{ scale: [0.8, 1.2, 0.8], opacity: [0.5, 0.8, 0.5] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                />
+                              </div>
                             </motion.div>
                           </motion.div>
                         </div>
@@ -810,18 +843,35 @@ export default function MainToolsShowcase() {
                       </>
                     ) : (
                       <>
-                        {/* List View Content */}
+                        {/* Enhanced List View Content */}
                         <motion.div 
-                          className={`p-3 rounded-lg bg-gradient-to-br ${tool.color.primary} shadow-lg shrink-0`}
+                          className={`p-4 rounded-xl bg-gradient-to-br ${tool.color.primary} shadow-lg shrink-0 relative overflow-hidden`}
                           whileHover={animationEnabled ? { rotate: 360, scale: 1.1 } : {}}
                           transition={{ duration: 0.5 }}
                         >
+                          {/* Background glow */}
+                          <div 
+                            className="absolute inset-0 opacity-30"
+                            style={{
+                              background: `radial-gradient(circle at center, ${tool.color.glow}, transparent 70%)`
+                            }}
+                          />
                           <Image
                             src={tool.logo}
                             alt={`${tool.title} logo`}
-                            width={32}
-                            height={32}
-                            className="object-contain"
+                            width={48}
+                            height={48}
+                            className={`logo-image object-contain relative z-10 ${tool.key === 'git' ? 'git-logo-size' : ''}`}
+                            priority
+                            quality={100}
+                          />
+                          {/* Shine effect */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"
+                            animate={hoveredTool === tool.key ? {
+                              x: ["-100%", "100%"]
+                            } : {}}
+                            transition={{ duration: 1, ease: "easeInOut" }}
                           />
                         </motion.div>
                         
@@ -902,22 +952,40 @@ export default function MainToolsShowcase() {
                 >
                   <div className="flex items-center gap-6">
                     <motion.div 
-                      className={`p-4 rounded-2xl bg-gradient-to-br ${selectedTool.color.primary} shadow-2xl relative overflow-hidden`}
+                      className={`p-5 rounded-3xl bg-gradient-to-br ${selectedTool.color.primary} shadow-2xl relative overflow-hidden border border-white/20`}
                       whileHover={{ scale: 1.05, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
+                      {/* Enhanced background glow */}
+                      <div 
+                        className="absolute inset-0 opacity-40"
+                        style={{
+                          background: `radial-gradient(circle at center, ${selectedTool.color.glow}, transparent 60%)`
+                        }}
+                      />
+                      
                       {/* Animated shine effect */}
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                         animate={{ x: ["-100%", "100%"] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                        transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
                       />
+                      
+                      {/* Pulsing border */}
+                      <motion.div
+                        className="absolute inset-0 rounded-3xl border-2 border-white/40"
+                        animate={{ opacity: [0.3, 0.8, 0.3] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
+                      
                       <Image
                         src={selectedTool.logo}
                         alt={`${selectedTool.title} logo`}
-                        width={48}
-                        height={48}
-                        className="object-contain relative z-10"
+                        width={80}
+                        height={80}
+                        className={`logo-image object-contain relative z-10 ${selectedTool.key === 'git' ? 'git-logo-size' : ''}`}
+                        priority
+                        quality={100}
                       />
                     </motion.div>
                     <div>
