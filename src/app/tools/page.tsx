@@ -1,5 +1,4 @@
 import Logo from "@/components/portfolio/logo/Logo";
-import ReportsSection from "@/components/portfolio/profile/sections/ReportsSection";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import SecurityScansViewClient from "@/components/portfolio/tool/SecurityScansViewClient";
 import ToolsShowcase from "@/components/portfolio/tool/ToolsShowcase";
@@ -41,19 +40,8 @@ export default async function ToolsPage() {
         {/* Tools showcase */}
         <ToolsShowcase tools={tools} />
 
-        {/* Security reports (client-rendered) */}
-        <SecurityScansViewClient />
-
-        {/* Fallback SSR render for reports if available */}
-        {reports.length > 0 ? (
-          <ReportsSection reports={reports} />
-        ) : (
-          <div className="container mx-auto max-w-4xl px-4 py-10">
-            <div className="rounded-lg border border-white/10 bg-white/5 p-6 text-white/70">
-              No security or quality reports available.
-            </div>
-          </div>
-        )}
+        {/* Security reports (client-rendered; receives SSR data to avoid duplicate) */}
+        <SecurityScansViewClient initialReports={reports} />
       </div>
     </div>
   );
