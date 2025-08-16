@@ -405,9 +405,8 @@ export default function MainToolsShowcase() {
     offset: ["start end", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 1]);
 
   // Filter and sort tools
   const filteredTools = tools
@@ -445,10 +444,29 @@ export default function MainToolsShowcase() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  // Lock/unlock background scrolling when modal opens/closes
+  useEffect(() => {
+    if (selectedTool) {
+      // Lock scrolling
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      // Unlock scrolling
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+
+    // Cleanup function to ensure scrolling is unlocked when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [selectedTool]);
+
   return (
     <motion.div 
       ref={containerRef}
-      style={{ y, opacity, scale }}
+      style={{ y, opacity }}
       className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative overflow-hidden"
     >
       {/* Enhanced Animated Background Elements */}
