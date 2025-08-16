@@ -41,5 +41,6 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
     })),
     bottomHeadline: dto.bottomHeadline, 
     copyrights: dto.copyrights, 
+    toolDocs: dto.toolDocs?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
   };
 }

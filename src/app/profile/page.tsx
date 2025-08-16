@@ -1,5 +1,4 @@
 import Logo from "@/components/portfolio/logo/Logo";
-import { PortfolioName } from "@/components/portfolio/PortfolioName";
 import ProfileViewClient from "@/components/portfolio/profile/ProfileViewClient";
 
 // Server Component by default (App Router)
