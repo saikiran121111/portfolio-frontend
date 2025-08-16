@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ReportsSection from "@/components/portfolio/profile/sections/ReportsSection";
+import MainToolsShowcase from "./MainToolsShowcase";
 import type { IscanReports } from "@/interfaces/user.interface";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
@@ -29,7 +30,13 @@ export default function SecurityScansView({ initialReports }: { initialReports?:
     };
   }, [initialReports]);
 
-  if (error) return null;
-  if (!reports?.length) return null;
-  return <ReportsSection reports={reports} />;
+  return (
+    <>
+      {/* Main Tools Showcase - The main attraction */}
+      <MainToolsShowcase />
+      
+      {/* Original Reports Section - Keep if there are reports */}
+      {!error && reports?.length && <ReportsSection reports={reports} />}
+    </>
+  );
 }
