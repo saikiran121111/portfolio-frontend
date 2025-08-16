@@ -2,10 +2,12 @@ import Logo from "@/components/portfolio/logo/Logo";
 import ReportsSection from "@/components/portfolio/profile/sections/ReportsSection";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import SecurityScansViewClient from "@/components/portfolio/tool/SecurityScansViewClient";
+import ToolsShowcase from "@/components/portfolio/tool/ToolsShowcase";
 
 export default async function ToolsPage() {
   const data = await fetchUserPortfolio({ cache: "no-store" });
   const reports = data.scanReports ?? [];
+  const tools = data.toolDocs ?? [];
 
   return (
     <div className="relative min-h-dvh">
@@ -35,7 +37,10 @@ export default async function ToolsPage() {
         />
       </div>
 
-      <div className="container mx-auto max-w-6xl py-10 px-4">
+      <div className="container mx-auto max-w-6xl py-10 px-4 space-y-10">
+        {/* Tools showcase */}
+        <ToolsShowcase tools={tools} />
+
         {/* Security reports (client-rendered) */}
         <SecurityScansViewClient />
 

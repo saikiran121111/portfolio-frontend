@@ -28,8 +28,7 @@ export interface PortfolioDto {
   achievements?: AchievementDto[];
   languages?: LanguageDto[];
   scanReports?: ScanReportDto[];
-  bottomHeadline?: string[]; // NEW
-  copyrights?: string; 
-  // NEW: tools documentation from backend
-  toolDocs?: ToolDocDto[];
+  bottomHeadline?: string[];
+  copyrights?: string;
+  toolDocs?: ToolDocDto[]; 
 }
