@@ -56,7 +56,7 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
 };
 
 // Geometric shape component
-const GeometricShape = ({ type, delay = 0, index = 0 }: { type: 'triangle' | 'circle' | 'square'; delay?: number; index?: number }) => {
+const GeometricShape = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) => {
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -68,12 +68,6 @@ const GeometricShape = ({ type, delay = 0, index = 0 }: { type: 'triangle' | 'ci
   const randomY = mounted ? (index * 67.3) % 100 : 50;
   const randomRotation = mounted ? (index * 47) % 360 : 0;
   const randomDuration = mounted ? 8 + ((index * 0.3) % 4) : 10;
-  
-  const shapes = {
-    triangle: 'polygon(50% 0%, 0% 100%, 100% 100%)',
-    circle: 'circle(50%)',
-    square: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
-  };
   
   if (!mounted) {
     return (
@@ -116,7 +110,6 @@ export default function IntroLoader({
   const [hidden, setHidden] = useState(false);
   const [outlined, setOutlined] = useState(false);
   const [reveal, setReveal] = useState(false);
-  const [pulseIntensity, setPulseIntensity] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [breathingEffect, setBreathingEffect] = useState(false);
 
@@ -140,18 +133,8 @@ export default function IntroLoader({
     return baseScale * elasticFactor;
   }, [progress]);
 
-  const inverseScale = useMemo(() => 1 / contentScale, [contentScale]);
-
-  // Dynamic glow intensity based on progress
-  const glowIntensity = useMemo(() => {
-    return Math.min(100, progress * 1.2);
-  }, [progress]);
-
   // Pulse effect for final stages
   useEffect(() => {
-    if (progress >= 80) {
-      setPulseIntensity((progress - 80) / 20);
-    }
     if (progress >= 60) {
       setBreathingEffect(true);
     }
@@ -360,7 +343,6 @@ export default function IntroLoader({
           {mounted && Array.from({ length: 15 }).map((_, i) => (
             <GeometricShape 
               key={`shape-${i}`} 
-              type={['triangle', 'circle', 'square'][i % 3] as 'triangle' | 'circle' | 'square'} 
               delay={i * 0.2} 
               index={i}
             />
