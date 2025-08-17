@@ -33,7 +33,7 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
           left: '50%',
           top: '50%',
           transform: 'scale(0.75)',
-          background: 'linear-gradient(45deg, #4fc3f7, #81d4fa)',
+          background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
         }}
       />
     );
@@ -47,8 +47,8 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
         top: `${randomY}%`,
         transform: `scale(${randomScale})`,
         animation: `float ${randomDuration}s ease-in-out infinite ${delay}s`,
-        background: 'linear-gradient(45deg, #4fc3f7, #81d4fa)',
-        boxShadow: '0 0 10px rgba(79, 195, 247, 0.4), 0 0 20px rgba(129, 212, 250, 0.2)',
+        background: 'linear-gradient(45deg, #ffffff, #f0f0f0)',
+        boxShadow: '0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(240, 240, 240, 0.2)',
         filter: 'blur(0.5px)',
       }}
     />
@@ -83,8 +83,8 @@ const GeometricShape = ({ type, delay = 0, index = 0 }: { type: 'triangle' | 'ci
           left: '50%',
           top: '50%',
           transform: 'rotate(0deg)',
-          background: 'linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(129, 212, 250, 0.08))',
-          border: '1px solid rgba(79, 195, 247, 0.25)',
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(240, 240, 240, 0.08))',
+          border: '1px solid rgba(255, 255, 255, 0.25)',
         }}
       />
     );
@@ -98,9 +98,9 @@ const GeometricShape = ({ type, delay = 0, index = 0 }: { type: 'triangle' | 'ci
         top: `${randomY}%`,
         transform: `rotate(${randomRotation}deg)`,
         animation: `spin ${randomDuration}s linear infinite ${delay}s, float ${randomDuration * 0.7}s ease-in-out infinite, hexagon-grid 6s ease-in-out infinite`,
-        background: 'linear-gradient(135deg, rgba(79, 195, 247, 0.15), rgba(129, 212, 250, 0.08))',
-        border: '1px solid rgba(79, 195, 247, 0.25)',
-        boxShadow: '0 0 15px rgba(79, 195, 247, 0.15)',
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(240, 240, 240, 0.08))',
+        border: '1px solid rgba(255, 255, 255, 0.25)',
+        boxShadow: '0 0 15px rgba(255, 255, 255, 0.15)',
       }}
     />
   );
@@ -225,25 +225,25 @@ export default function IntroLoader({
           }
           25% {
             transform: scale(1.01) rotateZ(1deg);
-            filter: hue-rotate(90deg) brightness(1.1);
+            filter: hue-rotate(0deg) brightness(1.1);
           }
           50% { 
             transform: scale(1.02) rotateZ(0deg);
-            filter: hue-rotate(180deg) brightness(1.2);
+            filter: hue-rotate(0deg) brightness(1.2);
           }
           75% {
             transform: scale(1.01) rotateZ(-1deg);
-            filter: hue-rotate(270deg) brightness(1.1);
+            filter: hue-rotate(0deg) brightness(1.1);
           }
         }
         @keyframes neural-glow {
           0%, 100% { 
             filter: brightness(1) saturate(1) blur(0px);
-            box-shadow: 0 0 20px rgba(79, 195, 247, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
           }
           50% { 
             filter: brightness(1.2) saturate(1.3) blur(0.5px);
-            box-shadow: 0 0 40px rgba(79, 195, 247, 0.5), 0 0 80px rgba(129, 212, 250, 0.2);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), 0 0 80px rgba(240, 240, 240, 0.2);
           }
         }
         @keyframes data-stream {
@@ -265,12 +265,12 @@ export default function IntroLoader({
           0% { 
             top: -4px; 
             opacity: 1;
-            box-shadow: 0 0 20px rgba(79, 195, 247, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
           }
           100% { 
             top: 100%; 
             opacity: 0;
-            box-shadow: 0 0 40px rgba(129, 212, 250, 0.4);
+            box-shadow: 0 0 40px rgba(240, 240, 240, 0.4);
           }
         }
         @keyframes quantum-rain {
@@ -280,12 +280,12 @@ export default function IntroLoader({
             filter: hue-rotate(0deg);
           }
           50% {
-            filter: hue-rotate(180deg);
+            filter: hue-rotate(0deg);
           }
           100% { 
             opacity: 0; 
             transform: translateY(100vh) scale(0.5);
-            filter: hue-rotate(360deg);
+            filter: hue-rotate(0deg);
           }
         }
         @keyframes hexagon-grid {
@@ -301,9 +301,9 @@ export default function IntroLoader({
         .hologram-shimmer {
           background: linear-gradient(90deg, 
             transparent, 
-            rgba(79, 195, 247, 0.8), 
+            rgba(255, 255, 255, 0.8), 
             rgba(255, 255, 255, 0.9),
-            rgba(129, 212, 250, 0.6),
+            rgba(240, 240, 240, 0.6),
             transparent);
           background-size: 200% 100%;
           -webkit-background-clip: text;
@@ -325,9 +325,9 @@ export default function IntroLoader({
           height: 4px;
           background: linear-gradient(90deg, 
             transparent, 
-            rgba(79, 195, 247, 0.8), 
+            rgba(255, 255, 255, 0.8), 
             rgba(255, 255, 255, 0.6),
-            rgba(129, 212, 250, 0.8),
+            rgba(240, 240, 240, 0.8),
             transparent);
           animation: tech-scan 3s linear infinite;
           filter: blur(1px);
@@ -335,11 +335,11 @@ export default function IntroLoader({
         .quantum-char {
           animation: quantum-rain 4s linear infinite;
           font-family: 'Courier New', monospace;
-          background: linear-gradient(45deg, #4fc3f7, #ffffff, #81d4fa);
+          background: linear-gradient(45deg, #ffffff, #ffffff, #f0f0f0);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          text-shadow: 0 0 10px rgba(79, 195, 247, 0.4);
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
         }
         .hexagon-grid {
           animation: hexagon-grid 6s ease-in-out infinite;
@@ -406,45 +406,8 @@ export default function IntroLoader({
             }}
           >
             {/* Futuristic percentage display */}
-            <div className="select-none relative neural-glow">
-              {/* Quantum glow background */}
-              <div 
-                className="absolute inset-0 rounded-full blur-3xl"
-                style={{
-                  background: `radial-gradient(circle, 
-                    rgba(79, 195, 247, ${glowIntensity / 100 * 0.3}) 0%, 
-                    rgba(129, 212, 250, ${glowIntensity / 100 * 0.2}) 50%, 
-                    transparent 100%)`,
-                  transform: `scale(${1 + pulseIntensity * 0.3})`,
-                  transition: 'transform 300ms ease',
-                }}
-              />
-              
-              {/* Holographic grid overlay */}
-              <div 
-                className="absolute inset-0"
-                style={{
-                  background: `
-                    repeating-linear-gradient(
-                      0deg,
-                      transparent 0px,
-                      rgba(79, 195, 247, 0.08) 1px,
-                      transparent 2px,
-                      transparent 20px
-                    ),
-                    repeating-linear-gradient(
-                      90deg,
-                      transparent 0px,
-                      rgba(129, 212, 250, 0.06) 1px,
-                      transparent 2px,
-                      transparent 20px
-                    )
-                  `,
-                  opacity: 0.3,
-                }}
-              />
-              
-              {/* Main holographic text */}
+            <div className="select-none relative">
+              {/* Main holographic text - removed background box */}
               <span
                 className={`
                   relative z-10 font-black text-[12vw] sm:text-[10vw] md:text-[8vw] lg:text-[6vw] 
@@ -455,25 +418,25 @@ export default function IntroLoader({
                   ...(outlined
                     ? { 
                         color: "transparent", 
-                        WebkitTextStroke: "2px rgba(79, 195, 247, 0.9)",
-                        filter: "drop-shadow(0 0 30px rgba(79, 195, 247, 0.7)) drop-shadow(0 0 60px rgba(129, 212, 250, 0.4))"
+                        WebkitTextStroke: "2px rgba(255, 255, 255, 0.9)",
+                        filter: "drop-shadow(0 0 30px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 60px rgba(240, 240, 240, 0.4))"
                       }
                     : { 
                         background: `linear-gradient(135deg, 
-                          #4fc3f7 0%, 
+                          #ffffff 0%, 
                           #ffffff 25%, 
-                          #81d4fa 50%, 
+                          #f0f0f0 50%, 
                           #ffffff 75%, 
-                          #4fc3f7 100%)`,
+                          #ffffff 100%)`,
                         WebkitBackgroundClip: "text",
                         backgroundClip: "text",
                         color: "transparent",
                         filter: `
-                          drop-shadow(0 4px 30px rgba(79, 195, 247, 0.5))
-                          drop-shadow(0 0 50px rgba(129, 212, 250, 0.3))
+                          drop-shadow(0 4px 30px rgba(255, 255, 255, 0.5))
+                          drop-shadow(0 0 50px rgba(240, 240, 240, 0.3))
                         `
                       }),
-                  textShadow: outlined ? 'none' : '0 0 60px rgba(79, 195, 247, 0.4)',
+                  textShadow: outlined ? 'none' : '0 0 60px rgba(255, 255, 255, 0.4)',
                   transform: `perspective(1000px) rotateX(${Math.sin(progress * 0.02) * 2}deg) rotateY(${Math.cos(progress * 0.015) * 1}deg)`,
                 }}
               >
@@ -483,7 +446,7 @@ export default function IntroLoader({
               {/* Quantum data sweep */}
               {!outlined && (
                 <div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-300/15 via-white/20 to-transparent"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 via-white/20 to-transparent"
                   style={{
                     transform: `translateX(${(progress / 100) * 200 - 100}%)`,
                     transition: 'transform 200ms ease-out',
@@ -505,16 +468,16 @@ export default function IntroLoader({
                     className="absolute inset-0 rounded-full blur-sm"
                     style={{
                       background: `linear-gradient(90deg, 
-                        rgba(79, 195, 247, 0.4) 0%, 
-                        rgba(129, 212, 250, 0.3) 50%, 
-                        rgba(79, 195, 247, 0.4) 100%)`,
+                        rgba(255, 255, 255, 0.4) 0%, 
+                        rgba(240, 240, 240, 0.3) 50%, 
+                        rgba(255, 255, 255, 0.4) 100%)`,
                       opacity: progress / 100,
                     }}
                   />
                   
                   {/* Main progress bar with tech design */}
-                  <div className="relative h-4 rounded-full bg-black/50 overflow-hidden backdrop-blur-sm border border-blue-400/30" 
-                       style={{ boxShadow: 'inset 0 0 20px rgba(79, 195, 247, 0.15)' }}>
+                  <div className="relative h-4 rounded-full bg-black/50 overflow-hidden backdrop-blur-sm border border-white/30" 
+                       style={{ boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.15)' }}>
                     {/* Animated circuit pattern */}
                     <div 
                       className="absolute inset-0 opacity-40"
@@ -523,14 +486,14 @@ export default function IntroLoader({
                           repeating-linear-gradient(
                             90deg,
                             transparent 0px,
-                            rgba(79, 195, 247, 0.15) 2px,
+                            rgba(255, 255, 255, 0.15) 2px,
                             transparent 4px,
                             transparent 12px
                           ),
                           repeating-linear-gradient(
                             0deg,
                             transparent 0px,
-                            rgba(129, 212, 250, 0.08) 1px,
+                            rgba(240, 240, 240, 0.08) 1px,
                             transparent 2px,
                             transparent 8px
                           )
@@ -545,14 +508,14 @@ export default function IntroLoader({
                       style={{ 
                         width: `${progress}%`,
                         background: `linear-gradient(90deg, 
-                          #4fc3f7 0%, 
+                          #ffffff 0%, 
                           #ffffff 30%, 
-                          #81d4fa 60%, 
+                          #f0f0f0 60%, 
                           #ffffff 100%)`,
                         boxShadow: `
-                          0 0 25px rgba(79, 195, 247, 0.6),
+                          0 0 25px rgba(255, 255, 255, 0.6),
                           inset 0 1px 0 rgba(255, 255, 255, 0.4),
-                          inset 0 -1px 0 rgba(79, 195, 247, 0.4)
+                          inset 0 -1px 0 rgba(255, 255, 255, 0.4)
                         `,
                         transition: "width 150ms cubic-bezier(0.4, 0, 0.2, 1)",
                       }}
@@ -586,8 +549,8 @@ export default function IntroLoader({
                 
                 {/* Holographic progress indicators */}
                 <div className="flex justify-between mt-3 text-xs font-mono">
-                  <span className="text-blue-300/80 tracking-wider">LOADING_SYS...</span>
-                  <span className="text-blue-200/90 font-semibold tracking-wider">{progress.toString().padStart(3, '0')}%</span>
+                  <span className="text-white/80 tracking-wider">LOADING_SYS...</span>
+                  <span className="text-white/90 font-semibold tracking-wider">{progress.toString().padStart(3, '0')}%</span>
                 </div>
               </div>
             )}
@@ -595,7 +558,7 @@ export default function IntroLoader({
             {/* Futuristic status display */}
             {progress < 100 && (
               <div className="text-center">
-                <p className="text-blue-300/80 text-sm font-mono tracking-widest uppercase">
+                <p className="text-white/80 text-sm font-mono tracking-widest uppercase">
                   {progress < 30 && ">> INITIALIZING NEURAL NETWORKS..."}
                   {progress >= 30 && progress < 60 && ">> LOADING QUANTUM MODULES..."}
                   {progress >= 60 && progress < 90 && ">> SYNCHRONIZING DATA STREAMS..."}
@@ -605,7 +568,7 @@ export default function IntroLoader({
                   {Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className="w-2 h-2 bg-blue-300 rounded-full"
+                      className="w-2 h-2 bg-white rounded-full"
                       style={{
                         animation: `pulse 1.5s ease-in-out infinite ${i * 0.2}s`,
                         opacity: 0.6,
