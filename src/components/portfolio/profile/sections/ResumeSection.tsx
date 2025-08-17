@@ -2,9 +2,11 @@
 import { motion } from "framer-motion";
 import { Download, FileText, Eye, ExternalLink } from "lucide-react";
 import { containerVariants, fadeUpVariants, scaleVariants } from "./utils";
+import { useState } from "react";
+import ResumeModal from "./ResumeModal";
 
 export default function ResumeSection() {
-  const resumeUrl = "https://github.com/saikiran121111/Resume/raw/main/SaiKiran_Resume.pdf";
+  const [isModalOpen, setIsModalOpen] = useState(false);
   
   const handleDownload = () => {
     // Use our API route for proper download
@@ -19,7 +21,11 @@ export default function ResumeSection() {
   };
 
   const handlePreview = () => {
-    window.open(resumeUrl, '_blank');
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -97,6 +103,13 @@ export default function ResumeSection() {
           </div>
         </div>
       </motion.div>
+
+      {/* Resume Modal */}
+      <ResumeModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal}
+        onDownload={handleDownload}
+      />
 
     </motion.section>
   );
