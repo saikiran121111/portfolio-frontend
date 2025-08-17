@@ -83,7 +83,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
           <>
             {/* Full Black Backdrop - Completely Black, highest z below modal */}
             <motion.div
-              className="fixed inset-0 z-[2147483646] bg-black"
+              className="fixed inset-0 z-[2147483645] bg-black"
               variants={backdropVariants}
               initial="hidden"
               animate="visible"
@@ -93,7 +93,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
 
             {/* Full Screen Modal via Portal - Slides from top, max z-index */}
             <motion.div
-              className="fixed inset-0 z-[2147483647] flex flex-col bg-slate-900 overflow-hidden"
+              className="fixed inset-0 z-[2147483646] flex flex-col bg-slate-900 overflow-hidden cursor-none"
               variants={modalVariants}
               initial="hidden"
               animate="visible"
