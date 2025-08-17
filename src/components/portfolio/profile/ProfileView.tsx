@@ -11,6 +11,7 @@ import {
   Trophy,
   ArrowUpRight,
   Menu,
+  FileText,
 } from "lucide-react";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
@@ -22,6 +23,7 @@ import ExperienceSection from "./sections/ExperienceSection";
 import ProjectsSection from "./sections/ProjectsSection";
 import EducationCertsSection from "./sections/EducationCertsSection";
 import AchievementsLanguagesSection from "./sections/AchievementsLanguagesSection";
+import ResumeSection from "./sections/ResumeSection";
 
 // Navigation Tab Component
 function NavigationTab({ sections }: { sections: Array<{ id: string; label: string; icon: React.ComponentType<{ className?: string }> }> }) {
@@ -181,6 +183,7 @@ export default function ProfileView() {
 
     const sections = [
       { id: "header", label: "Profile", icon: MapPin },
+      { id: "resume", label: "Resume", icon: FileText },
       { id: "skills", label: "Skills", icon: BadgeCheck },
     ];
 
@@ -293,6 +296,9 @@ export default function ProfileView() {
             )}
           </motion.div>
         </motion.section>
+
+        {/* Resume Download */}
+        <ResumeSection />
 
         {/* Skills */}
         <SkillsSection skillsByCat={skillsByCat} />
