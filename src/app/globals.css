@@ -326,3 +326,176 @@ html[data-intro-done="true"] .intro-gate { opacity: 1; transform: translateY(0);
   0% { transform: translateY(0) translateX(0); }
   100% { transform: translateY(-100px) translateX(50px); }
 }
+
+/* Glitch effect animations for logo */
+.logo-glitch-container:hover {
+  filter: contrast(1.2) brightness(1.1);
+}
+
+.glitch-red {
+  animation: glitch-1 0.6s infinite linear alternate-reverse;
+}
+
+.glitch-blue {
+  animation: glitch-2 0.8s infinite linear alternate;
+}
+
+.glitch-green {
+  animation: glitch-3 0.4s infinite linear alternate-reverse;
+}
+
+.group:hover .glitch-red {
+  animation-play-state: running;
+}
+
+.group:hover .glitch-blue {
+  animation-play-state: running;
+}
+
+.group:hover .glitch-green {
+  animation-play-state: running;
+}
+
+.group:not(:hover) .glitch-red,
+.group:not(:hover) .glitch-blue,
+.group:not(:hover) .glitch-green {
+  animation-play-state: paused;
+}
+
+/* Scanline effect */
+.scanlines {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 1px,
+    rgba(0, 255, 255, 0.15) 1px,
+    rgba(0, 255, 255, 0.15) 2px
+  );
+  animation: scanline 1.5s linear infinite;
+}
+
+/* Noise overlay */
+.noise-overlay {
+  background-image: 
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E");
+  animation: noise 0.2s infinite;
+}
+
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1px, 1px); }
+  20% { transform: translate(-1px, -1px); }
+  30% { transform: translate(1px, 1px); }
+  40% { transform: translate(1px, -1px); }
+  50% { transform: translate(-1px, 1px); }
+  60% { transform: translate(1px, 1px); }
+  70% { transform: translate(-1px, -1px); }
+  80% { transform: translate(1px, -1px); }
+  90% { transform: translate(-1px, 1px); }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes glitch-1 {
+  0%, 90%, 100% { 
+    transform: translate(0); 
+    opacity: 0.8;
+  }
+  10% { 
+    transform: translate(-4px, -2px); 
+    opacity: 1;
+  }
+  20% { 
+    transform: translate(4px, 2px); 
+    opacity: 0.6;
+  }
+  30% { 
+    transform: translate(-3px, 4px); 
+    opacity: 0.9;
+  }
+  40% { 
+    transform: translate(3px, -4px); 
+    opacity: 0.7;
+  }
+  50% { 
+    transform: translate(-4px, 3px); 
+    opacity: 0.8;
+  }
+  60% { 
+    transform: translate(4px, -3px); 
+    opacity: 1;
+  }
+  70% { 
+    transform: translate(-3px, -4px); 
+    opacity: 0.5;
+  }
+  80% { 
+    transform: translate(3px, 4px); 
+    opacity: 0.9;
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 90%, 100% { 
+    transform: translate(0); 
+    opacity: 0.6;
+  }
+  15% { 
+    transform: translate(3px, 4px); 
+    opacity: 0.8;
+  }
+  25% { 
+    transform: translate(-4px, -3px); 
+    opacity: 0.5;
+  }
+  35% { 
+    transform: translate(4px, -4px); 
+    opacity: 0.7;
+  }
+  45% { 
+    transform: translate(-3px, 3px); 
+    opacity: 0.9;
+  }
+  55% { 
+    transform: translate(3px, -3px); 
+    opacity: 0.6;
+  }
+  65% { 
+    transform: translate(-4px, 4px); 
+    opacity: 0.8;
+  }
+  75% { 
+    transform: translate(4px, 3px); 
+    opacity: 0.5;
+  }
+  85% { 
+    transform: translate(-3px, -3px); 
+    opacity: 0.7;
+  }
+}
+
+@keyframes glitch-3 {
+  0%, 90%, 100% { 
+    transform: translate(0) scale(1); 
+    opacity: 0.3;
+  }
+  20% { 
+    transform: translate(2px, -2px) scale(1.02); 
+    opacity: 0.6;
+  }
+  40% { 
+    transform: translate(-2px, 2px) scale(0.98); 
+    opacity: 0.4;
+  }
+  60% { 
+    transform: translate(2px, 2px) scale(1.01); 
+    opacity: 0.5;
+  }
+  80% { 
+    transform: translate(-2px, -2px) scale(0.99); 
+    opacity: 0.7;
+  }
+}
