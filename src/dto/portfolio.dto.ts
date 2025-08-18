@@ -20,6 +20,12 @@ export interface PortfolioDto {
   location?: string;
   phone?: string;
   socials?: SocialsDto;
+  nestJSGitRepo?: string;
+  nestJSDeployedServer?: string;
+  nestJSSwaggerUrl?: string;
+  nextJSGitRepo?: string;
+  nextJSDeployedServer?: string;
+  postgresDeployedServer?: string;
   skills: SkillDto[];
   experiences: ExperienceDto[];
   projects?: ProjectDto[];
