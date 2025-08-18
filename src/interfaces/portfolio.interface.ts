@@ -18,6 +18,12 @@ export interface IPortfolio {
   location?: string;
   phone?: string;
   socials?: ISocials;
+  nestJSGitRepo?: string;
+  nestJSDeployedServer?: string;
+  nestJSSwaggerUrl?: string;
+  nextJSGitRepo?: string;
+  nextJSDeployedServer?: string;
+  postgresDeployedServer?: string;
   skills: ISkill[];
   experiences: IExperience[];
   projects?: IProjects[];
