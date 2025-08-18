@@ -2,6 +2,7 @@ import Logo from "@/components/portfolio/logo/Logo";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import SecurityScansViewClient from "@/components/portfolio/tool/SecurityScansViewClient";
 import ToolsShowcase from "@/components/portfolio/tool/ToolsShowcase";
+import TechStackShowcase from "@/components/portfolio/tool/TechStackShowcase";
 
 export default async function ToolsPage() {
   const data = await fetchUserPortfolio({ cache: "no-store" });
@@ -37,6 +38,9 @@ export default async function ToolsPage() {
       </div>
 
       <div className="container mx-auto max-w-6xl py-10 px-4 space-y-10">
+        {/* Tech Stack Architecture showcase */}
+        <TechStackShowcase portfolio={data} />
+
         {/* Tools showcase */}
         <ToolsShowcase tools={tools} />
 

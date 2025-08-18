@@ -10,6 +10,12 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
     location: dto.location,
     phone: dto.phone,
     socials: dto.socials,
+    nestJSGitRepo: dto.nestJSGitRepo,
+    nestJSDeployedServer: dto.nestJSDeployedServer,
+    nestJSSwaggerUrl: dto.nestJSSwaggerUrl,
+    nextJSGitRepo: dto.nextJSGitRepo,
+    nextJSDeployedServer: dto.nextJSDeployedServer,
+    postgresDeployedServer: dto.postgresDeployedServer,
     skills: dto.skills,
     experiences: dto.experiences.map(e => ({
       ...e,
