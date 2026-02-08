@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
 import Logo from "@/components/portfolio/logo/Logo";
 import ProfileViewClient from "@/components/portfolio/profile/ProfileViewClient";
 import ProfileGuardWrapper from "./ProfileGuardWrapper";
 
+export const metadata: Metadata = {
+  title: "Profile",
+  description: "View Sai Kiran's professional profile - Experience, skills, and achievements",
+};
 // Server Component by default (App Router)
 export default function PortfolioPage() {
   return (
