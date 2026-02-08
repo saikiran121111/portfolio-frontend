@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
+import { usePathname } from "next/navigation";
+import { usePageTransition } from "@/components/page-transition";
+import { setAllowedRoute } from "@/components/guards/RouteGuard";
 
 interface ProfileLinkProps {
   className?: string; // extra classes for the <a>
@@ -81,6 +86,10 @@ export function ProfileLink({
   scale = 1,
   iconSizePx,
 }: ProfileLinkProps) {
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
+  const { triggerTransition, state } = usePageTransition();
+
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
 
@@ -117,13 +126,27 @@ export function ProfileLink({
     ? "max-[346px]:!translate-x-[calc(var(--min-left-xs)+max(0px,var(--profile-x-xs)))] translate-x-[calc(var(--min-left)+max(0px,var(--profile-x)))] md:translate-x-[calc(var(--min-left-md)+max(0px,var(--profile-x-md)))] lg:translate-x-[calc(var(--min-left-lg)+max(0px,var(--profile-x-lg)))] xl:translate-x-[calc(var(--min-left-xl)+max(0px,var(--profile-x-xl)))]"
     : "max-[346px]:!translate-x-[var(--profile-x-xs)] translate-x-[var(--profile-x)] md:translate-x-[var(--profile-x-md)] lg:translate-x-[var(--profile-x-lg)] xl:translate-x-[var(--profile-x-xl)]";
 
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    // Only trigger custom animation on homepage and when not already transitioning
+    if (isHomepage && state === "idle") {
+      e.preventDefault();
+      setAllowedRoute("/profile");
+      triggerTransition("/profile", { x: e.clientX, y: e.clientY });
+    }
+  };
+
   return (
     <div className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}>
       <div
         className={`profile-transform ${translateXClasses} max-[346px]:!translate-y-[var(--profile-y-xs)] translate-y-[var(--profile-y)] md:translate-y-[var(--profile-y-md)] lg:translate-y-[var(--profile-y-lg)] xl:translate-y-[var(--profile-y-xl)]`}
         style={styleVars}
       >
-        <Link href="/profile" className={`profile-link pointer-events-auto ${className ?? ""}`.trim()} aria-label="Open profile">
+        <Link
+          href="/profile"
+          className={`profile-link pointer-events-auto ${className ?? ""}`.trim()}
+          aria-label="Open profile"
+          onClick={handleClick}
+        >
           <span className="icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width={computedIcon} height={computedIcon} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" role="img" aria-hidden="true">
               <circle cx="12" cy="12" r="10"></circle>
