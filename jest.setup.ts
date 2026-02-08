@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 
 // Set React 19 act environment flag
+// @ts-ignore - Runtime flag for React 19
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 // Mock Next.js router

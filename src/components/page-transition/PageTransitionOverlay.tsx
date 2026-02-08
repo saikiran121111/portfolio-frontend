@@ -48,25 +48,27 @@ export function PageTransitionOverlay({
     }, [state, completeExit]);
 
     // Calculate the scale needed to cover the entire viewport from a given position
-    const getMaxScale = (position: { x: number; y: number }) => {
-        if (typeof window === "undefined") return 100;
+    const getMaxScale = useMemo(() => {
+        return (position: { x: number; y: number }) => {
+            if (typeof window === "undefined") return 100;
 
-        const { x, y } = position;
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
+            const { x, y } = position;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
 
-        // Distance to the farthest corner
-        const distances = [
-            Math.hypot(x, y), // top-left
-            Math.hypot(vw - x, y), // top-right
-            Math.hypot(x, vh - y), // bottom-left
-            Math.hypot(vw - x, vh - y), // bottom-right
-        ];
+            // Distance to the farthest corner
+            const distances = [
+                Math.hypot(x, y), // top-left
+                Math.hypot(vw - x, y), // top-right
+                Math.hypot(x, vh - y), // bottom-left
+                Math.hypot(vw - x, vh - y), // bottom-right
+            ];
 
-        const maxDistance = Math.max(...distances);
-        // Scale so the circle covers the farthest corner with some extra margin
-        return (maxDistance * 2.2) / baseSize;
-    };
+            const maxDistance = Math.max(...distances);
+            // Scale so the circle covers the farthest corner with some extra margin
+            return (maxDistance * 2.2) / baseSize;
+        };
+    }, [baseSize]);
 
     // Use entry position for expanding/navigating, exit position for exiting
     const activePosition = state === "exiting" ? exitPosition : cursorPosition;
