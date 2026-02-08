@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { usePageTransition } from "@/components/page-transition";
 
 interface LogoProps {
   className?: string; // applied to the <svg> for color/hover control
@@ -27,6 +32,8 @@ interface LogoProps {
   xlMinLeftPx?: number; // xl ≥ 1280
   /** Apply the intro fade/slide gate. Default true (homepage). Set false on other routes. */
   introGate?: boolean;
+  /** Enable entrance animation. Default true. */
+  animate?: boolean;
 }
 
 // Typed CSS custom properties used by this component
@@ -70,7 +77,32 @@ export function Logo({
   desktopMinLeftPx,
   xlMinLeftPx,
   introGate = true,
+  animate = true,
 }: LogoProps) {
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+  const pathname = usePathname();
+  const { triggerTransition, state } = usePageTransition();
+
+  useEffect(() => {
+    // Trigger animation on mount with a small delay for smooth entry
+    if (animate) {
+      const timer = setTimeout(() => setShouldAnimate(true), 50);
+      return () => clearTimeout(timer);
+    }
+  }, [animate]);
+
+  // Handle logo click with page transition animation (only when not on homepage)
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (pathname !== "/" && state === "idle") {
+      e.preventDefault();
+      const rect = (e.target as HTMLElement).getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      triggerTransition("/", { x, y });
+    }
+    // On homepage, let normal Link behavior work
+  };
+
   const alignY = v === "top" ? "items-start" : v === "bottom" ? "items-end" : "items-center";
   const alignX = h === "left" ? "justify-start" : h === "right" ? "justify-end" : "justify-center";
 
@@ -100,14 +132,16 @@ export function Logo({
     ? "max-[346px]:!translate-x-[calc(var(--min-left-xs)+max(0px,var(--logo-x-xs)))] translate-x-[calc(var(--min-left)+max(0px,var(--logo-x)))] md:translate-x-[calc(var(--min-left-md)+max(0px,var(--logo-x-md)))] lg:translate-x-[calc(var(--min-left-lg)+max(0px,var(--logo-x-lg)))] xl:translate-x-[calc(var(--min-left-xl)+max(0px,var(--logo-x-xl)))]"
     : "max-[346px]:!translate-x-[var(--logo-x-xs)] translate-x-[var(--logo-x)] md:translate-x-[var(--logo-x-md)] lg:translate-x-[var(--logo-x-lg)] xl:translate-x-[var(--logo-x-xl)]";
 
+  const animationClass = shouldAnimate ? "sk-logo-animate" : "";
+
   return (
     <div className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}>
-      <Link href="/" className="pointer-events-auto">
+      <Link href="/" className="pointer-events-auto" onClick={handleClick}>
         <div
           className={`logo-transform ${translateXClasses} max-[346px]:!translate-y-[var(--logo-y-xs)] translate-y-[var(--logo-y)] md:translate-y-[var(--logo-y-md)] lg:translate-y-[var(--logo-y-lg)] xl:translate-y-[var(--logo-y-xl)]`}
           style={styleVars}
         >
-          <div className="relative group cursor-pointer logo-glitch-container">
+          <div className={`relative group cursor-pointer logo-glitch-container ${animationClass}`.trim()}>
             {/* Main logo with enhanced glow */}
             <svg
               className={`sk-logo text-white group-hover:text-cyan-400 group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
@@ -121,7 +155,7 @@ export function Logo({
               <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
               <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
             </svg>
-            
+
             {/* Red glitch layer - offset left */}
             <svg
               className="absolute inset-0 text-red-500 opacity-0 group-hover:opacity-80 transition-opacity duration-150 glitch-red pointer-events-none mix-blend-screen"
@@ -133,7 +167,7 @@ export function Logo({
               <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
               <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
             </svg>
-            
+
             {/* Blue glitch layer - offset right */}
             <svg
               className="absolute inset-0 text-blue-500 opacity-0 group-hover:opacity-60 transition-opacity duration-200 glitch-blue pointer-events-none mix-blend-screen"
@@ -145,7 +179,7 @@ export function Logo({
               <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
               <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
             </svg>
-            
+
             {/* Green accent layer for extra glitch */}
             <svg
               className="absolute inset-0 text-green-400 opacity-0 group-hover:opacity-30 transition-opacity duration-100 glitch-green pointer-events-none mix-blend-overlay"
@@ -157,10 +191,10 @@ export function Logo({
               <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
               <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
             </svg>
-            
+
             {/* Scanline effect */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-200 pointer-events-none scanlines"></div>
-            
+
             {/* Static noise overlay */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-100 pointer-events-none noise-overlay"></div>
           </div>
