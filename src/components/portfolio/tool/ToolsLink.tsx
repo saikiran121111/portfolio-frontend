@@ -6,6 +6,7 @@ import type { CSSProperties, MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import toolIcon from "./tool.png";
 import { usePageTransition } from "@/components/page-transition";
+import { setAllowedRoute } from "@/components/guards/RouteGuard";
 
 interface ToolsLinkProps {
   className?: string; // extra classes for the <a>
@@ -131,6 +132,7 @@ export function ToolsLink({
     // Only trigger custom animation on homepage and when not already transitioning
     if (isHomepage && state === "idle") {
       e.preventDefault();
+      setAllowedRoute("/tools");
       triggerTransition("/tools", { x: e.clientX, y: e.clientY });
     }
   };
