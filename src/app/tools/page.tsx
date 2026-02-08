@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import Logo from "@/components/portfolio/logo/Logo";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 import SecurityScansViewClient from "@/components/portfolio/tool/SecurityScansViewClient";
 import ToolsShowcase from "@/components/portfolio/tool/ToolsShowcase";
 import TechStackShowcase from "@/components/portfolio/tool/TechStackShowcase";
 import ToolsGuardWrapper from "./ToolsGuardWrapper";
+
+export const metadata: Metadata = {
+  title: "Tools",
+  description: "Explore the tech stack, tools, and security reports",
+};
 
 export default async function ToolsPage() {
   const data = await fetchUserPortfolio({ cache: "no-store" });
