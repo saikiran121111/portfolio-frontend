@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { CSSProperties, MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { usePageTransition } from "@/components/page-transition";
+import { setAllowedRoute } from "@/components/guards/RouteGuard";
 
 interface ProfileLinkProps {
   className?: string; // extra classes for the <a>
@@ -129,6 +130,7 @@ export function ProfileLink({
     // Only trigger custom animation on homepage and when not already transitioning
     if (isHomepage && state === "idle") {
       e.preventDefault();
+      setAllowedRoute("/profile");
       triggerTransition("/profile", { x: e.clientX, y: e.clientY });
     }
   };
