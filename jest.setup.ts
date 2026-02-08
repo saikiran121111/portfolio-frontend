@@ -17,6 +17,19 @@ jest.mock("next/navigation", () => ({
     useSearchParams: () => new URLSearchParams(),
 }));
 
+// Mock next/image
+
+import React from "react";
+
+// Mock next/image
+jest.mock("next/image", () => ({
+    __esModule: true,
+    default: (props: any) => {
+        // eslint-disable-next-line @next/next/no-img-element
+        return React.createElement("img", props);
+    },
+}));
+
 // Mock matchMedia for cursor detection
 Object.defineProperty(window, "matchMedia", {
     writable: true,
@@ -37,6 +50,12 @@ global.requestAnimationFrame = jest.fn((cb: FrameRequestCallback) =>
     setTimeout(() => cb(Date.now()), 0) as unknown as number
 );
 global.cancelAnimationFrame = jest.fn((id: number) => clearTimeout(id));
+
+// Ensure they are available on window as well for JSDOM
+if (typeof window !== "undefined") {
+    (window as any).requestAnimationFrame = global.requestAnimationFrame;
+    (window as any).cancelAnimationFrame = global.cancelAnimationFrame;
+}
 
 // Mock window dimensions
 Object.defineProperty(window, "innerWidth", { value: 1920, writable: true });
