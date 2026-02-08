@@ -14,7 +14,7 @@ interface IntroLoaderProps {
 // Particle component for animated background
 const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) => {
   const [mounted, setMounted] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -24,7 +24,7 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
   const randomY = mounted ? (index * 73.2) % 100 : 50;
   const randomScale = mounted ? 0.5 + ((index * 0.1) % 0.5) : 0.75;
   const randomDuration = mounted ? 3 + ((index * 0.5) % 4) : 3.5;
-  
+
   if (!mounted) {
     return (
       <div
@@ -38,7 +38,7 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
       />
     );
   }
-  
+
   return (
     <div
       className="absolute w-2 h-2 rounded-full opacity-60"
@@ -58,7 +58,7 @@ const Particle = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) 
 // Geometric shape component
 const GeometricShape = ({ delay = 0, index = 0 }: { delay?: number; index?: number }) => {
   const [mounted, setMounted] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -68,7 +68,7 @@ const GeometricShape = ({ delay = 0, index = 0 }: { delay?: number; index?: numb
   const randomY = mounted ? (index * 67.3) % 100 : 50;
   const randomRotation = mounted ? (index * 47) % 360 : 0;
   const randomDuration = mounted ? 8 + ((index * 0.3) % 4) : 10;
-  
+
   if (!mounted) {
     return (
       <div
@@ -83,7 +83,7 @@ const GeometricShape = ({ delay = 0, index = 0 }: { delay?: number; index?: numb
       />
     );
   }
-  
+
   return (
     <div
       className="absolute w-8 h-8 backdrop-blur-sm hexagon-grid"
@@ -112,6 +112,22 @@ export default function IntroLoader({
   const [reveal, setReveal] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [breathingEffect, setBreathingEffect] = useState(false);
+  const [skipIntro, setSkipIntro] = useState(false);
+
+  // Check if intro was already shown in this session
+  useEffect(() => {
+    try {
+      const introShown = sessionStorage.getItem("intro-shown");
+      if (introShown === "true") {
+        // Skip intro animation, immediately set data-intro-done
+        setSkipIntro(true);
+        document.documentElement.setAttribute("data-intro-done", "true");
+        onComplete?.();
+      }
+    } catch {
+      // sessionStorage might not be available, proceed normally
+    }
+  }, [onComplete]);
 
   // Ensure client-side only rendering for random elements
   useEffect(() => {
@@ -141,13 +157,16 @@ export default function IntroLoader({
   }, [progress]);
 
   useEffect(() => {
+    // Skip the animation if already shown
+    if (skipIntro) return;
+
     const start = performance.now();
-    
+
     const step = (now: number) => {
       const elapsed = now - start;
       const pct = Math.min(100, Math.round((elapsed / stableDuration) * 100));
       setProgress(pct);
-      
+
       if (pct < 100) {
         requestAnimationFrame(step);
       } else {
@@ -157,8 +176,10 @@ export default function IntroLoader({
         const endTimer = setTimeout(() => {
           try {
             document.documentElement.setAttribute("data-intro-done", "true");
+            // Mark intro as shown in session
+            sessionStorage.setItem("intro-shown", "true");
             window.dispatchEvent(new Event("intro:done"));
-          } catch {}
+          } catch { }
           setHidden(true);
           stableOnComplete();
         }, 2000);
@@ -172,9 +193,10 @@ export default function IntroLoader({
 
     const id = requestAnimationFrame(step);
     return () => cancelAnimationFrame(id);
-  }, [stableDuration, stableOnComplete]);
+  }, [stableDuration, stableOnComplete, skipIntro]);
 
-  if (hidden) return null;
+  // Don't render if skipped or hidden
+  if (skipIntro || hidden) return null;
 
   return (
     <>
@@ -341,9 +363,9 @@ export default function IntroLoader({
         {/* Geometric shapes */}
         <div className="absolute inset-0">
           {mounted && Array.from({ length: 15 }).map((_, i) => (
-            <GeometricShape 
-              key={`shape-${i}`} 
-              delay={i * 0.2} 
+            <GeometricShape
+              key={`shape-${i}`}
+              delay={i * 0.2}
               index={i}
             />
           ))}
@@ -378,13 +400,13 @@ export default function IntroLoader({
         >
           {/* Futuristic scanning line effect */}
           <div className="tech-scan" />
-          
+
           {/* Central content container */}
           <div
             className={`flex w-full max-w-[720px] flex-col items-center gap-8 px-6 relative data-stream ${breathingEffect ? 'cyber-pulse' : ''}`}
-            style={{ 
-              transform: `scale(${contentScale})`, 
-              transition: "transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)" 
+            style={{
+              transform: `scale(${contentScale})`,
+              transition: "transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1)"
             }}
           >
             {/* Futuristic percentage display */}
@@ -398,26 +420,26 @@ export default function IntroLoader({
                 `}
                 style={{
                   ...(outlined
-                    ? { 
-                        color: "transparent", 
-                        WebkitTextStroke: "2px rgba(255, 255, 255, 0.9)",
-                        filter: "drop-shadow(0 0 30px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 60px rgba(240, 240, 240, 0.4))"
-                      }
-                    : { 
-                        background: `linear-gradient(135deg, 
+                    ? {
+                      color: "transparent",
+                      WebkitTextStroke: "2px rgba(255, 255, 255, 0.9)",
+                      filter: "drop-shadow(0 0 30px rgba(255, 255, 255, 0.7)) drop-shadow(0 0 60px rgba(240, 240, 240, 0.4))"
+                    }
+                    : {
+                      background: `linear-gradient(135deg, 
                           #ffffff 0%, 
                           #ffffff 25%, 
                           #f0f0f0 50%, 
                           #ffffff 75%, 
                           #ffffff 100%)`,
-                        WebkitBackgroundClip: "text",
-                        backgroundClip: "text",
-                        color: "transparent",
-                        filter: `
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                      filter: `
                           drop-shadow(0 4px 30px rgba(255, 255, 255, 0.5))
                           drop-shadow(0 0 50px rgba(240, 240, 240, 0.3))
                         `
-                      }),
+                    }),
                   textShadow: outlined ? 'none' : '0 0 60px rgba(255, 255, 255, 0.4)',
                   transform: `perspective(1000px) rotateX(${Math.sin(progress * 0.02) * 2}deg) rotateY(${Math.cos(progress * 0.015) * 1}deg)`,
                 }}
@@ -427,7 +449,7 @@ export default function IntroLoader({
 
               {/* Quantum data sweep */}
               {!outlined && (
-                <div 
+                <div
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 via-white/20 to-transparent"
                   style={{
                     transform: `translateX(${(progress / 100) * 200 - 100}%)`,
@@ -441,12 +463,12 @@ export default function IntroLoader({
 
             {/* Futuristic loading bar */}
             {progress < 100 && (
-              <div 
+              <div
                 className="w-full relative"
               >
                 {/* Quantum field container */}
                 <div className="relative p-1">
-                  <div 
+                  <div
                     className="absolute inset-0 rounded-full blur-sm"
                     style={{
                       background: `linear-gradient(90deg, 
@@ -456,12 +478,12 @@ export default function IntroLoader({
                       opacity: progress / 100,
                     }}
                   />
-                  
+
                   {/* Main progress bar with tech design */}
-                  <div className="relative h-4 rounded-full bg-black/50 overflow-hidden backdrop-blur-sm border border-white/30" 
-                       style={{ boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.15)' }}>
+                  <div className="relative h-4 rounded-full bg-black/50 overflow-hidden backdrop-blur-sm border border-white/30"
+                    style={{ boxShadow: 'inset 0 0 20px rgba(255, 255, 255, 0.15)' }}>
                     {/* Animated circuit pattern */}
-                    <div 
+                    <div
                       className="absolute inset-0 opacity-40"
                       style={{
                         background: `
@@ -483,11 +505,11 @@ export default function IntroLoader({
                         animation: 'slide 2s linear infinite',
                       }}
                     />
-                    
+
                     {/* Progress fill with quantum effect */}
                     <div
                       className="h-full relative overflow-hidden"
-                      style={{ 
+                      style={{
                         width: `${progress}%`,
                         background: `linear-gradient(90deg, 
                           #ffffff 0%, 
@@ -503,7 +525,7 @@ export default function IntroLoader({
                       }}
                     >
                       {/* Quantum energy pulse */}
-                      <div 
+                      <div
                         className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent"
                         style={{
                           transform: 'translateX(-100%)',
@@ -511,7 +533,7 @@ export default function IntroLoader({
                           filter: 'blur(1px)',
                         }}
                       />
-                      
+
                       {/* Data nodes */}
                       <div className="absolute inset-0 flex items-center justify-around">
                         {Array.from({ length: 8 }).map((_, i) => (
@@ -528,7 +550,7 @@ export default function IntroLoader({
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Holographic progress indicators */}
                 <div className="flex justify-between mt-3 text-xs font-mono">
                   <span className="text-white/80 tracking-wider">LOADING_SYS...</span>
