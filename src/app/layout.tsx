@@ -4,6 +4,10 @@ import "./globals.css";
 import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
 import CustomCursor from "@/components/cursor/CustomCursor";
 import Copyright from "../components/portfolio/footer/Copyright";
+import {
+  PageTransitionProvider,
+  PageTransitionOverlay,
+} from "@/components/page-transition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,10 +35,15 @@ export default function RootLayout({
         <HomepageBackground />
         {/* Custom cursor above content */}
         <CustomCursor />
-        <div className="relative z-10 min-h-dvh">{children}</div>
+        <PageTransitionProvider expansionDuration={800}>
+          <div className="relative z-10 min-h-dvh">{children}</div>
+          {/* Page transition overlay for cursor expansion effect */}
+          <PageTransitionOverlay />
+        </PageTransitionProvider>
         {/* Copyright fetched client-side to avoid blocking SSR */}
         <Copyright />
       </body>
     </html>
   );
 }
+
