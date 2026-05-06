@@ -13,7 +13,8 @@ function splitNameForHero(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean);
 
   if (parts.length <= 2) return [name];
-  if (parts.length === 3) return [parts.slice(0, 2).join(" "), parts[2]];
+  if (parts.length === 3) return [parts[0], parts.slice(1).join(" ")];
+  if (parts.length === 4) return [parts[0], parts[1], parts.slice(2).join(" ")];
 
   const midpoint = Math.ceil(parts.length / 2);
   return [parts.slice(0, midpoint).join(" "), parts.slice(midpoint).join(" ")];
@@ -46,12 +47,14 @@ export default async function Home() {
         />
         <div
           data-cursor-expand
-          className="home-spline-shell absolute -right-[38%] top-[8%] h-[54vh] w-[128vw] sm:-right-[24%] sm:top-[10%] sm:h-[58vh] sm:w-[104vw] md:-right-[10%] md:top-[8%] md:h-[66vh] md:w-[78vw] lg:left-[47%] lg:right-auto lg:top-[5%] lg:h-[88vh] lg:w-[46vw] xl:left-[49%] xl:top-[4%] xl:h-[90vh] xl:w-[43vw] 2xl:left-[50%] 2xl:w-[40vw]"
+          className="home-spline-shell absolute inset-0"
         >
-          <Spline
-            scene={HOME_SCENE}
-            className="home-spline h-full w-full"
-          />
+          <div className="home-spline-stage">
+            <Spline
+              scene={HOME_SCENE}
+              className="home-spline h-full w-full"
+            />
+          </div>
         </div>
         <div
           aria-hidden
@@ -63,11 +66,11 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
       </div>
 
-      <section className="pointer-events-none relative z-10 mx-auto flex min-h-dvh w-full max-w-[94rem] items-center px-5 pb-24 pt-24 sm:px-8 sm:pt-28 lg:px-8 lg:pb-20 lg:pt-20 xl:px-10">
-        <div className="hero-copy-stack relative max-w-[35rem] sm:max-w-[38rem] lg:ml-7 lg:max-w-[42rem] xl:ml-10">
+      <section className="pointer-events-none relative z-10 flex min-h-dvh w-full items-center px-6 pb-24 pt-24 sm:px-10 sm:pt-28 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
+        <div className="hero-copy-stack relative w-full max-w-[38rem] sm:max-w-[42rem] lg:max-w-[46rem]">
           <div className="hero-copy-glow absolute -inset-x-8 -inset-y-10 sm:-inset-x-10 sm:-inset-y-12" />
           <div className="intro-gate relative">
-            <h1 className="hero-name max-w-[9.1ch] text-[3rem] font-[350] leading-[0.87] tracking-[-0.085em] text-white sm:text-[4.3rem] lg:text-[6.05rem] xl:text-[6.55rem]">
+            <h1 className="hero-name text-[3.15rem] font-[320] leading-[0.9] tracking-normal text-white sm:text-[4.35rem] lg:text-[5.45rem] xl:text-[5.95rem] 2xl:text-[6.35rem]">
               {nameLines.map((line) => (
                 <span
                   key={line}

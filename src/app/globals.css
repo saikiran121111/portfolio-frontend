@@ -97,7 +97,7 @@ html[data-intro-done="true"] .intro-gate {
 
 .hero-name {
   font-feature-settings: "ss01" 1;
-  letter-spacing: -0.09em;
+  letter-spacing: 0;
 }
 
 .hero-copy-stack {
@@ -156,7 +156,7 @@ html[data-intro-done="true"] .intro-gate {
 }
 
 .hero-rotating-copy {
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 .bottom-headline-shell {
@@ -790,7 +790,51 @@ html[data-intro-done="true"] .intro-gate {
 
 .home-spline-shell {
   pointer-events: auto;
+  overflow: hidden;
   animation: heroOrbDrift 16s ease-in-out infinite;
+}
+
+.home-spline-stage {
+  position: absolute;
+  inset: -16% -82% -18% -44%;
+  transform: translate3d(12%, 0, 0) scale(1.08);
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@media (min-width: 640px) {
+  .home-spline-stage {
+    inset: -14% -68% -18% -36%;
+    transform: translate3d(11%, 0, 0) scale(1.06);
+  }
+}
+
+@media (min-width: 768px) {
+  .home-spline-stage {
+    inset: -12% -52% -16% -24%;
+    transform: translate3d(11%, -1%, 0) scale(1.03);
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-spline-stage {
+    inset: -8% -24% -14% -10%;
+    transform: translate3d(10%, 0, 0) scale(1.03);
+  }
+}
+
+@media (min-width: 1280px) {
+  .home-spline-stage {
+    inset: -8% -16% -14% -8%;
+    transform: translate3d(11%, 0, 0) scale(1.04);
+  }
+}
+
+@media (min-width: 1536px) {
+  .home-spline-stage {
+    inset: -6% -12% -12% -6%;
+    transform: translate3d(12%, 0, 0) scale(1.04);
+  }
 }
 
 .home-spline,
