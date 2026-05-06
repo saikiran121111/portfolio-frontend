@@ -90,7 +90,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
           className={classNames(
             "absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 flex items-center justify-center w-14 h-14 backdrop-blur-xl transition-all duration-300 shadow-lg border border-white/20 z-10",
             isTabOpen
-              ? "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white border-cyan-500/30 shadow-cyan-500/20 rounded-l-2xl"
+              ? "bg-white/10 text-white border-white/20 shadow-white/10 rounded-l-2xl"
               : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:shadow-xl rounded-l-2xl"
           )}
           whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)" }}
@@ -122,7 +122,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
               animate={isTabOpen ? { opacity: 1, x: 0 } : { opacity: 0.9, x: -6 }}
               transition={{ duration: 0.25 }}
             >
-              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <div className="w-2 h-2 rounded-full bg-white/70 animate-pulse" />
               Quick Navigation
             </motion.h3>
             <nav className="space-y-1">
@@ -133,7 +133,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
                   className={classNames(
                     "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300 group",
                     activeSection === id
-                      ? "bg-gradient-to-r from-cyan-500/30 to-blue-500/20 text-cyan-300 border border-cyan-500/30 shadow-lg shadow-cyan-500/20"
+                      ? "bg-white/10 text-white border border-white/20 shadow-lg shadow-white/10"
                       : "text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md"
                   )}
                   initial={false}
@@ -148,7 +148,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
                   {activeSection === id && (
                     <motion.div
                       layoutId="activeIndicator"
-                      className="w-2 h-2 rounded-full bg-cyan-400 ml-auto shadow-lg shadow-cyan-400/50"
+                      className="w-2 h-2 rounded-full bg-white/70 ml-auto shadow-lg shadow-white/15"
                       initial={false}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                     />
@@ -250,7 +250,7 @@ export default function ProfileView() {
   if (error) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-10">
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-200">{error}</div>
+        <div className="rounded-lg border border-white/20 bg-white/10 p-4 text-white/80">{error}</div>
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function ProfileView() {
     <>
       {/* Scroll Progress Indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-blue-500 z-50 origin-left shadow-lg shadow-cyan-500/50"
+        className="fixed top-0 left-0 right-0 h-1 bg-white/20 z-50 origin-left shadow-lg shadow-white/10"
         style={{ scaleX: scrollYProgress }}
         initial={{ scaleX: 0 }}
       />

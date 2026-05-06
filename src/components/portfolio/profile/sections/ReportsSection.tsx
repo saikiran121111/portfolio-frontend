@@ -9,7 +9,7 @@ export default function ReportsSection({ reports }: { reports: IscanReports[] })
   return (
     <motion.section id="reports" variants={containerVariants} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-120px" }} className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur">
       <motion.h2 variants={fadeUpVariants} className="mb-4 flex items-center gap-2 text-lg font-semibold">
-        <ShieldCheck className="size-5 text-cyan-300" /> Security & Quality Reports
+        <ShieldCheck className="size-5 text-slate-200" /> Security & Quality Reports
       </motion.h2>
       <div className="grid gap-6 md:grid-cols-2">
         {reports.map((r, i) => (

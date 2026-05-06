@@ -16,7 +16,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
       className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
     >
       <motion.h2 variants={fadeUpVariants} className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
-        <Globe className="size-6 text-cyan-400" /> Projects
+        <Globe className="size-6 text-slate-200" /> Projects
       </motion.h2>
       
       <div className="grid gap-6 md:grid-cols-2">
@@ -26,7 +26,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
             variants={scaleVariants} 
             transition={{ delay: i * 0.1 }} 
             whileHover={{ scale: 1.02, y: -4 }} 
-            className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-6 transition-all duration-300 hover:border-cyan-400/30 hover:shadow-xl hover:shadow-cyan-500/15"
+            className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-6 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
           >
             {/* Project status indicator */}
             <div className="absolute top-4 right-4 flex items-center gap-2">
@@ -51,7 +51,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
                   title="Live Demo"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="inline-flex size-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 hover:text-cyan-200 hover:from-cyan-400/30 hover:to-blue-400/30 border border-cyan-400/30 hover:border-cyan-300/50 transition-all duration-200"
+                  className="inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white/70 hover:text-white hover:from-white/20 hover:to-white/10 border border-white/20 hover:border-white/30 transition-all duration-200"
                 >
                   <ExternalLink className="size-4" />
                 </motion.a>
@@ -59,12 +59,12 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
             </div>
             
             <div className="pr-20">
-              <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-white group-hover:text-white transition-colors duration-300">
                 {p.title}
               </h3>
               
               <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-sm text-white/70">
-                <Calendar className="size-3 text-cyan-400" />
+                <Calendar className="size-3 text-slate-200" />
                 {formatDate(p.startDate)} – {formatDate(p.endDate)}
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
             
             {p.highlights?.length ? (
               <div className="mt-4">
-                <h4 className="text-sm font-medium text-cyan-300 mb-3">Key Features:</h4>
+                <h4 className="text-sm font-medium text-slate-200 mb-3">Key Features:</h4>
                 <ul className="space-y-2">
                   {p.highlights.map((h, j) => (
                     <motion.li 
@@ -88,7 +88,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
                       viewport={{ once: true }}
                       className="flex items-start gap-3 text-white/80"
                     >
-                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-cyan-400 flex-shrink-0"></span>
+                      <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/70 flex-shrink-0"></span>
                       <span className="leading-relaxed">{h}</span>
                     </motion.li>
                   ))}
@@ -98,7 +98,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
             
             {p.tech?.length ? (
               <div className="mt-4">
-                <h4 className="text-sm font-medium text-cyan-300 mb-3">Technologies:</h4>
+                <h4 className="text-sm font-medium text-slate-200 mb-3">Technologies:</h4>
                 <div className="flex flex-wrap gap-2">
                   {p.tech.map((t, j) => (
                     <motion.span 
@@ -108,7 +108,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
                       transition={{ delay: i * 0.1 + j * 0.02 }}
                       viewport={{ once: true }}
                       whileHover={{ scale: 1.05 }}
-                      className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-300 border border-cyan-400/20 rounded-full hover:border-cyan-400/40 hover:bg-cyan-500/20 transition-all duration-200"
+                      className="px-3 py-1.5 text-xs font-medium bg-white/10 text-slate-200 border border-white/20 rounded-full hover:border-white/30 hover:bg-white/20 transition-all duration-200"
                     >
                       {t}
                     </motion.span>
@@ -118,7 +118,7 @@ export default function ProjectsSection({ projects }: { projects: IProjects[] })
             ) : null}
             
             {/* Subtle gradient overlay on hover */}
-            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-cyan-500/[0.02] to-blue-500/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.02] to-white/[0.05] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </motion.div>
         ))}
       </div>

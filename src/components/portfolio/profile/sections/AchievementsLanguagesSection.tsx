@@ -8,12 +8,7 @@ export default function AchievementsLanguagesSection({ achievements, languages }
   if (!achievements?.length && !languages?.length) return null;
 
   const getLanguageProficiencyColor = (level: string) => {
-    const normalizedLevel = level.toLowerCase();
-    if (normalizedLevel.includes('native') || normalizedLevel.includes('fluent')) return 'from-emerald-500/20 to-green-500/20 border-emerald-500/30 text-emerald-400';
-    if (normalizedLevel.includes('advanced') || normalizedLevel.includes('proficient')) return 'from-blue-500/20 to-cyan-500/20 border-blue-500/30 text-blue-400';
-    if (normalizedLevel.includes('intermediate')) return 'from-yellow-500/20 to-orange-500/20 border-yellow-500/30 text-yellow-400';
-    if (normalizedLevel.includes('basic') || normalizedLevel.includes('beginner')) return 'from-red-500/20 to-pink-500/20 border-red-500/30 text-red-400';
-    return 'from-gray-500/20 to-slate-500/20 border-gray-500/30 text-gray-400';
+    return 'from-white/10 to-white/5 border border-white/20 text-slate-200';
   };
 
   return (
@@ -26,15 +21,15 @@ export default function AchievementsLanguagesSection({ achievements, languages }
       className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
     >
       <motion.h2 variants={fadeUpVariants} className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
-        <Trophy className="size-6 text-cyan-400" /> Achievements & Languages
+        <Trophy className="size-6 text-slate-200" /> Achievements & Languages
       </motion.h2>
-      
+
       <div className="space-y-8">
         {/* Achievements Section - Full Width */}
         {achievements?.length && (
           <div>
             <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-white/90">
-              <Award className="size-5 text-cyan-400" />
+              <Award className="size-5 text-slate-200" />
               Achievements
             </h3>
             
@@ -45,17 +40,17 @@ export default function AchievementsLanguagesSection({ achievements, languages }
                   variants={scaleVariants}
                   transition={{ delay: i * 0.1 }} 
                   whileHover={{ scale: 1.02, y: -2 }} 
-                  className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-5 transition-all duration-300 hover:border-cyan-400/30 hover:shadow-xl hover:shadow-cyan-500/15"
+                  className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-5 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 pl-6">
-                      <h4 className="mb-2 text-base font-medium text-white group-hover:text-cyan-300 transition-colors">
+                      <h4 className="mb-2 text-base font-medium text-white group-hover:text-white transition-colors">
                         {a.title}
                       </h4>
                       
                       {a.date && (
                         <div className="flex items-center gap-2">
-                          <Calendar className="size-4 text-cyan-400" />
+                          <Calendar className="size-4 text-slate-200" />
                           <span className="text-white/70 text-sm">
                             {formatDate(a.date)}
                           </span>
@@ -71,7 +66,7 @@ export default function AchievementsLanguagesSection({ achievements, languages }
                         title="View Achievement"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="inline-flex size-10 items-center justify-center rounded-full bg-gradient-to-r from-cyan-600/20 to-blue-500/20 text-cyan-400 hover:text-white hover:from-cyan-500/30 hover:to-blue-400/30 border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-200"
+                        className="inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-slate-200 hover:text-white border border-white/20 hover:border-white/30 transition-all duration-200"
                       >
                         <ExternalLink className="size-4" />
                       </motion.a>
@@ -79,7 +74,7 @@ export default function AchievementsLanguagesSection({ achievements, languages }
                   </div>
                   
                   {/* Timeline dot indicator like experience section */}
-                  <div className="absolute top-6 left-3 w-3 h-3 rounded-full bg-cyan-400 group-hover:bg-cyan-300 transition-colors shadow-lg shadow-cyan-400/30"></div>
+                  <div className="absolute top-6 left-3 w-3 h-3 rounded-full bg-white/70 group-hover:bg-white/90 transition-colors shadow-lg shadow-white/10"></div>
                 </motion.div>
               ))}
             </div>
@@ -90,7 +85,7 @@ export default function AchievementsLanguagesSection({ achievements, languages }
         {languages?.length && (
           <div>
             <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-white/90">
-              <LanguagesIcon className="size-5 text-cyan-400" />
+              <LanguagesIcon className="size-5 text-slate-200" />
               Languages
             </h3>
             

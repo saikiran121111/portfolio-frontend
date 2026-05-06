@@ -103,14 +103,14 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
               
               {/* Header - Fixed within modal at top */}
-              <div className="relative z-20 flex items-center justify-between p-4 sm:p-6 border-b border-cyan-500/20 bg-slate-800/95 backdrop-blur-sm shrink-0">
+              <div className="relative z-20 flex items-center justify-between p-4 sm:p-6 border-b border-white/15 bg-slate-800/95 backdrop-blur-sm shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 sm:p-3 rounded-xl bg-gradient-to-r from-cyan-600/30 to-blue-500/30 border border-cyan-400/30">
-                    <ExternalLink className="size-5 sm:size-6 text-cyan-300" />
+                  <div className="p-2 sm:p-3 rounded-xl bg-white/10 border border-white/15">
+                    <ExternalLink className="size-5 sm:size-6 text-white/80" />
                   </div>
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-white">Resume Preview</h2>
-                    <p className="text-xs sm:text-sm text-cyan-200/80">Full Screen View • SaiKiran_Resume.pdf</p>
+                    <p className="text-xs sm:text-sm text-white/70">Full Screen View • SaiKiran_Resume.pdf</p>
                   </div>
                 </div>
 
@@ -120,7 +120,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                     onClick={onDownload}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-600 to-blue-500 text-white font-medium transition-all duration-300 hover:from-cyan-500 hover:to-blue-400 hover:shadow-lg hover:shadow-cyan-500/25 text-sm sm:text-base"
+                    className="flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-white/10 text-white font-medium transition-all duration-300 hover:bg-white/20 hover:shadow-lg hover:shadow-white/15 text-sm sm:text-base"
                   >
                     <Download className="size-4 sm:size-5" />
                     <span className="hidden sm:inline">Download Resume</span>
@@ -132,7 +132,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                     onClick={onClose}
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
-                    className="p-2 sm:p-3 rounded-lg sm:rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-red-400/40 hover:text-red-300 transition-all duration-300"
+                    className="p-2 sm:p-3 rounded-lg sm:rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 hover:text-white transition-all duration-300"
                   >
                     <X className="size-5 sm:size-6" />
                   </motion.button>
@@ -149,11 +149,11 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                       >
-                        <Loader2 className="size-10 sm:size-12 text-cyan-400" />
+                        <Loader2 className="size-10 sm:size-12 text-white/70" />
                       </motion.div>
                       <div className="text-center px-4">
-                        <p className="text-cyan-200 font-medium text-lg sm:text-xl mb-2">Loading resume preview...</p>
-                        <p className="text-cyan-300/60 text-sm">Please wait while we prepare your document</p>
+                        <p className="text-white/70 font-medium text-lg sm:text-xl mb-2">Loading resume preview...</p>
+                        <p className="text-white/60 text-sm">Please wait while we prepare your document</p>
                       </div>
                     </div>
                   </div>
@@ -182,7 +182,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                     repeat: Infinity, 
                     ease: "easeInOut" 
                   }}
-                  className="w-3 h-3 bg-cyan-300 rounded-full shadow-lg shadow-cyan-300/50"
+                  className="w-3 h-3 bg-white/60 rounded-full shadow-lg shadow-white/10"
                 />
               </div>
               <div className="absolute top-32 right-12 opacity-30 z-10">
@@ -198,7 +198,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                     ease: "easeInOut",
                     delay: 3
                   }}
-                  className="w-4 h-4 bg-blue-300 rounded-full shadow-lg shadow-blue-300/50"
+                  className="w-4 h-4 bg-slate-300/70 rounded-full shadow-lg shadow-white/10"
                 />
               </div>
               <div className="absolute bottom-20 left-16 opacity-25 z-10">
@@ -214,7 +214,7 @@ export default function ResumeModal({ isOpen, onClose, onDownload }: ResumeModal
                     ease: "easeInOut",
                     delay: 1
                   }}
-                  className="w-2 h-2 bg-purple-300 rounded-full shadow-lg shadow-purple-300/50"
+                  className="w-2 h-2 bg-slate-300/70 rounded-full shadow-lg shadow-white/10"
                 />
               </div>
             </motion.div>

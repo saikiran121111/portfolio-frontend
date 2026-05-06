@@ -38,20 +38,20 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
         .hero-card {
           position: relative;
-          background: linear-gradient(135deg, 
-            rgba(15,23,42,0.9) 0%, 
-            rgba(30,41,59,0.8) 25%,
-            rgba(15,23,42,0.9) 50%,
-            rgba(30,41,59,0.8) 75%,
-            rgba(15,23,42,0.9) 100%);
-          backdrop-filter: blur(40px) saturate(180%);
+          background: linear-gradient(135deg,
+            rgba(15,23,42,0.95) 0%,
+            rgba(30,41,59,0.92) 25%,
+            rgba(15,23,42,0.95) 50%,
+            rgba(30,41,59,0.92) 75%,
+            rgba(15,23,42,0.95) 100%);
+          backdrop-filter: blur(40px) saturate(120%);
           border: 2px solid transparent;
           background-clip: padding-box;
-          box-shadow: 
-            0 25px 50px -12px rgba(0,0,0,0.5),
-            0 0 0 1px rgba(255,255,255,0.05),
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            0 0 100px rgba(6,182,212,0.15);
+          box-shadow:
+            0 25px 50px -12px rgba(0,0,0,0.6),
+            0 0 0 1px rgba(255,255,255,0.04),
+            inset 0 1px 0 rgba(255,255,255,0.08),
+            0 0 40px rgba(255,255,255,0.05);
           overflow: hidden;
           transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
           transform-style: preserve-3d;
@@ -61,12 +61,14 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           content: '';
           position: absolute;
           inset: -2px;
-          background: linear-gradient(45deg, 
-            #06b6d4, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #06b6d4);
+          background: linear-gradient(45deg,
+            rgba(255,255,255,0.08),
+            rgba(148,163,184,0.05),
+            rgba(255,255,255,0.08));
           background-size: 400% 400%;
           border-radius: inherit;
           z-index: -1;
-          animation: border-animation 8s ease infinite;
+          animation: border-animation 12s ease infinite;
           opacity: 0;
           transition: opacity 0.6s ease;
         }
@@ -83,9 +85,9 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .neural-grid {
           position: absolute;
           inset: 0;
-          background-image: 
-            conic-gradient(from 90deg at 40% 50%, #0000 50%, #06b6d4 50%),
-            conic-gradient(from 90deg at 60% 50%, #0000 50%, #3b82f6 50%);
+          background-image:
+            conic-gradient(from 90deg at 40% 50%, #0000 50%, rgba(255,255,255,0.04) 50%),
+            conic-gradient(from 90deg at 60% 50%, #0000 50%, rgba(148,163,184,0.04) 50%);
           background-size: 20px 20px;
           background-position: 0 0, 10px 10px;
           opacity: 0.03;
@@ -114,7 +116,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-1 {
           width: 120px;
           height: 120px;
-          background: radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%);
           top: -20%;
           left: -10%;
         }
@@ -122,7 +124,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-2 {
           width: 80px;
           height: 80px;
-          background: radial-gradient(circle, rgba(59,130,246,0.3) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%);
           top: 60%;
           right: -5%;
         }
@@ -130,7 +132,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-3 {
           width: 100px;
           height: 100px;
-          background: radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(248,250,252,0.25) 0%, transparent 70%);
           bottom: -15%;
           left: 40%;
         }
@@ -138,7 +140,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-4 {
           width: 60px;
           height: 60px;
-          background: radial-gradient(circle, rgba(236,72,153,0.4) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(241,245,249,0.3) 0%, transparent 70%);
           top: 20%;
           right: 30%;
         }
@@ -146,7 +148,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-5 {
           width: 90px;
           height: 90px;
-          background: radial-gradient(circle, rgba(245,158,11,0.3) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(226,232,240,0.25) 0%, transparent 70%);
           bottom: 40%;
           left: 10%;
         }
@@ -154,7 +156,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .orb-6 {
           width: 70px;
           height: 70px;
-          background: radial-gradient(circle, rgba(34,197,94,0.3) 0%, transparent 70%);
+          background: radial-gradient(circle, rgba(209,213,219,0.25) 0%, transparent 70%);
           top: 40%;
           left: 70%;
         }
@@ -170,25 +172,24 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           position: absolute;
           width: 2px;
           height: 2px;
-          background: linear-gradient(45deg, #06b6d4, #3b82f6);
+          background: linear-gradient(45deg, #f8fafc, #94a3b8);
           border-radius: 50%;
           box-shadow: 0 0 6px currentColor;
         }
 
         .holographic-text {
-          background: linear-gradient(45deg, 
-            #ffffff 0%, 
-            #06b6d4 20%, 
-            #ffffff 40%, 
-            #3b82f6 60%, 
-            #ffffff 80%, 
-            #8b5cf6 100%);
+          background: linear-gradient(45deg,
+            #ffffff 0%,
+            #e2e8f0 30%,
+            #d1d5db 50%,
+            #f8fafc 70%,
+            #e5e7eb 100%);
           background-size: 300% 300%;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
           animation: hologram-shift 4s ease-in-out infinite;
-          filter: drop-shadow(0 0 20px rgba(6,182,212,0.5));
+          filter: drop-shadow(0 0 20px rgba(255,255,255,0.18));
           position: relative;
         }
 
@@ -197,7 +198,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           position: absolute;
           top: 0;
           left: 0;
-          background: linear-gradient(45deg, #ff0080, #00ff80, #8000ff);
+          background: linear-gradient(45deg, #f8fafc, #cbd5e1);
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
@@ -215,13 +216,13 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
         @keyframes glitch-hologram {
           0%, 90%, 100% { opacity: 0; }
-          5%, 85% { opacity: 0.3; }
+          5%, 85% { opacity: 0.18; }
         }
 
         .contact-item {
           position: relative;
-          background: linear-gradient(135deg, 
-            rgba(255,255,255,0.05) 0%, 
+          background: linear-gradient(135deg,
+            rgba(255,255,255,0.05) 0%,
             rgba(255,255,255,0.1) 50%,
             rgba(255,255,255,0.05) 100%);
           backdrop-filter: blur(10px);
@@ -237,11 +238,11 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           left: -100%;
           width: 100%;
           height: 100%;
-          background: linear-gradient(90deg, 
-            transparent 0%, 
-            rgba(6,182,212,0.2) 25%,
-            rgba(59,130,246,0.2) 50%,
-            rgba(139,92,246,0.2) 75%,
+          background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255,255,255,0.12) 25%,
+            rgba(203,213,225,0.12) 50%,
+            rgba(255,255,255,0.12) 75%,
             transparent 100%);
           transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1);
         }
@@ -252,25 +253,25 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
         .contact-item:hover {
           transform: translateY(-4px) scale(1.02);
-          border-color: rgba(6,182,212,0.4);
-          box-shadow: 
-            0 10px 30px rgba(6,182,212,0.2),
-            0 0 20px rgba(6,182,212,0.1),
+          border-color: rgba(255,255,255,0.18);
+          box-shadow:
+            0 10px 30px rgba(255,255,255,0.12),
+            0 0 20px rgba(255,255,255,0.08),
             inset 0 1px 0 rgba(255,255,255,0.2);
-          background: linear-gradient(135deg, 
-            rgba(6,182,212,0.1) 0%, 
-            rgba(59,130,246,0.05) 50%,
-            rgba(139,92,246,0.1) 100%);
+          background: linear-gradient(135deg,
+            rgba(255,255,255,0.08) 0%,
+            rgba(203,213,225,0.05) 50%,
+            rgba(255,255,255,0.08) 100%);
         }
 
         .cursor-glow {
           position: absolute;
           width: 300px;
           height: 300px;
-          background: radial-gradient(circle, 
-            rgba(6,182,212,0.15) 0%, 
-            rgba(59,130,246,0.1) 30%,
-            rgba(139,92,246,0.05) 60%,
+          background: radial-gradient(circle,
+            rgba(255,255,255,0.18) 0%,
+            rgba(203,213,225,0.12) 30%,
+            rgba(229,231,235,0.06) 60%,
             transparent 80%);
           border-radius: 50%;
           pointer-events: none;
@@ -279,20 +280,20 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         }
 
         .glow-icon {
-          filter: drop-shadow(0 0 8px rgba(6,182,212,0.6));
+          filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
           transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
         .glow-icon:hover {
-          filter: drop-shadow(0 0 16px rgba(6,182,212,1));
+          filter: drop-shadow(0 0 16px rgba(255,255,255,0.7));
           transform: scale(1.2) rotate(5deg);
         }
 
         .text-shimmer {
-          background: linear-gradient(90deg, 
-            rgba(255,255,255,0.8) 0%, 
+          background: linear-gradient(90deg,
+            rgba(255,255,255,0.8) 0%,
             rgba(255,255,255,1) 25%,
-            rgba(6,182,212,1) 50%,
+            rgba(226,232,240,1) 50%,
             rgba(255,255,255,1) 75%,
             rgba(255,255,255,0.8) 100%);
           background-size: 300% 100%;
@@ -313,7 +314,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           background: linear-gradient(
             to bottom,
             transparent 0%,
-            rgba(6,182,212,0.03) 50%,
+            rgba(255,255,255,0.04) 50%,
             transparent 100%
           );
           animation: scanline-sweep 3s linear infinite;
@@ -329,20 +330,14 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           .hero-card {
             transform: none !important;
           }
-          
-          .cursor-glow {
-            display: none;
-          }
         }
       `}</style>
 
-      <motion.div 
-        ref={cardRef}
-        variants={fadeUpVariants} 
+      <motion.div
         className="hero-card-container relative overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        whileHover={{ 
+        whileHover={{
           scale: 1.02,
           transition: { duration: 0.4, ease: [0.23, 1, 0.32, 1] }
         }}
@@ -513,7 +508,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                     ease: "easeInOut",
                   }}
                 >
-                  <MapPin className="size-5 text-cyan-300 glow-icon" />
+                  <MapPin className="size-5 text-white/70 glow-icon" />
                 </motion.div>
                 <span className="text-white font-medium">{data.location}</span>
               </motion.span>
@@ -528,7 +523,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a className="inline-flex items-center gap-3 hover:text-cyan-200 transition-all duration-300" href={`mailto:${data.email}`}>
+                <a className="inline-flex items-center gap-3 hover:text-white transition-all duration-300" href={`mailto:${data.email}`}>
                   <motion.div
                     whileHover={{
                       scale: 1.2,
@@ -536,7 +531,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                       transition: { duration: 0.2 }
                     }}
                   >
-                    <Mail className="size-5 text-cyan-300 glow-icon" />
+                    <Mail className="size-5 text-white/70 glow-icon" />
                   </motion.div>
                   <span className="text-white font-medium">{data.email}</span>
                 </a>
@@ -553,7 +548,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a className="inline-flex items-center gap-3 hover:text-cyan-200 transition-all duration-300" href={`tel:${data.phone}`}>
+                <a className="inline-flex items-center gap-3 hover:text-white transition-all duration-300" href={`tel:${data.phone}`}>
                   <motion.div
                     animate={{
                       rotate: [0, 15, -15, 0],
@@ -568,7 +563,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                       transition: { duration: 0.2 }
                     }}
                   >
-                    <Phone className="size-5 text-cyan-300 glow-icon" />
+                    <Phone className="size-5 text-white/70 glow-icon" />
                   </motion.div>
                   <span className="text-white font-medium">{data.phone}</span>
                 </a>

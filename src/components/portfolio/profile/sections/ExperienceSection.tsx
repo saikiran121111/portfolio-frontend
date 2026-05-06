@@ -16,7 +16,7 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
       className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
     >
       <motion.h2 variants={fadeUpVariants} className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
-        <BriefcaseBusiness className="size-6 text-cyan-400" /> Experience
+        <BriefcaseBusiness className="size-6 text-slate-200" /> Experience
       </motion.h2>
       
       <div className="space-y-6">
@@ -26,28 +26,28 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
             variants={scaleVariants} 
             transition={{ delay: i * 0.1 }} 
             whileHover={{ scale: 1.01, y: -2 }} 
-            className="group relative rounded-xl border border-white/10 bg-gradient-to-r from-white/[0.02] to-white/[0.05] p-6 transition-all duration-300 hover:border-cyan-400/30 hover:shadow-xl hover:shadow-cyan-500/10"
+            className="group relative rounded-xl border border-white/10 bg-gradient-to-r from-white/[0.02] to-white/[0.05] p-6 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
           >
             {/* Timeline dot */}
-            <div className="absolute -left-3 top-6 h-6 w-6 rounded-full border-2 border-cyan-400 bg-gray-900 group-hover:bg-cyan-400 transition-colors duration-300">
-              <div className="absolute inset-1 rounded-full bg-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -left-3 top-6 h-6 w-6 rounded-full border-2 border-white/20 bg-gray-900 group-hover:bg-white/20 transition-colors duration-300">
+              <div className="absolute inset-1 rounded-full bg-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             
             {/* Timeline line */}
             {i < experiences.length - 1 && (
-              <div className="absolute -left-1 top-12 w-0.5 h-16 bg-gradient-to-b from-cyan-400/50 to-transparent"></div>
+              <div className="absolute -left-1 top-12 w-0.5 h-16 bg-white/20"></div>
             )}
             
             <div className="ml-6">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-cyan-300 transition-colors duration-300">
+                  <h3 className="text-lg font-semibold text-white group-hover:text-white transition-colors duration-300">
                     {e.title}
                   </h3>
-                  <p className="text-cyan-400 font-medium">{e.company}</p>
+                  <p className="text-slate-200 font-medium">{e.company}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-white/70">
                     <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/10">
-                      <Calendar className="size-3 text-cyan-400" /> 
+                      <Calendar className="size-3 text-slate-200" /> 
                       {formatDate(e.startDate)} – {formatDate(e.endDate)}
                     </span>
                     {e.location && (
@@ -67,7 +67,7 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
               
               {e.bullets?.length ? (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-cyan-300 mb-2">Key Achievements:</h4>
+                  <h4 className="text-sm font-medium text-slate-200 mb-2">Key Achievements:</h4>
                   <ul className="space-y-2">
                     {e.bullets.map((b, j) => (
                       <motion.li 
@@ -78,7 +78,7 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
                         viewport={{ once: true }}
                         className="flex items-start gap-3 text-white/80"
                       >
-                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-cyan-400 flex-shrink-0"></span>
+                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/70 flex-shrink-0"></span>
                         <span className="leading-relaxed">{b}</span>
                       </motion.li>
                     ))}
@@ -88,7 +88,7 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
               
               {e.techStack?.length ? (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-cyan-300 mb-3">Technologies Used:</h4>
+                  <h4 className="text-sm font-medium text-slate-200 mb-3">Technologies Used:</h4>
                   <div className="flex flex-wrap gap-2">
                     {e.techStack.map((t, j) => (
                       <motion.span 
@@ -98,7 +98,7 @@ export default function ExperienceSection({ experiences }: { experiences: IExper
                         transition={{ delay: i * 0.1 + j * 0.02 }}
                         viewport={{ once: true }}
                         whileHover={{ scale: 1.05 }}
-                        className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-300 border border-cyan-400/20 rounded-full hover:border-cyan-400/40 hover:bg-cyan-500/20 transition-all duration-200"
+                        className="px-3 py-1.5 text-xs font-medium bg-white/10 text-slate-200 border border-white/20 rounded-full hover:border-white/30 hover:bg-white/20 transition-all duration-200"
                       >
                         {t}
                       </motion.span>
