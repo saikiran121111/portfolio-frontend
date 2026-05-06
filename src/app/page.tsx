@@ -66,7 +66,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
       </div>
 
-      <section className="pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
+      <section className="home-hero-section pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
         <div className="hero-copy-stack relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[46rem]">
           <div className="hero-copy-glow absolute -inset-x-8 -inset-y-10 sm:-inset-x-10 sm:-inset-y-12" />
           <div className="intro-gate relative">
@@ -85,7 +85,7 @@ export default async function Home() {
             </h1>
 
             {bottomHeadline.length > 0 ? (
-              <div className="mt-5 max-w-[16rem] sm:mt-7 sm:max-w-[22rem] md:max-w-[26rem] lg:mt-8 lg:max-w-[32rem]">
+              <div className="hero-headline-wrap mt-5 max-w-[16rem] sm:mt-7 sm:max-w-[22rem] md:max-w-[26rem] lg:mt-8 lg:max-w-[32rem]">
                 <BottomHeadline
                   items={bottomHeadline}
                   v="top"

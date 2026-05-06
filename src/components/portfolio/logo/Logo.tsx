@@ -9,6 +9,10 @@ import { usePageTransition } from "@/components/page-transition";
 interface LogoProps {
   className?: string; // applied to the <svg> for color/hover control
   size?: number; // px. default 96
+  xsSize?: number; // ≤346px
+  tabletSize?: number; // md ≥ 768
+  desktopSize?: number; // lg ≥ 1024
+  xlSize?: number; // xl ≥ 1280
   // positioning like other components
   v?: "top" | "center" | "bottom";
   h?: "left" | "center" | "right";
@@ -48,6 +52,11 @@ type LVars = Record<
   | "--logo-y-lg"
   | "--logo-x-xl"
   | "--logo-y-xl"
+  | "--logo-size-xs"
+  | "--logo-size"
+  | "--logo-size-md"
+  | "--logo-size-lg"
+  | "--logo-size-xl"
   | "--min-left-xs"
   | "--min-left"
   | "--min-left-md"
@@ -59,6 +68,10 @@ type LVars = Record<
 export function Logo({
   className,
   size = 96,
+  xsSize,
+  tabletSize,
+  desktopSize,
+  xlSize,
   v = "center",
   h = "center",
   xsOffsetX,
@@ -117,6 +130,11 @@ export function Logo({
     "--logo-y-lg": `${desktopOffsetY ?? tabletOffsetY ?? offsetY}px`,
     "--logo-x-xl": `${xlOffsetX ?? desktopOffsetX ?? tabletOffsetX ?? offsetX}px`,
     "--logo-y-xl": `${xlOffsetY ?? desktopOffsetY ?? tabletOffsetY ?? offsetY}px`,
+    "--logo-size-xs": `${xsSize ?? size}px`,
+    "--logo-size": `${size}px`,
+    "--logo-size-md": `${tabletSize ?? size}px`,
+    "--logo-size-lg": `${desktopSize ?? tabletSize ?? size}px`,
+    "--logo-size-xl": `${xlSize ?? desktopSize ?? tabletSize ?? size}px`,
     // per-breakpoint min-lefts with sensible fallback chains
     "--min-left-xs": `${xsMinLeftPx ?? minLeftPx}px`,
     "--min-left": `${minLeftPx}px`,
@@ -127,16 +145,30 @@ export function Logo({
 
   // Clamp negative X only when left-aligned by adding the min-left gap and preventing negative shifts
   const clampLeft = h === "left";
+  const safeAreaPadding: CSSProperties = {
+    paddingTop: v === "top" ? "var(--safe-top)" : undefined,
+    paddingRight: h === "right" ? "var(--safe-right)" : undefined,
+    paddingBottom: v === "bottom" ? "var(--safe-bottom)" : undefined,
+    paddingLeft: h === "left" ? "var(--safe-left)" : undefined,
+  };
 
   const translateXClasses = clampLeft
     ? "max-[346px]:!translate-x-[calc(var(--min-left-xs)+max(0px,var(--logo-x-xs)))] translate-x-[calc(var(--min-left)+max(0px,var(--logo-x)))] md:translate-x-[calc(var(--min-left-md)+max(0px,var(--logo-x-md)))] lg:translate-x-[calc(var(--min-left-lg)+max(0px,var(--logo-x-lg)))] xl:translate-x-[calc(var(--min-left-xl)+max(0px,var(--logo-x-xl)))]"
     : "max-[346px]:!translate-x-[var(--logo-x-xs)] translate-x-[var(--logo-x)] md:translate-x-[var(--logo-x-md)] lg:translate-x-[var(--logo-x-lg)] xl:translate-x-[var(--logo-x-xl)]";
 
   const animationClass = shouldAnimate ? "sk-logo-animate" : "";
+  const sizeClasses = "max-[346px]:!h-[var(--logo-size-xs)] max-[346px]:!w-[var(--logo-size-xs)] h-[var(--logo-size)] w-[var(--logo-size)] md:h-[var(--logo-size-md)] md:w-[var(--logo-size-md)] lg:h-[var(--logo-size-lg)] lg:w-[var(--logo-size-lg)] xl:h-[var(--logo-size-xl)] xl:w-[var(--logo-size-xl)]";
 
   return (
-    <div className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}>
-      <Link href="/" className="pointer-events-auto" onClick={handleClick}>
+    <div
+      className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}
+      style={safeAreaPadding}
+    >
+      <Link
+        href="/"
+        className="pointer-events-auto logo-link"
+        onClick={handleClick}
+      >
         <div
           className={`logo-transform ${translateXClasses} max-[346px]:!translate-y-[var(--logo-y-xs)] translate-y-[var(--logo-y)] md:translate-y-[var(--logo-y-md)] lg:translate-y-[var(--logo-y-lg)] xl:translate-y-[var(--logo-y-xl)]`}
           style={styleVars}
@@ -144,8 +176,7 @@ export function Logo({
           <div className={`relative group cursor-pointer logo-glitch-container ${animationClass}`.trim()}>
             {/* Main logo with enhanced glow */}
             <svg
-              className={`sk-logo text-white group-hover:text-cyan-400 group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
-              style={{ width: size, height: size }}
+              className={`sk-logo ${sizeClasses} text-white group-hover:text-cyan-400 group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
               viewBox="0 0 500 500"
               aria-label="SK logo"
               role="img"
@@ -158,8 +189,7 @@ export function Logo({
 
             {/* Red glitch layer - offset left */}
             <svg
-              className="absolute inset-0 text-red-500 opacity-0 group-hover:opacity-80 transition-opacity duration-150 glitch-red pointer-events-none mix-blend-screen"
-              style={{ width: size, height: size }}
+              className={`${sizeClasses} absolute inset-0 text-red-500 opacity-0 group-hover:opacity-80 transition-opacity duration-150 glitch-red pointer-events-none mix-blend-screen`}
               viewBox="0 0 500 500"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -170,8 +200,7 @@ export function Logo({
 
             {/* Blue glitch layer - offset right */}
             <svg
-              className="absolute inset-0 text-blue-500 opacity-0 group-hover:opacity-60 transition-opacity duration-200 glitch-blue pointer-events-none mix-blend-screen"
-              style={{ width: size, height: size }}
+              className={`${sizeClasses} absolute inset-0 text-blue-500 opacity-0 group-hover:opacity-60 transition-opacity duration-200 glitch-blue pointer-events-none mix-blend-screen`}
               viewBox="0 0 500 500"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -182,8 +211,7 @@ export function Logo({
 
             {/* Green accent layer for extra glitch */}
             <svg
-              className="absolute inset-0 text-green-400 opacity-0 group-hover:opacity-30 transition-opacity duration-100 glitch-green pointer-events-none mix-blend-overlay"
-              style={{ width: size, height: size }}
+              className={`${sizeClasses} absolute inset-0 text-green-400 opacity-0 group-hover:opacity-30 transition-opacity duration-100 glitch-green pointer-events-none mix-blend-overlay`}
               viewBox="0 0 500 500"
               xmlns="http://www.w3.org/2000/svg"
             >

@@ -10,31 +10,34 @@ export const metadata: Metadata = {
 export default function UpdateProfilePage() {
   return (
     <div className="relative min-h-dvh">
-      <div className="fixed inset-0 pointer-events-none">
+      <div className="fixed inset-0 z-40 pointer-events-none">
         <Logo
           className="text-white hover:text-cyan-400"
           size={45}
+          xsSize={34}
+          tabletSize={42}
+          desktopSize={45}
           xsOffsetX={-2}
-          xsOffsetY={30}
+          xsOffsetY={10}
           offsetX={-2}
-          offsetY={75}
+          offsetY={16}
           tabletOffsetX={-4}
-          tabletOffsetY={70}
+          tabletOffsetY={28}
           desktopOffsetX={-6}
-          desktopOffsetY={75}
-          xlOffsetY={75}
+          desktopOffsetY={42}
+          xlOffsetY={42}
           v="top"
           h="left"
-          minLeftPx={30}
+          minLeftPx={22}
           xlMinLeftPx={100}
           desktopMinLeftPx={100}
           tabletMinLeftPx={30}
-          xsMinLeftPx={8}
+          xsMinLeftPx={10}
           introGate={false}
         />
       </div>
 
-      <div className="container mx-auto max-w-6xl px-4 py-10">
+      <div className="container mx-auto max-w-6xl px-4 pb-10 pt-[calc(var(--safe-top)+5.35rem)] sm:py-10">
         <UpdateProfileClient />
       </div>
     </div>

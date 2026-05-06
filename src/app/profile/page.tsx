@@ -13,32 +13,35 @@ export default function PortfolioPage() {
     <ProfileGuardWrapper>
       <div className="relative min-h-dvh">
         {/* Clickable logo overlay (pointer-events enabled only on the logo) */}
-        <div className="fixed inset-0 pointer-events-none">
+        <div className="fixed inset-0 z-40 pointer-events-none">
           <Logo
             className="text-white hover:text-cyan-400"
             size={45}
+            xsSize={34}
+            tabletSize={42}
+            desktopSize={45}
             xsOffsetX={-2}
-            xsOffsetY={30}
+            xsOffsetY={10}
             offsetX={-2}
-            offsetY={75}
+            offsetY={16}
             tabletOffsetX={-4}
-            tabletOffsetY={70}
+            tabletOffsetY={28}
             desktopOffsetX={-6}
-            desktopOffsetY={75}
-            xlOffsetY={75}
+            desktopOffsetY={42}
+            xlOffsetY={42}
             v="top"
             h="left"
             // Clamp to 50px from the screen's left edge
-            minLeftPx={30}
+            minLeftPx={22}
             xlMinLeftPx={100}
             desktopMinLeftPx={100}
             tabletMinLeftPx={30}
-            xsMinLeftPx={8}
+            xsMinLeftPx={10}
             introGate={false}
           />
         </div>
 
-        <div className="container mx-auto max-w-6xl py-10 px-4 flex flex-col gap-10">
+        <div className="px-4 pt-[calc(var(--safe-top)+5.35rem)] pb-8 sm:px-0 sm:py-10">
           <ProfileViewClient />
         </div>
       </div>

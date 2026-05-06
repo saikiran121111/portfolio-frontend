@@ -4,7 +4,6 @@ import { MapPin, Mail, Phone } from "lucide-react";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import SocialIcon from "./SocialIcon";
 import CopyButton from "./CopyButton";
-import { fadeUpVariants } from "./utils";
 import { useState, useEffect, useRef } from "react";
 
 export default function HeaderCard({ data }: { data: IPortfolio }) {
@@ -331,6 +330,24 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
             transform: none !important;
           }
         }
+
+        @media (max-width: 640px) {
+          .hero-card::before {
+            opacity: 0.42;
+          }
+
+          .orb {
+            opacity: 0.18;
+          }
+
+          .particle-field {
+            opacity: 0.45;
+          }
+
+          .scanline {
+            opacity: 0.2;
+          }
+        }
       `}</style>
 
       <motion.div
@@ -411,7 +428,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
         {/* Main Card */}
         <motion.div 
-          className="hero-card relative z-10 rounded-2xl p-8"
+          className="hero-card relative z-10 rounded-[1.5rem] p-5 sm:rounded-2xl sm:p-8"
           style={{
             transformStyle: "preserve-3d",
           }}
@@ -419,10 +436,10 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           {/* Scanline Effect */}
           <div className="scanline absolute inset-0"></div>
 
-          <motion.div className="flex flex-wrap items-center justify-between gap-6 relative z-20">
-            <div className="flex-1">
+          <motion.div className="relative z-20 flex flex-col items-start gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+            <div className="w-full min-w-0 flex-1">
               <motion.h1 
-                className="holographic-text text-3xl md:text-4xl font-bold tracking-tight"
+                className="holographic-text max-w-[11rem] text-[2.55rem] font-bold leading-[0.92] tracking-tight sm:max-w-none sm:text-3xl md:text-4xl"
                 data-text={data.name}
                 initial={{ opacity: 0, y: 30, scale: 0.8 }} 
                 animate={{ opacity: 1, y: 0, scale: 1 }} 
@@ -442,7 +459,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
               </motion.h1>
               {data.headline && (
                 <motion.p 
-                  className="mt-2 text-lg text-shimmer font-medium"
+                  className="mt-3 max-w-[22rem] text-base font-medium leading-7 text-shimmer sm:mt-2 sm:text-lg"
                   initial={{ opacity: 0, y: 20 }} 
                   animate={{ opacity: 1, y: 0 }} 
                   transition={{ duration: 0.6, delay: 0.4 }}
@@ -452,7 +469,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
               )}
             </div>
             <motion.div 
-              className="social-container relative z-30"
+              className="social-container relative z-30 w-full sm:w-auto"
               initial={{ opacity: 0, scale: 0.5, rotateY: 90 }} 
               animate={{ opacity: 1, scale: 1, rotateY: 0 }} 
               transition={{ 
@@ -467,13 +484,13 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 transition: { duration: 0.3 }
               }}
             >
-              <SocialIcon socials={data.socials} />
+              <SocialIcon socials={data.socials} className="w-full justify-start sm:w-auto sm:justify-end" />
             </motion.div>
           </motion.div>
 
           {data.summary && (
             <motion.p 
-              className="mt-6 text-white/90 leading-relaxed text-lg relative z-20"
+              className="relative z-20 mt-5 text-sm leading-7 text-white/85 sm:mt-6 sm:text-lg sm:leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
@@ -483,14 +500,14 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           )}
 
           <motion.div 
-            className="mt-6 flex flex-wrap items-center gap-4 relative z-20"
+            className="relative z-20 mt-5 grid gap-3 sm:mt-6 sm:flex sm:flex-wrap sm:items-center sm:gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1 }}
           >
             {data.location && (
               <motion.span 
-                className="contact-item inline-flex items-center gap-3 px-4 py-3 rounded-lg"
+                className="contact-item inline-flex w-full items-start gap-3 rounded-xl px-4 py-3 sm:w-auto sm:items-center sm:rounded-lg"
                 whileHover={{
                   scale: 1.05,
                   rotateX: 5,
@@ -510,12 +527,14 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 >
                   <MapPin className="size-5 text-white/70 glow-icon" />
                 </motion.div>
-                <span className="text-white font-medium">{data.location}</span>
+                <span className="min-w-0 text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
+                  {data.location}
+                </span>
               </motion.span>
             )}
             {data.email && (
               <motion.div 
-                className="contact-item inline-flex items-center gap-3 px-4 py-3 rounded-lg group"
+                className="contact-item group inline-flex w-full items-start gap-3 rounded-xl px-4 py-3 sm:w-auto sm:items-center sm:rounded-lg"
                 whileHover={{
                   scale: 1.05,
                   rotateX: 5,
@@ -523,7 +542,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a className="inline-flex items-center gap-3 hover:text-white transition-all duration-300" href={`mailto:${data.email}`}>
+                <a className="inline-flex min-w-0 flex-1 items-start gap-3 text-white/90 transition-all duration-300 hover:text-white sm:items-center" href={`mailto:${data.email}`}>
                   <motion.div
                     whileHover={{
                       scale: 1.2,
@@ -533,14 +552,16 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                   >
                     <Mail className="size-5 text-white/70 glow-icon" />
                   </motion.div>
-                  <span className="text-white font-medium">{data.email}</span>
+                  <span className="min-w-0 break-all text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
+                    {data.email}
+                  </span>
                 </a>
-                <CopyButton text={data.email} label="email" />
+                <CopyButton className="ml-1 self-start sm:ml-2 sm:self-auto" text={data.email} label="email" />
               </motion.div>
             )}
             {data.phone && (
               <motion.div 
-                className="contact-item inline-flex items-center gap-3 px-4 py-3 rounded-lg group"
+                className="contact-item group inline-flex w-full items-start gap-3 rounded-xl px-4 py-3 sm:w-auto sm:items-center sm:rounded-lg"
                 whileHover={{
                   scale: 1.05,
                   rotateX: 5,
@@ -548,7 +569,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <a className="inline-flex items-center gap-3 hover:text-white transition-all duration-300" href={`tel:${data.phone}`}>
+                <a className="inline-flex min-w-0 flex-1 items-start gap-3 text-white/90 transition-all duration-300 hover:text-white sm:items-center" href={`tel:${data.phone}`}>
                   <motion.div
                     animate={{
                       rotate: [0, 15, -15, 0],
@@ -565,9 +586,11 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                   >
                     <Phone className="size-5 text-white/70 glow-icon" />
                   </motion.div>
-                  <span className="text-white font-medium">{data.phone}</span>
+                  <span className="min-w-0 break-all text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
+                    {data.phone}
+                  </span>
                 </a>
-                <CopyButton text={data.phone} label="phone" />
+                <CopyButton className="ml-1 self-start sm:ml-2 sm:self-auto" text={data.phone} label="phone" />
               </motion.div>
             )}
           </motion.div>

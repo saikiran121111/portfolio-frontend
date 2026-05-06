@@ -270,7 +270,7 @@ export default function ProfileView() {
         initial={{ scaleX: 0 }}
       />
 
-      <div ref={containerRef} className="container mx-auto max-w-6xl px-4 py-10">
+      <div ref={containerRef} className="container mx-auto max-w-6xl px-0 py-0 sm:px-4 sm:py-10">
         {/* Header */}
         <motion.section
           id="header"
@@ -289,10 +289,10 @@ export default function ProfileView() {
                 src={mapSrc}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="h-64 w-full md:h-full"
+                className="h-52 w-full sm:h-60 md:h-full"
               />
             ) : (
-              <div className="flex h-64 items-center justify-center text-white/60">No location provided</div>
+              <div className="flex h-52 items-center justify-center text-white/60 sm:h-60 md:h-64">No location provided</div>
             )}
           </motion.div>
         </motion.section>

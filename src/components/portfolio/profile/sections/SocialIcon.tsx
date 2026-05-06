@@ -18,14 +18,14 @@ export default function SocialIcon({ socials, className }: { socials?: ISocials;
   if (!items.length) return null;
 
   return (
-    <div className={classNames("flex items-center gap-3", className)}>
+    <div className={classNames("flex flex-wrap items-center gap-2 sm:gap-3", className)}>
       {items.map(({ href, label, Icon }, index) => (
         <motion.a
           key={href}
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-1 text-white/80 hover:text-white transition-colors"
+          className="group inline-flex items-center gap-1.5 rounded-full border border-white/12 bg-white/6 px-3 py-2 text-white/80 transition-colors hover:text-white sm:border-0 sm:bg-transparent sm:px-0 sm:py-0"
           title={label}
           initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
@@ -33,8 +33,11 @@ export default function SocialIcon({ socials, className }: { socials?: ISocials;
           whileHover={{ scale: 1.1, rotate: 2 }}
           whileTap={{ scale: 0.95 }}
         >
-          <Icon className="size-4" />
-          <ArrowUpRight className="size-3 opacity-0 -translate-y-0.5 group-hover:opacity-100 group-hover:translate-y-0 transition-all" />
+          <Icon className="size-4 shrink-0" />
+          <span className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-white/70 sm:hidden">
+            {label}
+          </span>
+          <ArrowUpRight className="hidden size-3 opacity-0 -translate-y-0.5 transition-all group-hover:opacity-100 group-hover:translate-y-0 sm:block" />
         </motion.a>
       ))}
     </div>

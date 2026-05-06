@@ -123,6 +123,12 @@ export function ToolsLink({
 
   // Mirror Logo's clamped negative-x behavior when left-aligned
   const clampLeft = h === "left";
+  const safeAreaPadding: CSSProperties = {
+    paddingTop: v === "top" ? "var(--safe-top)" : undefined,
+    paddingRight: h === "right" ? "var(--safe-right)" : undefined,
+    paddingBottom: v === "bottom" ? "var(--safe-bottom)" : undefined,
+    paddingLeft: h === "left" ? "var(--safe-left)" : undefined,
+  };
   const translateXClasses = clampLeft
     ? "max-[346px]:!translate-x-[calc(var(--min-left-xs)+max(0px,var(--profile-x-xs)))] translate-x-[calc(var(--min-left)+max(0px,var(--profile-x)))] md:translate-x-[calc(var(--min-left-md)+max(0px,var(--profile-x-md)))] lg:translate-x-[calc(var(--min-left-lg)+max(0px,var(--profile-x-lg)))] xl:translate-x-[calc(var(--min-left-xl)+max(0px,var(--profile-x-xl)))]"
     : "max-[346px]:!translate-x-[var(--profile-x-xs)] translate-x-[var(--profile-x)] md:translate-x-[var(--profile-x-md)] lg:translate-x-[var(--profile-x-lg)] xl:translate-x-[var(--profile-x-xl)]";
@@ -137,7 +143,10 @@ export function ToolsLink({
   };
 
   return (
-    <div className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}>
+    <div
+      className={`${introGate ? "intro-gate" : ""} flex h-full w-full ${alignY} ${alignX}`.trim()}
+      style={safeAreaPadding}
+    >
       <div
         className={`profile-transform ${translateXClasses} max-[346px]:!translate-y-[var(--profile-y-xs)] translate-y-[var(--profile-y)] md:translate-y-[var(--profile-y-md)] lg:translate-y-[var(--profile-y-lg)] xl:translate-y-[var(--profile-y-xl)]`}
         style={styleVars}
