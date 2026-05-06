@@ -38,6 +38,7 @@ export default function PortfolioPage() {
             tabletMinLeftPx={30}
             xsMinLeftPx={10}
             introGate={false}
+            mobileShell={false}
           />
         </div>
 

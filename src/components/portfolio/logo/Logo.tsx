@@ -38,6 +38,8 @@ interface LogoProps {
   introGate?: boolean;
   /** Enable entrance animation. Default true. */
   animate?: boolean;
+  /** Enable the mobile glass shell around the logo. Default true (homepage). */
+  mobileShell?: boolean;
 }
 
 // Typed CSS custom properties used by this component
@@ -91,6 +93,7 @@ export function Logo({
   xlMinLeftPx,
   introGate = true,
   animate = true,
+  mobileShell = true,
 }: LogoProps) {
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const pathname = usePathname();
@@ -166,7 +169,7 @@ export function Logo({
     >
       <Link
         href="/"
-        className="pointer-events-auto logo-link"
+        className={`pointer-events-auto logo-link ${mobileShell ? "" : "logo-link--plain"}`.trim()}
         onClick={handleClick}
       >
         <div
