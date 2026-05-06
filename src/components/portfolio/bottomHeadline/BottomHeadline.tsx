@@ -68,6 +68,14 @@ export default function BottomHeadline({
 }: BottomHeadlineProps) {
   const [apiItems, setApiItems] = useState<string[] | null>(null);
   const sourceItems = useMemo(() => items ?? apiItems ?? [], [items, apiItems]);
+  const longestItem = useMemo(
+    () =>
+      sourceItems.reduce(
+        (longest, item) => (item.length > longest.length ? item : longest),
+        "",
+      ),
+    [sourceItems],
+  );
 
   // Fetch from API if items not provided
   useEffect(() => {
@@ -91,8 +99,7 @@ export default function BottomHeadline({
 
   // Typing state
   const [index, setIndex] = useState(0);
-  const [subIndex, setSubIndex] = useState(0);
-  const [phase, setPhase] = useState<"typing" | "pausing" | "deleting">("typing");
+  const [phase, setPhase] = useState<"entering" | "holding" | "exiting">("entering");
   const timeoutRef = useRef<number | null>(null);
 
   // Clear any pending timeout on unmount
@@ -101,37 +108,42 @@ export default function BottomHeadline({
   }, []);
 
   const currentText = sourceItems.length ? sourceItems[index % sourceItems.length] : "";
-  const displayed = useMemo(() => currentText.slice(0, subIndex), [currentText, subIndex]);
+  const enterDuration = Math.max(420, Math.min(960, currentText.length * typingSpeed * 0.8));
+  const exitDuration = Math.max(220, Math.min(620, currentText.length * deleteSpeed * 0.7));
 
-  // Drive the typing/deleting lifecycle
+  // Drive the rotating text lifecycle with fixed layout footprint.
   useEffect(() => {
     if (!sourceItems.length) return;
 
-    // Always clear before scheduling a new one
     if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
 
-    if (phase === "typing") {
-      if (subIndex < currentText.length) {
-        timeoutRef.current = window.setTimeout(() => setSubIndex(s => s + 1), typingSpeed);
-      } else {
-        // finished typing: enter pause, schedule deletion in separate phase
-        setPhase("pausing");
-      }
-    } else if (phase === "pausing") {
-      timeoutRef.current = window.setTimeout(() => setPhase("deleting"), displayDuration);
-    } else if (phase === "deleting") {
-      if (subIndex > 0) {
-        timeoutRef.current = window.setTimeout(() => setSubIndex(s => s - 1), deleteSpeed);
-      } else {
+    if (phase === "entering") {
+      timeoutRef.current = window.setTimeout(() => setPhase("holding"), enterDuration);
+    } else if (phase === "holding") {
+      timeoutRef.current = window.setTimeout(() => setPhase("exiting"), displayDuration);
+    } else if (phase === "exiting") {
+      timeoutRef.current = window.setTimeout(() => {
         const next = index + 1;
-        if (!loop && next >= sourceItems.length) return; // stop
+        if (!loop && next >= sourceItems.length) {
+          setPhase("holding");
+          return;
+        }
         setIndex(next % sourceItems.length);
-        setPhase("typing");
-      }
+        setPhase("entering");
+      }, exitDuration);
     }
 
     return () => { if (timeoutRef.current) window.clearTimeout(timeoutRef.current); };
-  }, [sourceItems, currentText, subIndex, phase, typingSpeed, deleteSpeed, displayDuration, index, loop]);
+  }, [
+    sourceItems,
+    currentText.length,
+    phase,
+    displayDuration,
+    enterDuration,
+    exitDuration,
+    index,
+    loop,
+  ]);
 
   // Build typed CSS variables for offsets per breakpoint
   const styleVars: CSSProperties & BHVars = {
@@ -153,10 +165,29 @@ export default function BottomHeadline({
         className="bh-transform max-[346px]:!translate-x-[var(--bh-x-xs)] max-[346px]:!translate-y-[var(--bh-y-xs)] translate-x-[var(--bh-x)] translate-y-[var(--bh-y)] md:translate-x-[var(--bh-x-md)] md:translate-y-[var(--bh-y-md)] lg:translate-x-[var(--bh-x-lg)] lg:translate-y-[var(--bh-y-lg)] xl:translate-x-[var(--bh-x-xl)] xl:translate-y-[var(--bh-y-xl)]"
         style={styleVars}
       >
-        <p className={`text-center text-sm md:text-base lg:text-lg xl:text-xl ${className ?? ""}`.trim()}>
-          {displayed}
-          {showCursor && <span className="ml-0.5 inline-block w-[1px] bg-current align-middle animate-pulse" style={{ height: "1em" }} />}
-        </p>
+        <div className={`bottom-headline-shell relative inline-grid max-w-full text-center text-sm md:text-base lg:text-lg xl:text-xl ${className ?? ""}`.trim()}>
+          <span aria-hidden className="invisible block whitespace-pre-line">
+            {longestItem || "\u00A0"}
+          </span>
+          <span
+            key={`${index}-${phase}`}
+            className={`bottom-headline-live pointer-events-none absolute inset-0 block whitespace-pre-line ${
+              phase === "entering"
+                ? "bottom-headline-enter"
+                : phase === "exiting"
+                  ? "bottom-headline-exit"
+                  : "bottom-headline-hold"
+            }`}
+          >
+            {currentText}
+            {showCursor && (
+              <span
+                className="bottom-headline-cursor ml-1 inline-block align-middle"
+                style={{ height: "1em" }}
+              />
+            )}
+          </span>
+        </div>
       </div>
     </div>
   );

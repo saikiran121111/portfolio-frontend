@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, act } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
@@ -16,13 +16,10 @@ describe("BottomHeadline", () => {
     });
 
     it("renders items provided via props", () => {
-        render(<BottomHeadline items={["Hello", "World"]} typingSpeed={10} />);
+        const { container } = render(<BottomHeadline items={["Hello", "World"]} typingSpeed={10} />);
+        const liveText = container.querySelector(".bottom-headline-live");
 
-        act(() => {
-            jest.advanceTimersByTime(100); // Allow typing to start
-        });
-
-        expect(screen.getByText(/H/)).toBeInTheDocument();
+        expect(liveText).toHaveTextContent("Hello");
     });
 
     it("fetches items from API if not provided", async () => {
@@ -30,35 +27,30 @@ describe("BottomHeadline", () => {
             bottomHeadline: ["API Item"],
         });
 
-        render(<BottomHeadline typingSpeed={10} />);
+        const { container } = render(<BottomHeadline typingSpeed={10} />);
 
         await act(async () => {
             // Wait for useEffect
             await Promise.resolve();
         });
 
-        act(() => {
-            jest.advanceTimersByTime(100);
-        });
+        const liveText = container.querySelector(".bottom-headline-live");
 
-        expect(screen.getByText(/A/)).toBeInTheDocument();
+        expect(liveText).toHaveTextContent("API Item");
     });
 
     it("cycles through items", async () => {
-        render(<BottomHeadline items={["A", "B"]} typingSpeed={10} deleteSpeed={10} displayDuration={100} />);
+        const { container } = render(
+            <BottomHeadline items={["A", "B"]} typingSpeed={10} deleteSpeed={10} displayDuration={100} />,
+        );
+        const liveText = () => container.querySelector(".bottom-headline-live");
 
-        // Type "A"
-        act(() => jest.advanceTimersByTime(50));
-        expect(screen.getByText("A")).toBeInTheDocument();
+        expect(liveText()).toHaveTextContent("A");
 
-        // Wait display duration
-        act(() => jest.advanceTimersByTime(200));
+        act(() => jest.advanceTimersByTime(450));
+        act(() => jest.advanceTimersByTime(150));
+        act(() => jest.advanceTimersByTime(250));
 
-        // Delete "A"
-        act(() => jest.advanceTimersByTime(50));
-
-        // Type "B"
-        act(() => jest.advanceTimersByTime(200));
-        expect(screen.getByText("B")).toBeInTheDocument();
+        expect(liveText()).toHaveTextContent("B");
     });
 });
