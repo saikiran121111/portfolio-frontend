@@ -513,7 +513,7 @@ export default function MainToolsShowcase() {
           className="text-center mb-12"
         >
           <motion.h1 
-            className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent mb-6"
+            className="contrast-title mb-6 text-6xl font-bold tracking-tight md:text-8xl"
             animate={{ 
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
             }}
@@ -526,7 +526,7 @@ export default function MainToolsShowcase() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed mb-8"
+            className="mx-auto mb-8 max-w-3xl text-xl leading-relaxed text-slate-200"
           >
             Explore the cutting-edge technologies that power modern applications. Each tool is carefully selected for its unique capabilities and impact on the development ecosystem.
           </motion.p>
@@ -536,7 +536,7 @@ export default function MainToolsShowcase() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex justify-center gap-8 text-sm text-slate-300"
+            className="flex justify-center gap-8 text-sm text-slate-200"
           >
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
@@ -558,7 +558,7 @@ export default function MainToolsShowcase() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="mb-12 p-6 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl"
+          className="contrast-surface mb-12 rounded-2xl p-6 shadow-2xl"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
@@ -569,7 +569,7 @@ export default function MainToolsShowcase() {
                 placeholder="Search tools..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all"
+                className="contrast-field w-full rounded-xl py-3 pl-10 pr-4 text-white placeholder-slate-400 transition-all focus:border-blue-400/50 focus:bg-white/10 focus:outline-none"
               />
             </div>
 
@@ -579,7 +579,7 @@ export default function MainToolsShowcase() {
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all appearance-none cursor-pointer"
+                className="contrast-field w-full cursor-pointer appearance-none rounded-xl py-3 pl-10 pr-4 text-white transition-all focus:border-blue-400/50 focus:bg-white/10 focus:outline-none"
               >
                 {categories.map(category => (
                   <option key={category} value={category} className="bg-slate-900">
@@ -595,7 +595,7 @@ export default function MainToolsShowcase() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as "popularity" | "difficulty" | "year")}
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-blue-400/50 focus:bg-white/10 transition-all appearance-none cursor-pointer"
+                className="contrast-field w-full cursor-pointer appearance-none rounded-xl py-3 pl-10 pr-4 text-white transition-all focus:border-blue-400/50 focus:bg-white/10 focus:outline-none"
               >
                 <option value="popularity" className="bg-slate-900">Popularity</option>
                 <option value="difficulty" className="bg-slate-900">Difficulty</option>
@@ -610,7 +610,7 @@ export default function MainToolsShowcase() {
                 className={`flex-1 p-3 rounded-xl border transition-all ${
                   viewMode === "grid" 
                     ? "bg-blue-500/20 border-blue-400/50 text-blue-300" 
-                    : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                    : "contrast-surface-soft border-white/10 text-slate-200 hover:bg-white/10"
                 }`}
               >
                 <Grid3X3 className="w-4 h-4 mx-auto" />
@@ -620,7 +620,7 @@ export default function MainToolsShowcase() {
                 className={`flex-1 p-3 rounded-xl border transition-all ${
                   animationEnabled 
                     ? "bg-green-500/20 border-green-400/50 text-green-300" 
-                    : "bg-white/5 border-white/10 text-slate-400 hover:bg-white/10"
+                    : "contrast-surface-soft border-white/10 text-slate-200 hover:bg-white/10"
                 }`}
               >
                 {animationEnabled ? <Eye className="w-4 h-4 mx-auto" /> : <EyeOff className="w-4 h-4 mx-auto" />}
@@ -661,8 +661,8 @@ export default function MainToolsShowcase() {
                 <motion.div 
                   className={`
                     relative ${viewMode === "grid" ? "h-80" : "h-40 flex items-center gap-6"} 
-                    rounded-2xl p-6 backdrop-blur-xl border border-white/10
-                    bg-gradient-to-br ${tool.color.secondary} hover:border-white/30
+                    contrast-card rounded-2xl p-6 border border-white/10
+                    hover:border-white/30
                     transition-all duration-500 
                     shadow-2xl hover:shadow-[0_25px_50px_rgba(0,0,0,0.4)]
                     before:absolute before:inset-0 before:rounded-2xl 
@@ -739,7 +739,7 @@ export default function MainToolsShowcase() {
                             </motion.div>
                             <div>
                               <h3 className="text-xl font-bold text-white">{tool.title}</h3>
-                              <p className="text-sm text-slate-400">{tool.category}</p>
+                              <p className="text-sm text-slate-200">{tool.category}</p>
                             </div>
                           </div>
                           <div className="text-right">
@@ -750,9 +750,9 @@ export default function MainToolsShowcase() {
                               >
                                 <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
                               </motion.div>
-                              <span className="text-sm text-slate-300">{tool.popularity}%</span>
+                              <span className="text-sm text-slate-200">{tool.popularity}%</span>
                             </div>
-                            <span className="text-xs text-slate-500">Since {tool.year}</span>
+                            <span className="text-xs text-slate-300">Since {tool.year}</span>
                           </div>
                         </div>
 
@@ -822,7 +822,7 @@ export default function MainToolsShowcase() {
                         </div>
 
                         {/* Description */}
-                        <p className="text-sm text-slate-300 line-clamp-3 mb-4">
+                        <p className="mb-4 line-clamp-3 text-sm text-slate-200">
                           {tool.description}
                         </p>
 
@@ -876,12 +876,12 @@ export default function MainToolsShowcase() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <h3 className="text-xl font-bold text-white">{tool.title}</h3>
-                            <span className="text-sm text-slate-400">{tool.category}</span>
+                            <span className="text-sm text-slate-200">{tool.category}</span>
                             <div className={`px-2 py-1 rounded text-xs font-medium bg-gradient-to-r ${difficultyColors[tool.difficulty]} text-white`}>
                               {tool.difficulty}
                             </div>
                           </div>
-                          <p className="text-sm text-slate-300 line-clamp-2">
+                          <p className="text-sm text-slate-200 line-clamp-2">
                             {tool.description}
                           </p>
                         </div>
@@ -889,7 +889,7 @@ export default function MainToolsShowcase() {
                         <div className="flex items-center gap-4 shrink-0">
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-sm text-slate-300">{tool.popularity}%</span>
+                            <span className="text-sm text-slate-200">{tool.popularity}%</span>
                           </div>
                           <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-white transition-colors duration-300" />
                         </div>
@@ -996,7 +996,7 @@ export default function MainToolsShowcase() {
                         {selectedTool.title}
                       </motion.h2>
                       <motion.p 
-                        className="text-xl text-slate-400"
+                        className="text-xl text-slate-200"
                         initial={{ x: -20, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: 0.4 }}
@@ -1040,7 +1040,7 @@ export default function MainToolsShowcase() {
                   <div className="space-y-6">
                     {/* Overview with Animation */}
                     <motion.div 
-                      className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm"
+                      className="contrast-surface-soft rounded-2xl p-6"
                       initial={{ x: -50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.6 }}
@@ -1055,7 +1055,7 @@ export default function MainToolsShowcase() {
                         </motion.div>
                         Overview
                       </h3>
-                      <p className="text-slate-300 leading-relaxed">{selectedTool.description}</p>
+                      <p className="leading-relaxed text-slate-200">{selectedTool.description}</p>
                     </motion.div>
 
                     {/* Why Use with Enhanced Animation */}
@@ -1080,7 +1080,7 @@ export default function MainToolsShowcase() {
 
                     {/* Features with Staggered Animation */}
                     <motion.div 
-                      className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm"
+                      className="contrast-surface-soft rounded-2xl p-6"
                       initial={{ x: -50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.8 }}
@@ -1093,7 +1093,7 @@ export default function MainToolsShowcase() {
                         {selectedTool.features.map((feature, index) => (
                           <motion.li 
                             key={index} 
-                            className="flex items-center gap-3 text-slate-300"
+                            className="flex items-center gap-3 text-slate-200"
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             transition={{ delay: 0.9 + index * 0.1 }}
@@ -1172,7 +1172,7 @@ export default function MainToolsShowcase() {
 
                     {/* Use Cases */}
                     <motion.div 
-                      className="bg-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm"
+                      className="contrast-surface-soft rounded-2xl p-6"
                       initial={{ x: 50, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.8 }}
@@ -1185,7 +1185,7 @@ export default function MainToolsShowcase() {
                         {selectedTool.useCases.map((useCase, index) => (
                           <motion.li 
                             key={index} 
-                            className="flex items-center gap-3 text-slate-300"
+                            className="flex items-center gap-3 text-slate-200"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.9 + index * 0.1 }}

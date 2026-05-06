@@ -1,106 +1,124 @@
 "use client";
 import { motion } from "framer-motion";
-import { BriefcaseBusiness, Calendar } from "lucide-react";
+import { BriefcaseBusiness, Calendar, MapPin } from "lucide-react";
 import type { IExperience } from "@/interfaces/user.interface";
-import { containerVariants, fadeUpVariants, scaleVariants, formatDate } from "./utils";
+import {
+  containerVariants,
+  fadeUpVariants,
+  scaleVariants,
+  formatDate,
+} from "./utils";
 
-export default function ExperienceSection({ experiences }: { experiences: IExperience[] }) {
+export default function ExperienceSection({
+  experiences,
+}: {
+  experiences: IExperience[];
+}) {
   if (!experiences?.length) return null;
+
   return (
-    <motion.section 
-      id="experience" 
-      variants={containerVariants} 
-      initial="hidden" 
-      whileInView="show" 
-      viewport={{ once: true, margin: "-120px" }} 
-      className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+    <motion.section
+      id="experience"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-120px" }}
+      className="contrast-surface mt-8 rounded-2xl p-6"
     >
-      <motion.h2 variants={fadeUpVariants} className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
+      <motion.h2
+        variants={fadeUpVariants}
+        className="mb-6 flex items-center gap-2 text-xl font-bold text-white"
+      >
         <BriefcaseBusiness className="size-6 text-slate-200" /> Experience
       </motion.h2>
-      
+
       <div className="space-y-6">
-        {experiences.map((e, i) => (
-          <motion.div 
-            key={i} 
-            variants={scaleVariants} 
-            transition={{ delay: i * 0.1 }} 
-            whileHover={{ scale: 1.01, y: -2 }} 
-            className="group relative rounded-xl border border-white/10 bg-gradient-to-r from-white/[0.02] to-white/[0.05] p-6 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
+        {experiences.map((experience, index) => (
+          <motion.div
+            key={index}
+            variants={scaleVariants}
+            transition={{ delay: index * 0.1 }}
+            whileHover={{ scale: 1.01, y: -2 }}
+            className="contrast-card group relative rounded-xl p-6 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
           >
-            {/* Timeline dot */}
-            <div className="absolute -left-3 top-6 h-6 w-6 rounded-full border-2 border-white/20 bg-gray-900 group-hover:bg-white/20 transition-colors duration-300">
-              <div className="absolute inset-1 rounded-full bg-white/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -left-3 top-6 h-6 w-6 rounded-full border-2 border-slate-300/30 bg-slate-950/95 transition-colors duration-300 group-hover:bg-white/20">
+              <div className="absolute inset-1 rounded-full bg-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
             </div>
-            
-            {/* Timeline line */}
-            {i < experiences.length - 1 && (
-              <div className="absolute -left-1 top-12 w-0.5 h-16 bg-white/20"></div>
+
+            {index < experiences.length - 1 && (
+              <div className="absolute -left-1 top-12 h-16 w-0.5 bg-white/20"></div>
             )}
-            
+
             <div className="ml-6">
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-white transition-colors duration-300">
-                    {e.title}
+                  <h3 className="text-lg font-semibold text-white transition-colors duration-300 group-hover:text-white">
+                    {experience.title}
                   </h3>
-                  <p className="text-slate-200 font-medium">{e.company}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-white/70">
-                    <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/10">
-                      <Calendar className="size-3 text-slate-200" /> 
-                      {formatDate(e.startDate)} – {formatDate(e.endDate)}
+                  <p className="font-medium text-slate-100">{experience.company}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-white/80">
+                    <span className="contrast-pill inline-flex items-center gap-1.5 rounded-md px-2 py-1">
+                      <Calendar className="size-3 text-slate-200" />
+                      {formatDate(experience.startDate)} - {formatDate(experience.endDate)}
                     </span>
-                    {e.location && (
-                      <span className="px-2 py-1 rounded-md bg-white/5 border border-white/10">
-                        📍 {e.location}
+                    {experience.location && (
+                      <span className="contrast-pill inline-flex items-center gap-1.5 rounded-md px-2 py-1">
+                        <MapPin className="size-3 text-slate-200" />
+                        {experience.location}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
-              
-              {e.description && (
-                <div className="mt-4 p-4 rounded-lg bg-white/[0.02] border border-white/5">
-                  <p className="text-white/90 leading-relaxed">{e.description}</p>
+
+              {experience.description && (
+                <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.04] p-4">
+                  <p className="leading-relaxed text-white/90">
+                    {experience.description}
+                  </p>
                 </div>
               )}
-              
-              {e.bullets?.length ? (
+
+              {experience.bullets?.length ? (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-slate-200 mb-2">Key Achievements:</h4>
+                  <h4 className="mb-2 text-sm font-medium text-slate-200">
+                    Key Achievements:
+                  </h4>
                   <ul className="space-y-2">
-                    {e.bullets.map((b, j) => (
-                      <motion.li 
-                        key={j} 
+                    {experience.bullets.map((bullet, bulletIndex) => (
+                      <motion.li
+                        key={bulletIndex}
                         initial={{ opacity: 0, x: -10 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.1 + j * 0.05 }}
+                        transition={{ delay: index * 0.1 + bulletIndex * 0.05 }}
                         viewport={{ once: true }}
-                        className="flex items-start gap-3 text-white/80"
+                        className="flex items-start gap-3 text-white/85"
                       >
-                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-white/70 flex-shrink-0"></span>
-                        <span className="leading-relaxed">{b}</span>
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-white/70"></span>
+                        <span className="leading-relaxed">{bullet}</span>
                       </motion.li>
                     ))}
                   </ul>
                 </div>
               ) : null}
-              
-              {e.techStack?.length ? (
+
+              {experience.techStack?.length ? (
                 <div className="mt-4">
-                  <h4 className="text-sm font-medium text-slate-200 mb-3">Technologies Used:</h4>
+                  <h4 className="mb-3 text-sm font-medium text-slate-200">
+                    Technologies Used:
+                  </h4>
                   <div className="flex flex-wrap gap-2">
-                    {e.techStack.map((t, j) => (
-                      <motion.span 
-                        key={j} 
+                    {experience.techStack.map((tech, techIndex) => (
+                      <motion.span
+                        key={techIndex}
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 + j * 0.02 }}
+                        transition={{ delay: index * 0.1 + techIndex * 0.02 }}
                         viewport={{ once: true }}
                         whileHover={{ scale: 1.05 }}
-                        className="px-3 py-1.5 text-xs font-medium bg-white/10 text-slate-200 border border-white/20 rounded-full hover:border-white/30 hover:bg-white/20 transition-all duration-200"
+                        className="contrast-pill rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200 hover:border-white/30 hover:bg-white/10"
                       >
-                        {t}
+                        {tech}
                       </motion.span>
                     ))}
                   </div>

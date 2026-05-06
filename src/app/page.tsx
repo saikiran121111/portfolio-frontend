@@ -101,7 +101,7 @@ export default async function Home() {
                   xlOffsetX={-16}
                   xlOffsetY={0}
                   showCursor={false}
-                  className="hero-rotating-copy !text-left text-[0.92rem] leading-6 text-white/68 sm:text-base sm:leading-7 md:text-[1.02rem] lg:text-lg lg:leading-8"
+                  className="hero-rotating-copy !text-left text-[0.92rem] leading-6 text-white/80 sm:text-base sm:leading-7 md:text-[1.02rem] lg:text-lg lg:leading-8"
                 />
               </div>
             ) : null}

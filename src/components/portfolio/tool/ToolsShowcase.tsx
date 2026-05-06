@@ -262,7 +262,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
             <h2 id="tools-title" className="text-3xl font-bold text-white tracking-tight">
               Tools & Stack Behind This Portfolio
             </h2>
-            <p className="text-white/70 mt-1 flex items-center gap-2">
+            <p className="mt-1 flex items-center gap-2 text-white/80">
               <Sparkles className="size-4" />
               Crafted with precision and passion
             </p>
@@ -280,18 +280,18 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                 placeholder="Search tools..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-2 pl-10 pr-4 text-white placeholder:text-white/40 focus:border-cyan-400/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/20 backdrop-blur-sm"
+                className="contrast-field w-full rounded-lg py-2 pl-10 pr-4 text-white focus:border-cyan-400/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
               />
             </div>
             
             {/* View Toggle */}
-            <div className="flex rounded-lg border border-white/10 bg-white/5 p-1 backdrop-blur-sm">
+            <div className="contrast-surface-soft flex rounded-lg p-1">
               <button
                 onClick={() => setViewMode("grid")}
                 className={`rounded-md p-2 transition-all ${
                   viewMode === "grid" 
                     ? "bg-cyan-500/20 text-cyan-300" 
-                    : "text-white/60 hover:text-white/80"
+                    : "text-white/70 hover:text-white/90"
                 }`}
               >
                 <Grid3X3 className="size-4" />
@@ -301,7 +301,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                 className={`rounded-md p-2 transition-all ${
                   viewMode === "list" 
                     ? "bg-cyan-500/20 text-cyan-300" 
-                    : "text-white/60 hover:text-white/80"
+                    : "text-white/70 hover:text-white/90"
                 }`}
               >
                 <LayoutGrid className="size-4" />
@@ -311,8 +311,8 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 transition-all backdrop-blur-sm ${
-                showFilters ? "bg-cyan-500/20 text-cyan-300" : "text-white/70 hover:text-white/90"
+              className={`contrast-surface-soft flex items-center gap-2 rounded-lg px-3 py-2 transition-all ${
+                showFilters ? "bg-cyan-500/20 text-cyan-300" : "text-white/80 hover:text-white"
               }`}
             >
               <Filter className="size-4" />
@@ -333,11 +333,11 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
               >
                 {/* Category Filter */}
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-white/60">Category:</span>
+                  <span className="text-sm text-white/70">Category:</span>
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-white focus:border-cyan-400/50 focus:outline-none backdrop-blur-sm"
+                    className="contrast-field rounded-lg px-3 py-1 text-white focus:border-cyan-400/50 focus:outline-none"
                   >
                     <option value="all">All</option>
                     {categories.map(cat => (
@@ -350,11 +350,11 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
 
                 {/* Sort Filter */}
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-white/60">Sort by:</span>
+                  <span className="text-sm text-white/70">Sort by:</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as "order" | "title" | "category")}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-white focus:border-cyan-400/50 focus:outline-none backdrop-blur-sm"
+                    className="contrast-field rounded-lg px-3 py-1 text-white focus:border-cyan-400/50 focus:outline-none"
                   >
                     <option value="order" className="bg-black/90 text-white">Order</option>
                     <option value="title" className="bg-black/90 text-white">Title</option>
@@ -363,7 +363,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                 </div>
 
                 {/* Results Count */}
-                <div className="flex items-center gap-2 text-sm text-white/60">
+                <div className="flex items-center gap-2 text-sm text-white/70">
                   <ArrowUpDown className="size-4" />
                   {filtered.length} of {tools.length} tools
                 </div>
@@ -412,7 +412,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                   y: -8,
                   transition: { type: "spring", stiffness: 300, damping: 20 }
                 }}
-                className={`group relative h-full rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl overflow-hidden ${
+                className={`contrast-card group relative h-full overflow-hidden rounded-2xl p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] ${
                   viewMode === "list" ? "flex gap-6 items-center" : ""
                 }`}
               >
@@ -434,7 +434,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                     padding: "1px",
                   }}
                 >
-                  <div className="h-full w-full rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02]" />
+                  <div className="contrast-card h-full w-full rounded-2xl" />
                 </motion.div>
 
                 {/* Category Badge */}
@@ -480,7 +480,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                         whileHover={{ scale: 1.2 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
-                        <Wrench className="size-8 text-white/70" aria-hidden />
+                        <Wrench className="size-8 text-white/80" aria-hidden />
                       </motion.div>
                     )}
                     
@@ -503,7 +503,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                       {tool.title}
                     </motion.h3>
                     {tool.summary && (
-                      <p className="mt-1 line-clamp-2 text-sm text-white/75 leading-relaxed">
+                      <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-white/80">
                         {tool.summary}
                       </p>
                     )}
@@ -526,7 +526,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                     onClick={() => setOpenKey(isOpen ? null : tool.key)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="group/btn relative overflow-hidden rounded-lg border border-white/20 bg-gradient-to-r from-white/10 to-white/5 px-4 py-2 text-sm font-medium text-white/95 shadow-lg transition-all hover:border-cyan-400/40 hover:from-cyan-500/20 hover:to-violet-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50 backdrop-blur-sm"
+                    className="contrast-pill group/btn relative overflow-hidden rounded-lg px-4 py-2 text-sm font-medium text-white/95 shadow-lg transition-all hover:border-cyan-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50"
                   >
                     <span className="relative z-10">
                       {isOpen ? "Hide details" : "How I used it"}
@@ -547,7 +547,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
                       animate={{ opacity: 1, height: "auto", y: 0 }}
                       exit={{ opacity: 0, height: 0, y: -20 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-black/20 p-4 backdrop-blur-sm"
+                      className="contrast-surface-soft mt-6 overflow-hidden rounded-lg p-4"
                     >
                       <Paragraphs text={tool.content} />
                     </motion.div>
@@ -566,7 +566,7 @@ export default function ToolsShowcase({ tools = [] }: ToolsShowcaseProps) {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col items-center justify-center py-16 text-center"
         >
-          <div className="rounded-full bg-white/5 p-4 mb-4">
+          <div className="contrast-surface-soft mb-4 rounded-full p-4">
             <Search className="size-8 text-white/40" />
           </div>
           <h3 className="text-xl font-semibold text-white/80 mb-2">No tools found</h3>

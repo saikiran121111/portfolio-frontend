@@ -42,7 +42,7 @@ export default function EducationCertsSection({
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, margin: "-120px" }}
-      className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+      className="contrast-surface mt-8 rounded-2xl p-6"
     >
       <motion.h2
         variants={fadeUpVariants}
@@ -61,42 +61,42 @@ export default function EducationCertsSection({
             </h3>
 
             <div className={educationGridClass}>
-              {education.map((ed, i) => (
+              {education.map((item, index) => (
                 <motion.div
-                  key={`${ed.institution}-${ed.degree}-${i}`}
+                  key={`${item.institution}-${item.degree}-${index}`}
                   variants={scaleVariants}
-                  transition={{ delay: i * 0.1 }}
+                  transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -2 }}
-                  className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-5 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
+                  className="contrast-card group relative rounded-xl p-5 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
                 >
-                  <h4 className="mb-2 text-lg font-semibold text-white transition-colors group-hover:text-white">
-                    {ed.degree}
+                  <h4 className="mb-2 text-lg font-semibold text-white">
+                    {item.degree}
                   </h4>
 
                   <div className="mb-2 flex items-center gap-2">
                     <School className="size-4 text-slate-200" />
-                    <span className="font-medium text-white/80">
-                      {ed.institution}
+                    <span className="font-medium text-white/85">
+                      {item.institution}
                     </span>
                   </div>
 
                   <div className="mb-3 flex items-center gap-2">
                     <Calendar className="size-4 text-slate-200" />
-                    <span className="text-sm text-white/70">
-                      {formatDate(ed.startDate)} - {formatDate(ed.endDate)}
+                    <span className="text-sm text-white/80">
+                      {formatDate(item.startDate)} - {formatDate(item.endDate)}
                     </span>
                   </div>
 
-                  {ed.field ? (
-                    <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium text-slate-200">
+                  {item.field ? (
+                    <div className="contrast-pill mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium">
                       <BookOpen className="size-3 text-slate-200" />
-                      {ed.field}
+                      {item.field}
                     </div>
                   ) : null}
 
-                  {ed.description ? (
-                    <p className="text-sm leading-relaxed text-white/80">
-                      {ed.description}
+                  {item.description ? (
+                    <p className="text-sm leading-relaxed text-white/85">
+                      {item.description}
                     </p>
                   ) : null}
                 </motion.div>
@@ -113,44 +113,44 @@ export default function EducationCertsSection({
             </h3>
 
             <div className={certificationGridClass}>
-              {certifications.map((cert, i) => (
+              {certifications.map((item, index) => (
                 <motion.div
-                  key={`${cert.title}-${cert.issuer}-${i}`}
+                  key={`${item.title}-${item.issuer}-${index}`}
                   variants={scaleVariants}
-                  transition={{ delay: i * 0.1 }}
+                  transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -2 }}
-                  className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-5 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
+                  className="contrast-card group relative rounded-xl p-5 transition-all duration-300 hover:border-white/30 hover:shadow-xl hover:shadow-white/10"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h4 className="mb-2 text-lg font-semibold text-white transition-colors group-hover:text-white">
-                        {cert.title}
+                      <h4 className="mb-2 text-lg font-semibold text-white">
+                        {item.title}
                       </h4>
 
                       <div className="mb-2 flex items-center gap-2">
                         <Award className="size-4 text-slate-200" />
-                        <span className="font-medium text-white/80">
-                          {cert.issuer}
+                        <span className="font-medium text-white/85">
+                          {item.issuer}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Calendar className="size-4 text-slate-200" />
-                        <span className="text-sm text-white/70">
-                          {formatDate(cert.date)}
+                        <span className="text-sm text-white/80">
+                          {formatDate(item.date)}
                         </span>
                       </div>
                     </div>
 
-                    {cert.link ? (
+                    {item.link ? (
                       <motion.a
-                        href={cert.link}
+                        href={item.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         title="View Certificate"
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.95 }}
-                        className="inline-flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-slate-200 transition-all duration-200 hover:border-white/30 hover:text-white"
+                        className="contrast-pill inline-flex size-10 items-center justify-center rounded-full text-slate-200 transition-all duration-200 hover:border-white/30 hover:text-white"
                       >
                         <LinkIcon className="size-4" />
                       </motion.a>

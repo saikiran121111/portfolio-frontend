@@ -37,13 +37,15 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
         .hero-card {
           position: relative;
+          isolation: isolate;
           background: linear-gradient(135deg,
-            rgba(15,23,42,0.95) 0%,
-            rgba(30,41,59,0.92) 25%,
-            rgba(15,23,42,0.95) 50%,
-            rgba(30,41,59,0.92) 75%,
-            rgba(15,23,42,0.95) 100%);
+            rgba(10,15,24,0.97) 0%,
+            rgba(20,28,41,0.94) 25%,
+            rgba(11,16,25,0.97) 50%,
+            rgba(20,28,41,0.94) 75%,
+            rgba(10,15,24,0.97) 100%);
           backdrop-filter: blur(40px) saturate(120%);
+          -webkit-backdrop-filter: blur(40px) saturate(120%);
           border: 2px solid transparent;
           background-clip: padding-box;
           box-shadow:
@@ -109,7 +111,8 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           position: absolute;
           border-radius: 50%;
           filter: blur(2px);
-          mix-blend-mode: screen;
+          mix-blend-mode: normal;
+          opacity: 0.62;
         }
 
         .orb-1 {
@@ -177,18 +180,10 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         }
 
         .holographic-text {
-          background: linear-gradient(45deg,
-            #ffffff 0%,
-            #e2e8f0 30%,
-            #d1d5db 50%,
-            #f8fafc 70%,
-            #e5e7eb 100%);
-          background-size: 300% 300%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          animation: hologram-shift 4s ease-in-out infinite;
-          filter: drop-shadow(0 0 20px rgba(255,255,255,0.18));
+          color: #f8fbff;
+          text-shadow:
+            0 10px 26px rgba(0,0,0,0.46),
+            0 0 20px rgba(255,255,255,0.12);
           position: relative;
         }
 
@@ -197,13 +192,36 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           position: absolute;
           top: 0;
           left: 0;
-          background: linear-gradient(45deg, #f8fafc, #cbd5e1);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
           opacity: 0;
-          animation: glitch-hologram 3s ease-in-out infinite;
           transform: translate(1px, 1px);
+          display: none;
+        }
+
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+          .holographic-text {
+            background: linear-gradient(45deg,
+              #ffffff 0%,
+              #e2e8f0 30%,
+              #d1d5db 50%,
+              #f8fafc 70%,
+              #e5e7eb 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: hologram-shift 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.18));
+            text-shadow: none;
+          }
+
+          .holographic-text::before {
+            background: linear-gradient(45deg, #f8fafc, #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: glitch-hologram 3s ease-in-out infinite;
+            display: block;
+          }
         }
 
         @keyframes hologram-shift {
@@ -221,10 +239,11 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         .contact-item {
           position: relative;
           background: linear-gradient(135deg,
-            rgba(255,255,255,0.05) 0%,
-            rgba(255,255,255,0.1) 50%,
-            rgba(255,255,255,0.05) 100%);
+            rgba(255,255,255,0.08) 0%,
+            rgba(255,255,255,0.12) 50%,
+            rgba(255,255,255,0.08) 100%);
           backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
           border: 1px solid rgba(255,255,255,0.1);
           transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
           overflow: hidden;
@@ -275,7 +294,8 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
           border-radius: 50%;
           pointer-events: none;
           filter: blur(20px);
-          mix-blend-mode: screen;
+          mix-blend-mode: normal;
+          opacity: 0.9;
         }
 
         .glow-icon {
@@ -289,17 +309,25 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
         }
 
         .text-shimmer {
-          background: linear-gradient(90deg,
-            rgba(255,255,255,0.8) 0%,
-            rgba(255,255,255,1) 25%,
-            rgba(226,232,240,1) 50%,
-            rgba(255,255,255,1) 75%,
-            rgba(255,255,255,0.8) 100%);
-          background-size: 300% 100%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          animation: shimmer-wave 3s ease-in-out infinite;
+          color: rgba(244, 248, 252, 0.96);
+          text-shadow: 0 8px 22px rgba(0, 0, 0, 0.28);
+        }
+
+        @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+          .text-shimmer {
+            background: linear-gradient(90deg,
+              rgba(255,255,255,0.8) 0%,
+              rgba(255,255,255,1) 25%,
+              rgba(226,232,240,1) 50%,
+              rgba(255,255,255,1) 75%,
+              rgba(255,255,255,0.8) 100%);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer-wave 3s ease-in-out infinite;
+            text-shadow: none;
+          }
         }
 
         @keyframes shimmer-wave {
@@ -490,7 +518,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
 
           {data.summary && (
             <motion.p 
-              className="relative z-20 mt-5 text-sm leading-7 text-white/85 sm:mt-6 sm:text-lg sm:leading-relaxed"
+              className="relative z-20 mt-5 text-sm leading-7 text-white/90 sm:mt-6 sm:text-lg sm:leading-relaxed"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.8 }}
@@ -525,7 +553,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                     ease: "easeInOut",
                   }}
                 >
-                  <MapPin className="size-5 text-white/70 glow-icon" />
+                  <MapPin className="size-5 text-white/80 glow-icon" />
                 </motion.div>
                 <span className="min-w-0 text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
                   {data.location}
@@ -550,7 +578,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                       transition: { duration: 0.2 }
                     }}
                   >
-                    <Mail className="size-5 text-white/70 glow-icon" />
+                    <Mail className="size-5 text-white/80 glow-icon" />
                   </motion.div>
                   <span className="min-w-0 break-all text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
                     {data.email}
@@ -584,7 +612,7 @@ export default function HeaderCard({ data }: { data: IPortfolio }) {
                       transition: { duration: 0.2 }
                     }}
                   >
-                    <Phone className="size-5 text-white/70 glow-icon" />
+                    <Phone className="size-5 text-white/80 glow-icon" />
                   </motion.div>
                   <span className="min-w-0 break-all text-sm font-medium leading-6 text-white sm:text-base sm:leading-normal">
                     {data.phone}

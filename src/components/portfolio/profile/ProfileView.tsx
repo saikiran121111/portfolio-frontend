@@ -88,10 +88,10 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
           onClick={() => setIsTabOpen(!isTabOpen)}
           aria-label={isTabOpen ? "Close quick navigation" : "Open quick navigation"}
           className={classNames(
-            "absolute left-0 top-1/2 -translate-x-full -translate-y-1/2 flex items-center justify-center w-14 h-14 backdrop-blur-xl transition-all duration-300 shadow-lg border border-white/20 z-10",
+            "contrast-surface-soft absolute left-0 top-1/2 z-10 flex h-14 w-14 -translate-x-full -translate-y-1/2 items-center justify-center transition-all duration-300 shadow-lg",
             isTabOpen
-              ? "bg-white/10 text-white border-white/20 shadow-white/10 rounded-l-2xl"
-              : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white hover:shadow-xl rounded-l-2xl"
+              ? "rounded-l-2xl text-white shadow-white/10"
+              : "rounded-l-2xl text-white/80 hover:text-white hover:shadow-xl"
           )}
           whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)" }}
           whileTap={{ scale: 0.95 }}
@@ -107,7 +107,7 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
         <motion.div
           initial={false}
           animate={{ opacity: isTabOpen ? 1 : 1 }}
-          className="max-w-[min(288px,calc(100vw-120px))] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 border-l-0 rounded-l-2xl shadow-2xl shadow-black/40 relative overflow-hidden"
+          className="contrast-surface relative max-w-[min(288px,calc(100vw-120px))] overflow-hidden rounded-l-2xl border-l-0 shadow-2xl shadow-black/40"
           style={{ width: PANEL_WIDTH }}
         >
           <motion.div
@@ -133,8 +133,8 @@ function NavigationTab({ sections }: { sections: Array<{ id: string; label: stri
                   className={classNames(
                     "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300 group",
                     activeSection === id
-                      ? "bg-white/10 text-white border border-white/20 shadow-lg shadow-white/10"
-                      : "text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md"
+                      ? "contrast-pill border text-white shadow-lg shadow-white/10"
+                      : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-md"
                   )}
                   initial={false}
                   animate={isTabOpen ? { opacity: 1, x: 0, transition: { delay: 0.05 + index * 0.04 } } : { opacity: 0.85, x: -8 }}
@@ -282,7 +282,7 @@ export default function ProfileView() {
         >
           <HeaderCard data={data} />
 
-          <motion.div variants={fadeUpVariants} className="rounded-2xl overflow-hidden border border-white/10 bg-white/5">
+          <motion.div variants={fadeUpVariants} className="contrast-surface overflow-hidden rounded-2xl">
             {mapSrc ? (
               <iframe
                 title="Location Map"
@@ -292,7 +292,7 @@ export default function ProfileView() {
                 className="h-52 w-full sm:h-60 md:h-full"
               />
             ) : (
-              <div className="flex h-52 items-center justify-center text-white/60 sm:h-60 md:h-64">No location provided</div>
+              <div className="flex h-52 items-center justify-center text-white/80 sm:h-60 md:h-64">No location provided</div>
             )}
           </motion.div>
         </motion.section>

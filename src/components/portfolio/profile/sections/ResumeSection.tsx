@@ -7,60 +7,53 @@ import ResumeModal from "./ResumeModal";
 
 export default function ResumeSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   const handleDownload = () => {
-    // Use our API route for proper download
-    const link = document.createElement('a');
-    link.href = '/api/download-resume';
-    link.download = 'SaiKiran_Resume.pdf';
-    link.style.display = 'none';
-    
+    const link = document.createElement("a");
+    link.href = "/api/download-resume";
+    link.download = "SaiKiran_Resume.pdf";
+    link.style.display = "none";
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handlePreview = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   return (
-    <motion.section 
-      id="resume" 
-      variants={containerVariants} 
-      initial="hidden" 
-      whileInView="show" 
-      viewport={{ once: true, margin: "-120px" }} 
-      className="mt-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm"
+    <motion.section
+      id="resume"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-120px" }}
+      className="contrast-surface mt-8 rounded-2xl p-6"
     >
-      <motion.h2 variants={fadeUpVariants} className="mb-6 flex items-center gap-2 text-xl font-bold text-white">
+      <motion.h2
+        variants={fadeUpVariants}
+        className="mb-6 flex items-center gap-2 text-xl font-bold text-white"
+      >
         <FileText className="size-6 text-slate-200" /> Resume
       </motion.h2>
-      
-      <motion.div 
+
+      <motion.div
         variants={scaleVariants}
-        whileHover={{ scale: 1.01 }} 
-        className="group relative rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.08] p-6 transition-all duration-300 hover:border-white/30 hover:shadow-lg hover:shadow-white/10"
+        whileHover={{ scale: 1.01 }}
+        className="contrast-card group relative rounded-xl p-6 transition-all duration-300 hover:border-white/30 hover:shadow-lg hover:shadow-white/10"
       >
         <div>
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="mb-4 flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-white group-hover:text-white transition-colors mb-2">
+              <h3 className="mb-2 text-lg font-semibold text-white transition-colors group-hover:text-white">
                 Download My Resume
               </h3>
-              <p className="text-white/70 text-sm leading-relaxed">
-                Get a comprehensive overview of my experience, skills, and achievements in a professionally formatted PDF document.
+              <p className="text-sm leading-relaxed text-white/80">
+                Get a comprehensive overview of my experience, skills, and
+                achievements in a professionally formatted PDF document.
               </p>
             </div>
-            
-            {/* File icon with animation */}
-            <motion.div 
-              className="flex items-center justify-center size-12 rounded-full bg-white/10 border border-white/20"
+
+            <motion.div
+              className="contrast-pill flex size-12 items-center justify-center rounded-full"
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.2 }}
             >
@@ -68,33 +61,29 @@ export default function ResumeSection() {
             </motion.div>
           </div>
 
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            {/* Download button */}
+          <div className="flex flex-col gap-3 sm:flex-row">
             <motion.button
               onClick={handleDownload}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-white/10 text-white font-medium transition-all duration-300 hover:bg-white/20 hover:shadow-lg hover:shadow-white/15"
+              className="flex flex-1 items-center justify-center gap-3 rounded-xl border border-cyan-400/25 bg-cyan-500/20 px-6 py-3 font-medium text-white transition-all duration-300 hover:bg-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/15"
             >
               <Download className="size-5" />
               Download Resume
             </motion.button>
 
-            {/* Preview button */}
             <motion.button
-              onClick={handlePreview}
+              onClick={() => setIsModalOpen(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex-1 sm:flex-auto flex items-center justify-center gap-3 px-6 py-3 rounded-xl border border-white/20 bg-white/5 text-white font-medium transition-all duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
+              className="contrast-pill flex flex-1 items-center justify-center gap-3 rounded-xl px-6 py-3 font-medium text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 sm:flex-auto"
             >
               <Eye className="size-5" />
               Preview
             </motion.button>
           </div>
 
-          {/* Additional info */}
-          <div className="mt-4 flex items-center justify-between text-xs text-white/60">
+          <div className="mt-4 flex items-center justify-between text-xs text-white/70">
             <span className="flex items-center gap-1">
               <ExternalLink className="size-3" />
               PDF Format
@@ -104,13 +93,11 @@ export default function ResumeSection() {
         </div>
       </motion.div>
 
-      {/* Resume Modal */}
-      <ResumeModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal}
+      <ResumeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onDownload={handleDownload}
       />
-
     </motion.section>
   );
 }
