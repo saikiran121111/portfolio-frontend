@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import type { CSSProperties, MouseEvent } from "react";
 import { usePathname } from "next/navigation";
-import toolIcon from "./tool.png";
+import { Wrench } from "lucide-react";
 import { usePageTransition } from "@/components/page-transition";
 import { setAllowedRoute } from "@/components/guards/RouteGuard";
 
@@ -145,12 +144,17 @@ export function ToolsLink({
       >
         <Link
           href="/tools"
-          className={`profile-link pointer-events-auto ${className ?? ""}`.trim()}
+          className={`profile-link tools-link pointer-events-auto ${className ?? ""}`.trim()}
           aria-label="Open tools"
           onClick={handleClick}
         >
           <span className="icon" aria-hidden="true" style={{ inlineSize: computedIcon, blockSize: computedIcon }}>
-            <Image src={toolIcon} alt="Tools" width={computedIcon} height={computedIcon} />
+            <Wrench
+              width={computedIcon}
+              height={computedIcon}
+              strokeWidth={2}
+              aria-hidden="true"
+            />
           </span>
           <span className="label">TOOLS</span>
         </Link>

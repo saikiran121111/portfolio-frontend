@@ -30,6 +30,8 @@ html {
 
 body {
   min-height: 100dvh;
+  max-width: 100%;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 8% 20%, rgba(16, 212, 222, 0.1), transparent 24%),
     var(--background);
@@ -114,6 +116,13 @@ html[data-intro-done="true"] .intro-gate {
   filter: blur(22px);
   opacity: 0.95;
   animation: heroGlowOrbit 15s ease-in-out infinite alternate;
+}
+
+@media (max-width: 767px) {
+  .hero-copy-glow {
+    opacity: 0.78;
+    filter: blur(18px);
+  }
 }
 
 .hero-name-line,
@@ -331,6 +340,20 @@ html[data-intro-done="true"] .intro-gate {
   place-items: center;
   flex: 0 0 auto;
   transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.25s ease;
+}
+
+.tools-link .icon {
+  color: #f3fcff;
+  filter: drop-shadow(0 0 10px rgba(103, 232, 249, 0.18));
+}
+
+.tools-link:hover .icon,
+.tools-link:focus-visible .icon {
+  color: #b7f4ff;
+}
+
+.tools-link .label {
+  letter-spacing: 0.18em;
 }
 
 .profile-link .label {
@@ -796,23 +819,23 @@ html[data-intro-done="true"] .intro-gate {
 
 .home-spline-stage {
   position: absolute;
-  inset: -16% -82% -18% -44%;
-  transform: translate3d(12%, 0, 0) scale(1.08);
+  inset: -18% -86% -20% -46%;
+  transform: translate3d(22%, 9%, 0) scale(1.06);
   transform-origin: center center;
   will-change: transform;
 }
 
 @media (min-width: 640px) {
   .home-spline-stage {
-    inset: -14% -68% -18% -36%;
-    transform: translate3d(11%, 0, 0) scale(1.06);
+    inset: -16% -72% -18% -34%;
+    transform: translate3d(18%, 7%, 0) scale(1.02);
   }
 }
 
 @media (min-width: 768px) {
   .home-spline-stage {
-    inset: -12% -52% -16% -24%;
-    transform: translate3d(11%, -1%, 0) scale(1.03);
+    inset: -12% -56% -18% -22%;
+    transform: translate3d(16%, 3%, 0) scale(1.01);
   }
 }
 

@@ -66,11 +66,11 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
       </div>
 
-      <section className="pointer-events-none relative z-10 flex min-h-dvh w-full items-center px-6 pb-24 pt-24 sm:px-10 sm:pt-28 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
-        <div className="hero-copy-stack relative w-full max-w-[38rem] sm:max-w-[42rem] lg:max-w-[46rem]">
+      <section className="pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
+        <div className="hero-copy-stack relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[46rem]">
           <div className="hero-copy-glow absolute -inset-x-8 -inset-y-10 sm:-inset-x-10 sm:-inset-y-12" />
           <div className="intro-gate relative">
-            <h1 className="hero-name text-[3.15rem] font-[320] leading-[0.9] tracking-normal text-white sm:text-[4.35rem] lg:text-[5.45rem] xl:text-[5.95rem] 2xl:text-[6.35rem]">
+            <h1 className="hero-name text-[3.05rem] font-[320] leading-[0.92] tracking-normal text-white sm:text-[4.1rem] md:text-[4.8rem] lg:text-[5.45rem] xl:text-[5.95rem] 2xl:text-[6.35rem]">
               {nameLines.map((line) => (
                 <span
                   key={line}
@@ -85,28 +85,28 @@ export default async function Home() {
             </h1>
 
             {bottomHeadline.length > 0 ? (
-              <div className="mt-6 max-w-[32rem] sm:mt-8">
+              <div className="mt-5 max-w-[16rem] sm:mt-7 sm:max-w-[22rem] md:max-w-[26rem] lg:mt-8 lg:max-w-[32rem]">
                 <BottomHeadline
                   items={bottomHeadline}
                   v="top"
                   h="left"
-                  xsOffsetX={-16}
+                  xsOffsetX={-6}
                   xsOffsetY={0}
-                  offsetX={-16}
+                  offsetX={-8}
                   offsetY={0}
-                  tabletOffsetX={-16}
+                  tabletOffsetX={-10}
                   tabletOffsetY={0}
                   desktopOffsetX={-16}
                   desktopOffsetY={0}
                   xlOffsetX={-16}
                   xlOffsetY={0}
                   showCursor={false}
-                  className="hero-rotating-copy !text-left text-[0.96rem] leading-7 text-white/68 sm:text-lg sm:leading-8"
+                  className="hero-rotating-copy !text-left text-[0.92rem] leading-6 text-white/68 sm:text-base sm:leading-7 md:text-[1.02rem] lg:text-lg lg:leading-8"
                 />
               </div>
             ) : null}
 
-            <div className="hero-divider mt-8 h-px w-36 sm:mt-10" />
+            <div className="hero-divider mt-7 h-px w-24 sm:mt-9 sm:w-28 lg:mt-10 lg:w-36" />
           </div>
         </div>
       </section>
@@ -136,12 +136,12 @@ export default async function Home() {
 
       <div className="fixed inset-0 z-20 pointer-events-none">
         <ToolsLink
-          xsOffsetX={-12}
-          xsOffsetY={24}
-          offsetX={-16}
-          offsetY={32}
-          tabletOffsetX={-24}
-          tabletOffsetY={32}
+          xsOffsetX={-10}
+          xsOffsetY={18}
+          offsetX={-12}
+          offsetY={22}
+          tabletOffsetX={-18}
+          tabletOffsetY={24}
           desktopOffsetX={-28}
           desktopOffsetY={36}
           xlOffsetX={-40}
@@ -149,19 +149,19 @@ export default async function Home() {
           v="top"
           h="right"
           introGate
-          scale={0.76}
-          iconSizePx={45}
+          scale={0.72}
+          iconSizePx={30}
         />
       </div>
 
       <div className="fixed inset-0 z-20 pointer-events-none">
         <ProfileLink
-          xsOffsetX={-12}
-          xsOffsetY={-14}
-          offsetX={-16}
-          offsetY={-20}
-          tabletOffsetX={-24}
-          tabletOffsetY={-24}
+          xsOffsetX={-10}
+          xsOffsetY={-10}
+          offsetX={-12}
+          offsetY={-12}
+          tabletOffsetX={-18}
+          tabletOffsetY={-18}
           desktopOffsetX={-28}
           desktopOffsetY={-32}
           xlOffsetX={-40}
@@ -169,7 +169,7 @@ export default async function Home() {
           v="bottom"
           h="right"
           introGate
-          scale={0.76}
+          scale={0.72}
         />
       </div>
     </main>
