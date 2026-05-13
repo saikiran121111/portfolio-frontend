@@ -23,10 +23,10 @@ export default async function ToolsPage() {
         <div className="fixed inset-0 z-40 pointer-events-none">
           <Logo
             className="text-white hover:text-cyan-400"
-            size={45}
-            xsSize={34}
-            tabletSize={42}
-            desktopSize={45}
+            size={56}
+            xsSize={44}
+            tabletSize={52}
+            desktopSize={56}
             xsOffsetX={-2}
             xsOffsetY={10}
             offsetX={-2}
@@ -49,7 +49,7 @@ export default async function ToolsPage() {
           />
         </div>
 
-        <div className="container mx-auto max-w-6xl px-4 pb-10 pt-[calc(var(--safe-top)+5.35rem)] space-y-8 sm:space-y-10 sm:py-10">
+        <div className="container mx-auto max-w-6xl px-4 pb-10 pt-[calc(var(--safe-top)+6rem)] space-y-8 sm:space-y-10 sm:pb-10 sm:pt-[calc(var(--safe-top)+6.25rem)]">
           {/* Tech Stack Architecture showcase */}
           {data ? <TechStackShowcase portfolio={data} /> : null}
 

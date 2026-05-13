@@ -13,6 +13,7 @@ jest.mock("@/components/page-transition", () => ({
 jest.mock("next/font/google", () => ({
     Geist: () => ({ variable: "geist-sans" }),
     Geist_Mono: () => ({ variable: "geist-mono" }),
+    Sora: () => ({ variable: "sora" }),
 }));
 
 describe("RootLayout", () => {

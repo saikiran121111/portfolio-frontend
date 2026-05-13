@@ -8,7 +8,7 @@ import { usePageTransition } from "@/components/page-transition";
 
 interface LogoProps {
   className?: string; // applied to the <svg> for color/hover control
-  size?: number; // px. default 96
+  size?: number; // px. default 112
   xsSize?: number; // ≤346px
   tabletSize?: number; // md ≥ 768
   desktopSize?: number; // lg ≥ 1024
@@ -69,9 +69,11 @@ type LVars = Record<
   string
 >;
 
+const LOGO_VIEW_BOX = "43 27 389 389";
+
 export function Logo({
   className,
-  size = 96,
+  size = 112,
   xsSize,
   tabletSize,
   desktopSize,
@@ -202,7 +204,7 @@ export function Logo({
             {/* Main logo with enhanced glow */}
             <svg
               className={`sk-logo ${sizeClasses} group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
-              viewBox="0 0 512 427"
+              viewBox={LOGO_VIEW_BOX}
               aria-label="SK Logo"
               role="img"
               xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +215,7 @@ export function Logo({
             {/* Red glitch layer - offset left */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-red-500 opacity-0 group-hover:opacity-80 transition-opacity duration-150 glitch-red pointer-events-none mix-blend-screen`}
-              viewBox="0 0 512 427"
+              viewBox={LOGO_VIEW_BOX}
               xmlns="http://www.w3.org/2000/svg"
             >
               {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}
@@ -222,7 +224,7 @@ export function Logo({
             {/* Blue glitch layer - offset right */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-blue-500 opacity-0 group-hover:opacity-60 transition-opacity duration-200 glitch-blue pointer-events-none mix-blend-screen`}
-              viewBox="0 0 512 427"
+              viewBox={LOGO_VIEW_BOX}
               xmlns="http://www.w3.org/2000/svg"
             >
               {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}
@@ -231,7 +233,7 @@ export function Logo({
             {/* Green accent layer for extra glitch */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-green-400 opacity-0 group-hover:opacity-30 transition-opacity duration-100 glitch-green pointer-events-none mix-blend-overlay`}
-              viewBox="0 0 512 427"
+              viewBox={LOGO_VIEW_BOX}
               xmlns="http://www.w3.org/2000/svg"
             >
               {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}

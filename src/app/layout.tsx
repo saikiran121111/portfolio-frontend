@@ -27,6 +27,10 @@ const sora = Sora({
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "Sai Kiran's Portfolio - Full Stack Developer",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml", sizes: "any" }],
+    shortcut: [{ url: "/icon.svg", type: "image/svg+xml", sizes: "any" }],
+  },
 };
 
 export default function RootLayout({

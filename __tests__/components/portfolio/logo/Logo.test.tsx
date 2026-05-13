@@ -60,7 +60,7 @@ describe("Logo", () => {
         const { container } = render(<Logo />);
 
         const logo = container.querySelector(".sk-logo");
-        expect(logo).toHaveAttribute("viewBox", "0 0 512 427");
+        expect(logo).toHaveAttribute("viewBox", "43 27 389 389");
         expect(container.querySelector('path[fill="#C29451"]')).toBeInTheDocument();
     });
 });

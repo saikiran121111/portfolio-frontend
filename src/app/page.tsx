@@ -147,7 +147,7 @@ export default async function Home() {
       <div className="fixed inset-0 z-20 pointer-events-none">
         <Logo
           className="text-white hover:text-cyan-300"
-          size={44}
+          size={56}
           xsOffsetX={-2}
           xsOffsetY={26}
           offsetX={-2}

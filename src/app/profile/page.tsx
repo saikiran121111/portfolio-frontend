@@ -16,10 +16,10 @@ export default function PortfolioPage() {
         <div className="fixed inset-0 z-40 pointer-events-none">
           <Logo
             className="text-white hover:text-cyan-400"
-            size={45}
-            xsSize={34}
-            tabletSize={42}
-            desktopSize={45}
+            size={56}
+            xsSize={44}
+            tabletSize={52}
+            desktopSize={56}
             xsOffsetX={-2}
             xsOffsetY={10}
             offsetX={-2}
@@ -42,7 +42,7 @@ export default function PortfolioPage() {
           />
         </div>
 
-        <div className="px-4 pt-[calc(var(--safe-top)+5.35rem)] pb-8 sm:px-0 sm:py-10">
+        <div className="px-4 pt-[calc(var(--safe-top)+6rem)] pb-8 sm:px-0 sm:pb-10 sm:pt-[calc(var(--safe-top)+6.25rem)]">
           <ProfileViewClient />
         </div>
       </div>
