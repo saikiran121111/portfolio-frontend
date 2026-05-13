@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ToolsPage() {
-  const data = await fetchUserPortfolio({ cache: "no-store" });
-  const reports = data.scanReports ?? [];
-  const tools = data.toolDocs ?? [];
+  const data = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);
+  const reports = data?.scanReports ?? [];
+  const tools = data?.toolDocs ?? [];
 
   return (
     <ToolsGuardWrapper>
@@ -51,7 +51,7 @@ export default async function ToolsPage() {
 
         <div className="container mx-auto max-w-6xl px-4 pb-10 pt-[calc(var(--safe-top)+5.35rem)] space-y-8 sm:space-y-10 sm:py-10">
           {/* Tech Stack Architecture showcase */}
-          <TechStackShowcase portfolio={data} />
+          {data ? <TechStackShowcase portfolio={data} /> : null}
 
           {/* Tools showcase */}
           <ToolsShowcase tools={tools} />

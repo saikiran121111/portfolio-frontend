@@ -45,7 +45,7 @@ export default function CustomCursor(props: Props) {
     interactiveSelector = DEFAULT_SELECTOR,
     smallSize = 10,
     smallEase = 0.5,
-    hoverScale = 4,
+    hoverScale = 2.35,
   } = props;
   // explicitly reference unused props to satisfy eslint without altering behavior
   void expandPadding;
@@ -113,6 +113,7 @@ export default function CustomCursor(props: Props) {
     // Create big ball
     const big = document.createElement("div");
     big.setAttribute("aria-hidden", "true");
+    big.setAttribute("data-custom-cursor", "primary");
     big.className = `pointer-events-none fixed left-0 top-0 rounded-full`;
     big.style.width = `${initialBigDiameter}px`;
     big.style.height = `${initialBigDiameter}px`;
@@ -129,6 +130,7 @@ export default function CustomCursor(props: Props) {
     // Create small ball
     const small = document.createElement("div");
     small.setAttribute("aria-hidden", "true");
+    small.setAttribute("data-custom-cursor", "dot");
     small.className = `pointer-events-none fixed left-0 top-0 rounded-full`;
     small.style.width = `${initialSmallDiameter}px`;
     small.style.height = `${initialSmallDiameter}px`;
@@ -159,12 +161,7 @@ export default function CustomCursor(props: Props) {
 
     const supportsPointer = typeof window !== "undefined" && ("onpointermove" in window);
 
-    const onMove = (e: PointerEvent | MouseEvent) => {
-      const x = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
-      const y = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
-      target.current.x = x;
-      target.current.y = y;
-
+    const updateHoverState = (x: number, y: number) => {
       const t = document.elementFromPoint(x, y);
       const hoverable = t && (t instanceof Element) ? t.closest(interactiveSelector) : null;
       bigScaleTarget.current = hoverable ? hoverScale : 1;
@@ -176,6 +173,18 @@ export default function CustomCursor(props: Props) {
       if (smallRef.current) smallRef.current.style.zIndex = zi;
     };
 
+    const onMove = (e: PointerEvent | MouseEvent) => {
+      const x = (e as PointerEvent).clientX ?? (e as MouseEvent).clientX;
+      const y = (e as PointerEvent).clientY ?? (e as MouseEvent).clientY;
+      target.current.x = x;
+      target.current.y = y;
+      updateHoverState(x, y);
+    };
+
+    const onPress = () => {
+      bigScaleTarget.current = 1;
+    };
+
     const onLeave = () => {
       bigScaleTarget.current = 1;
       // Restore z-index to top when pointer leaves window
@@ -185,9 +194,13 @@ export default function CustomCursor(props: Props) {
 
     if (supportsPointer) {
       window.addEventListener("pointermove", onMove, { passive: true });
+      window.addEventListener("pointerdown", onPress, { passive: true });
+      window.addEventListener("pointerup", onPress, { passive: true });
       window.addEventListener("pointerleave", onLeave as EventListener, { passive: true });
     } else {
       window.addEventListener("mousemove", onMove, { passive: true });
+      window.addEventListener("mousedown", onPress, { passive: true });
+      window.addEventListener("mouseup", onPress, { passive: true });
       window.addEventListener("mouseleave", onLeave as EventListener, { passive: true });
     }
 
@@ -197,9 +210,13 @@ export default function CustomCursor(props: Props) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (supportsPointer) {
         window.removeEventListener("pointermove", onMove as EventListener);
+        window.removeEventListener("pointerdown", onPress as EventListener);
+        window.removeEventListener("pointerup", onPress as EventListener);
         window.removeEventListener("pointerleave", onLeave as EventListener);
       } else {
         window.removeEventListener("mousemove", onMove as EventListener);
+        window.removeEventListener("mousedown", onPress as EventListener);
+        window.removeEventListener("mouseup", onPress as EventListener);
         window.removeEventListener("mouseleave", onLeave as EventListener);
       }
       big.remove();

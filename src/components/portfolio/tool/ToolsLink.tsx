@@ -134,12 +134,13 @@ export function ToolsLink({
     : "max-[346px]:!translate-x-[var(--profile-x-xs)] translate-x-[var(--profile-x)] md:translate-x-[var(--profile-x-md)] lg:translate-x-[var(--profile-x-lg)] xl:translate-x-[var(--profile-x-xl)]";
 
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    // Only trigger custom animation on homepage and when not already transitioning
-    if (isHomepage && state === "idle") {
-      e.preventDefault();
-      setAllowedRoute("/tools");
-      triggerTransition("/tools", { x: e.clientX, y: e.clientY });
-    }
+    if (!isHomepage) return;
+
+    e.preventDefault();
+    if (state !== "idle") return;
+
+    setAllowedRoute("/tools");
+    triggerTransition("/tools", { x: e.clientX, y: e.clientY });
   };
 
   return (

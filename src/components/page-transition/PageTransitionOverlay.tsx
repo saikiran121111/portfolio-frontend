@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useMemo } from "react";
 import { usePageTransition } from "./PageTransitionContext";
 
 export interface PageTransitionOverlayProps {
@@ -17,35 +17,68 @@ export function PageTransitionOverlay({
     const { state, cursorPosition, exitPosition, completeExpansion, completeExit } = usePageTransition();
     const overlayRef = useRef<HTMLDivElement>(null);
 
+    const getAnimationDuration = useCallback((fallbackMs: number, propertyName: string) => {
+        const overlay = overlayRef.current;
+        if (!overlay || typeof window === "undefined") return fallbackMs;
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return 150;
+        }
+
+        const rawValue = window
+            .getComputedStyle(overlay)
+            .getPropertyValue(propertyName)
+            .trim();
+        const parsed = Number.parseFloat(rawValue);
+
+        return Number.isFinite(parsed) ? parsed : fallbackMs;
+    }, []);
+
     useEffect(() => {
         if (state === "expanding" && overlayRef.current) {
+            let completed = false;
             const handleAnimationEnd = () => {
+                if (completed) return;
+                completed = true;
                 completeExpansion();
             };
 
             const overlay = overlayRef.current;
             overlay.addEventListener("animationend", handleAnimationEnd);
+            const fallbackTimer = window.setTimeout(
+                handleAnimationEnd,
+                getAnimationDuration(800, "--page-transition-duration") + 120
+            );
 
             return () => {
+                window.clearTimeout(fallbackTimer);
                 overlay.removeEventListener("animationend", handleAnimationEnd);
             };
         }
-    }, [state, completeExpansion]);
+    }, [state, completeExpansion, getAnimationDuration]);
 
     useEffect(() => {
         if (state === "exiting" && overlayRef.current) {
+            let completed = false;
             const handleAnimationEnd = () => {
+                if (completed) return;
+                completed = true;
                 completeExit();
             };
 
             const overlay = overlayRef.current;
             overlay.addEventListener("animationend", handleAnimationEnd);
+            const fallbackTimer = window.setTimeout(
+                handleAnimationEnd,
+                getAnimationDuration(600, "--page-transition-exit-duration") + 120
+            );
 
             return () => {
+                window.clearTimeout(fallbackTimer);
                 overlay.removeEventListener("animationend", handleAnimationEnd);
             };
         }
-    }, [state, completeExit]);
+    }, [state, completeExit, getAnimationDuration]);
 
     // Calculate the scale needed to cover the entire viewport from a given position
     const getMaxScale = useMemo(() => {
@@ -72,7 +105,7 @@ export function PageTransitionOverlay({
 
     // Use entry position for expanding/navigating, exit position for exiting
     const activePosition = state === "exiting" ? exitPosition : cursorPosition;
-    const scale = useMemo(() => getMaxScale(activePosition), [activePosition, baseSize]);
+    const scale = useMemo(() => getMaxScale(activePosition), [activePosition, getMaxScale]);
 
     if (state === "idle") {
         return null;

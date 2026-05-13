@@ -45,10 +45,7 @@ export default async function Home() {
           aria-hidden
           className="hero-aurora hero-aurora-secondary absolute left-[40%] top-[8%] h-[18rem] w-[18rem] sm:left-[48%] sm:h-[22rem] sm:w-[22rem] lg:left-[46%] lg:top-[18%] lg:h-[24rem] lg:w-[24rem]"
         />
-        <div
-          data-cursor-expand
-          className="home-spline-shell absolute inset-0"
-        >
+        <div className="home-spline-shell absolute inset-0">
           <div className="home-spline-stage">
             <Spline
               scene={HOME_SCENE}

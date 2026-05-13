@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const ALLOWED_ROUTES_KEY = "portfolio_allowed_routes";
-const ALLOWED_ROUTES = ["/profile", "/tools"] as const;
+type AllowedRoute = "/profile" | "/tools";
 
 /**
  * Sets an allowed route in sessionStorage.
@@ -52,7 +52,7 @@ export function clearAllowedRoute(route: string): void {
 }
 
 interface RouteGuardProps {
-    route: (typeof ALLOWED_ROUTES)[number];
+    route: AllowedRoute;
     children: React.ReactNode;
 }
 
