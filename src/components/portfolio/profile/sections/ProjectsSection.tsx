@@ -14,7 +14,9 @@ export default function ProjectsSection({
 }: {
   projects: IProjects[];
 }) {
-  if (!projects?.length) return null;
+  const visibleProjects = projects?.filter((project) => project.isVisible !== false) ?? [];
+
+  if (!visibleProjects.length) return null;
 
   return (
     <motion.section
@@ -33,7 +35,7 @@ export default function ProjectsSection({
       </motion.h2>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {projects.map((project, index) => (
+        {visibleProjects.map((project, index) => (
           <motion.div
             key={index}
             variants={scaleVariants}
@@ -68,6 +70,21 @@ export default function ProjectsSection({
                   <ExternalLink className="size-4" />
                 </motion.a>
               )}
+              {project.projectUrl &&
+                project.projectUrl !== project.repoUrl &&
+                project.projectUrl !== project.liveUrl && (
+                  <motion.a
+                    href={project.projectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={project.type || "Project"}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="contrast-pill inline-flex size-10 items-center justify-center rounded-full text-white/85 transition-all duration-200 hover:border-white/30 hover:text-white"
+                  >
+                    <ExternalLink className="size-4" />
+                  </motion.a>
+                )}
             </div>
 
             <div className="pr-20">

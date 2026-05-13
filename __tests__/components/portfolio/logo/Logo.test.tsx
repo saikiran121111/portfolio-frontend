@@ -54,4 +54,13 @@ describe("Logo", () => {
             expect(container.querySelector(".sk-logo-animate")).toBeInTheDocument();
         });
     });
+
+    it("renders the updated SK logo artwork", () => {
+        (usePathname as jest.Mock).mockReturnValue("/");
+        const { container } = render(<Logo />);
+
+        const logo = container.querySelector(".sk-logo");
+        expect(logo).toHaveAttribute("viewBox", "0 0 512 427");
+        expect(container.querySelector('path[fill="#C29451"]')).toBeInTheDocument();
+    });
 });

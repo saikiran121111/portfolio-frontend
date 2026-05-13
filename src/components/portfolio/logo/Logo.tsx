@@ -40,6 +40,8 @@ interface LogoProps {
   animate?: boolean;
   /** Enable the mobile glass shell around the logo. Default true (homepage). */
   mobileShell?: boolean;
+  /** Render the dark logo background from the source artwork. Default false. */
+  showBackground?: boolean;
 }
 
 // Typed CSS custom properties used by this component
@@ -94,6 +96,7 @@ export function Logo({
   introGate = true,
   animate = true,
   mobileShell = true,
+  showBackground = false,
 }: LogoProps) {
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const pathname = usePathname();
@@ -161,6 +164,25 @@ export function Logo({
 
   const animationClass = shouldAnimate ? "sk-logo-animate" : "";
   const sizeClasses = "max-[346px]:!h-[var(--logo-size-xs)] max-[346px]:!w-[var(--logo-size-xs)] h-[var(--logo-size)] w-[var(--logo-size)] md:h-[var(--logo-size-md)] md:w-[var(--logo-size-md)] lg:h-[var(--logo-size-lg)] lg:w-[var(--logo-size-lg)] xl:h-[var(--logo-size-xl)] xl:w-[var(--logo-size-xl)]";
+  const renderLogoPaths = ({
+    includeBackground = false,
+    sFill = "#FFFFFF",
+    kFill = "#C29451",
+  } = {}) => (
+    <>
+      {includeBackground && <rect width="512" height="427" fill="#11191C" />}
+      <path
+        fill={sFill}
+        d="M 51 63 L 153 184 L 213 189 L 212 236 L 171 212 L 235 367 L 235 164 L 168 164 L 127 112 L 210 118 L 213 144 L 235 145 L 235 98 Z"
+      />
+      <g transform="translate(-8 0)">
+        <path
+          fill={kFill}
+          d="M 430 67 L 277 142 L 271 96 L 252 98 L 251 367 L 272 304 L 273 198 L 307 218 L 318 203 L 283 171 Z"
+        />
+      </g>
+    </>
+  );
 
   return (
     <div
@@ -179,48 +201,40 @@ export function Logo({
           <div className={`relative group cursor-pointer logo-glitch-container ${animationClass}`.trim()}>
             {/* Main logo with enhanced glow */}
             <svg
-              className={`sk-logo ${sizeClasses} text-white group-hover:text-cyan-400 group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
-              viewBox="0 0 500 500"
-              aria-label="SK logo"
+              className={`sk-logo ${sizeClasses} group-hover:drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 relative z-10 ${className ?? ""}`.trim()}
+              viewBox="0 0 512 427"
+              aria-label="SK Logo"
               role="img"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path fill="currentColor" d="M140 50c40-40 150-40 190 0-50 0-90 10-115 30-40 30-40 90 40 110 120 30 160 90 90 150-50 40-150 50-200 0 60 10 110-10 130-40 30-50-10-80-60-100-90-40-110-110-35-150z" />
-              <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
-              <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
+              {renderLogoPaths({ includeBackground: showBackground })}
             </svg>
 
             {/* Red glitch layer - offset left */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-red-500 opacity-0 group-hover:opacity-80 transition-opacity duration-150 glitch-red pointer-events-none mix-blend-screen`}
-              viewBox="0 0 500 500"
+              viewBox="0 0 512 427"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path fill="currentColor" d="M140 50c40-40 150-40 190 0-50 0-90 10-115 30-40 30-40 90 40 110 120 30 160 90 90 150-50 40-150 50-200 0 60 10 110-10 130-40 30-50-10-80-60-100-90-40-110-110-35-150z" />
-              <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
-              <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
+              {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}
             </svg>
 
             {/* Blue glitch layer - offset right */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-blue-500 opacity-0 group-hover:opacity-60 transition-opacity duration-200 glitch-blue pointer-events-none mix-blend-screen`}
-              viewBox="0 0 500 500"
+              viewBox="0 0 512 427"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path fill="currentColor" d="M140 50c40-40 150-40 190 0-50 0-90 10-115 30-40 30-40 90 40 110 120 30 160 90 90 150-50 40-150 50-200 0 60 10 110-10 130-40 30-50-10-80-60-100-90-40-110-110-35-150z" />
-              <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
-              <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
+              {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}
             </svg>
 
             {/* Green accent layer for extra glitch */}
             <svg
               className={`${sizeClasses} absolute inset-0 text-green-400 opacity-0 group-hover:opacity-30 transition-opacity duration-100 glitch-green pointer-events-none mix-blend-overlay`}
-              viewBox="0 0 500 500"
+              viewBox="0 0 512 427"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path fill="currentColor" d="M140 50c40-40 150-40 190 0-50 0-90 10-115 30-40 30-40 90 40 110 120 30 160 90 90 150-50 40-150 50-200 0 60 10 110-10 130-40 30-50-10-80-60-100-90-40-110-110-35-150z" />
-              <path fill="currentColor" d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z" />
-              <path fill="currentColor" d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z" />
+              {renderLogoPaths({ sFill: "currentColor", kFill: "currentColor" })}
             </svg>
 
             {/* Scanline effect */}

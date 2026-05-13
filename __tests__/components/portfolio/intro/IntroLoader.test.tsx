@@ -261,7 +261,7 @@ describe("IntroLoader", () => {
         it("renders SVG with correct viewBox", () => {
             render(<IntroLoader />);
             const svg = document.querySelector("svg");
-            expect(svg).toHaveAttribute("viewBox", "50 -30 520 560");
+            expect(svg).toHaveAttribute("viewBox", "0 0 512 427");
         });
 
         it("contains gradient definitions", () => {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
 import CustomCursor from "@/components/cursor/CustomCursor";
 import Copyright from "../components/portfolio/footer/Copyright";
@@ -18,6 +18,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Portfolio",
   description: "Sai Kiran's Portfolio - Full Stack Developer",
@@ -30,7 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} antialiased`}
+      >
         {/* Custom cursor above content */}
         <CustomCursor />
         <PageTransitionProvider expansionDuration={800}>

@@ -112,8 +112,11 @@ export interface IAdminProjectApi {
   id?: number;
   title: string;
   description: string;
+  projectUrl?: string | null;
   repoUrl: string | null;
   liveUrl: string | null;
+  type?: string | null;
+  isVisible?: boolean;
   tech: string[];
   highlights: string[];
   startDate: string | null;
@@ -125,8 +128,11 @@ export interface IAdminProjectEditor {
   id?: number;
   title: string;
   description: string;
+  projectUrl: string;
   repoUrl: string;
   liveUrl: string;
+  type: string;
+  isVisible: boolean;
   tech: string[];
   highlights: string[];
   startDate: string;

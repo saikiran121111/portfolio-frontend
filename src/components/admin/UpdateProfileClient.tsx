@@ -4,8 +4,11 @@ import { FormEvent, useEffect, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
+  ChevronDown,
   Clock3,
   Database,
+  Eye,
+  EyeOff,
   LogOut,
   Plus,
   RefreshCw,
@@ -90,8 +93,11 @@ function createEmptyProject(): IAdminProjectEditor {
   return {
     title: "",
     description: "",
+    projectUrl: "",
     repoUrl: "",
     liveUrl: "",
+    type: "Other",
+    isVisible: true,
     tech: [""],
     highlights: [""],
     startDate: "",
@@ -456,7 +462,7 @@ export default function UpdateProfileClient() {
     key: CollectionKey,
     index: number,
     field: string,
-    value: string,
+    value: string | boolean,
   ) {
     setData((current) => {
       if (!current) {
@@ -775,11 +781,11 @@ export default function UpdateProfileClient() {
         <section className={`${panelClassName} mx-auto max-w-xl`}>
           <div className="mb-6 space-y-2">
             <h2 className="text-2xl font-semibold text-white">
-              Sign in to edit `/updateprofile`
+              Sign in to edit portfolio data
             </h2>
             <p className="text-sm leading-6 text-white/65">
               The editor stores a secure session cookie for 7 days. After that,
-              you’ll need to sign in again before making more changes.
+              you&apos;ll need to sign in again before making more changes.
             </p>
           </div>
 
@@ -820,7 +826,7 @@ export default function UpdateProfileClient() {
                   Editing workspace
                 </h2>
                 <p className="mt-1 text-sm text-white/60">
-                  Refresh to pull current database values, then save once you’re
+                  Refresh to pull current database values, then save once you&apos;re
                   done updating fields.
                 </p>
               </div>
@@ -867,8 +873,9 @@ export default function UpdateProfileClient() {
           ) : data ? (
             <>
               <SectionCard
-                title="Profile basics"
-                description="These fields feed the main header and contact area."
+                title="Hero / Intro"
+                description="Name, headline, and visual identity used by the landing hero."
+                defaultOpen
               >
                 <div className="grid gap-4 md:grid-cols-2">
                   <TextField
@@ -886,18 +893,6 @@ export default function UpdateProfileClient() {
                     required
                   />
                   <TextField
-                    label="Phone"
-                    value={data.user.phone}
-                    onChange={(value) => updateUserField("phone", value)}
-                    placeholder="Phone number"
-                  />
-                  <TextField
-                    label="Location"
-                    value={data.user.location}
-                    onChange={(value) => updateUserField("location", value)}
-                    placeholder="City, country"
-                  />
-                  <TextField
                     label="Avatar URL"
                     value={data.user.avatarUrl}
                     onChange={(value) => updateUserField("avatarUrl", value)}
@@ -908,6 +903,26 @@ export default function UpdateProfileClient() {
                     value={data.user.headline}
                     onChange={(value) => updateUserField("headline", value)}
                     placeholder="Short professional headline"
+                  />
+                </div>
+              </SectionCard>
+
+              <SectionCard
+                title="About"
+                description="Contact details, profile summary, and footer copy."
+              >
+                <div className="grid gap-4 md:grid-cols-2">
+                  <TextField
+                    label="Phone"
+                    value={data.user.phone}
+                    onChange={(value) => updateUserField("phone", value)}
+                    placeholder="Phone number"
+                  />
+                  <TextField
+                    label="Location"
+                    value={data.user.location}
+                    onChange={(value) => updateUserField("location", value)}
+                    placeholder="City, country"
                   />
                 </div>
                 <div className="mt-4 grid gap-4">
@@ -928,7 +943,7 @@ export default function UpdateProfileClient() {
               </SectionCard>
 
               <SectionCard
-                title="Social links"
+                title="Social Links"
                 description="These values map directly to the contact/social area."
               >
                 <div className="grid gap-4 md:grid-cols-3">
@@ -954,8 +969,8 @@ export default function UpdateProfileClient() {
               </SectionCard>
 
               <SectionCard
-                title="Repository and deployment links"
-                description="These feed the toolchain and deployment references shown across the site."
+                title="SEO / Settings"
+                description="Repository and deployment references used across tools and metadata surfaces."
               >
                 <div className="grid gap-4 md:grid-cols-2">
                   <TextField
@@ -1006,8 +1021,8 @@ export default function UpdateProfileClient() {
               </SectionCard>
 
               <RepeatableSection
-                title="Bottom headlines"
-                description="Short rotating lines shown in the landing experience."
+                title="Hero rotating subtitles"
+                description="Short rotating lines shown in the landing hero."
                 count={data.bottomHeadlines.length}
                 addLabel="Add headline"
                 onAdd={() =>
@@ -1032,7 +1047,9 @@ export default function UpdateProfileClient() {
                       onChange={(value) =>
                         updateCollectionItem("bottomHeadlines", index, "text", value)
                       }
-                      placeholder="Headline text"
+                      placeholder={
+                        "Ship confidently \u00b7 Pipelines, environments, rollbacks"
+                      }
                     />
                   </ItemCard>
                 ))}
@@ -1207,9 +1224,10 @@ export default function UpdateProfileClient() {
 
               <RepeatableSection
                 title="Projects"
-                description="Projects, links, tech tags, and highlights."
+                description="Projects, display URL, visibility, tech tags, and highlights."
                 count={data.projects.length}
                 addLabel="Add project"
+                defaultOpen
                 onAdd={() => addCollectionItem("projects", createEmptyProject())}
               >
                 {data.projects.map((item, index) => (
@@ -1230,6 +1248,29 @@ export default function UpdateProfileClient() {
                           updateCollectionItem("projects", index, "title", value)
                         }
                         placeholder="Project title"
+                      />
+                      <TextField
+                        label="Project URL"
+                        value={item.projectUrl}
+                        onChange={(value) =>
+                          updateCollectionItem("projects", index, "projectUrl", value)
+                        }
+                        placeholder="https://..."
+                      />
+                      <SelectField
+                        label="Type"
+                        value={item.type}
+                        options={["Live Demo", "GitHub", "Other"]}
+                        onChange={(value) =>
+                          updateCollectionItem("projects", index, "type", value)
+                        }
+                      />
+                      <ToggleField
+                        label="Visible on homepage/profile"
+                        checked={item.isVisible}
+                        onChange={(value) =>
+                          updateCollectionItem("projects", index, "isVisible", value)
+                        }
                       />
                       <TextField
                         label="Repository URL"
@@ -1648,19 +1689,32 @@ export default function UpdateProfileClient() {
 function SectionCard({
   title,
   description,
+  defaultOpen = false,
   children,
 }: {
   title: string;
   description: string;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
   return (
     <section className={panelClassName}>
-      <div className="mb-5 space-y-1">
-        <h3 className="text-xl font-semibold text-white">{title}</h3>
-        <p className="text-sm leading-6 text-white/60">{description}</p>
-      </div>
-      {children}
+      <details
+        className="group"
+        open={isOpen}
+        onToggle={(event) => setIsOpen(event.currentTarget.open)}
+      >
+        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
+          <div className="space-y-1">
+            <h3 className="text-xl font-semibold text-white">{title}</h3>
+            <p className="text-sm leading-6 text-white/60">{description}</p>
+          </div>
+          <ChevronDown className="mt-1 size-5 shrink-0 text-white/50 transition group-open:rotate-180" />
+        </summary>
+        <div className="mt-5">{children}</div>
+      </details>
     </section>
   );
 }
@@ -1671,6 +1725,7 @@ function RepeatableSection({
   count,
   addLabel,
   onAdd,
+  defaultOpen = false,
   children,
 }: {
   title: string;
@@ -1678,30 +1733,42 @@ function RepeatableSection({
   count: number;
   addLabel: string;
   onAdd: () => void;
+  defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
   return (
     <section className={panelClassName}>
-      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-xl font-semibold text-white">{title}</h3>
-            <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60">
-              {count}
-            </span>
+      <details
+        className="group"
+        open={isOpen}
+        onToggle={(event) => setIsOpen(event.currentTarget.open)}
+      >
+        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xl font-semibold text-white">{title}</h3>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60">
+                {count}
+              </span>
+            </div>
+            <p className="text-sm leading-6 text-white/60">{description}</p>
           </div>
-          <p className="text-sm leading-6 text-white/60">{description}</p>
+          <ChevronDown className="mt-1 size-5 shrink-0 text-white/50 transition group-open:rotate-180" />
+        </summary>
+        <div className="mt-5 space-y-4">
+          <button
+            type="button"
+            onClick={onAdd}
+            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/80 transition hover:bg-white/10"
+          >
+            <Plus className="size-4" />
+            {addLabel}
+          </button>
+          <div className="space-y-4">{children}</div>
         </div>
-        <button
-          type="button"
-          onClick={onAdd}
-          className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/80 transition hover:bg-white/10"
-        >
-          <Plus className="size-4" />
-          {addLabel}
-        </button>
-      </div>
-      <div className="space-y-4">{children}</div>
+      </details>
     </section>
   );
 }
@@ -1787,6 +1854,66 @@ function TextField({
         required={required}
         className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/40 focus:bg-slate-950/70"
       />
+    </label>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm font-medium text-white/75">{label}</span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40 focus:bg-slate-950/70"
+      >
+        <option value="">Select type</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function ToggleField({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+}) {
+  const Icon = checked ? Eye : EyeOff;
+
+  return (
+    <label className="grid gap-2">
+      <span className="text-sm font-medium text-white/75">{label}</span>
+      <span className="inline-flex min-h-[46px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white/80">
+        <span className="inline-flex items-center gap-2">
+          <Icon className="size-4 text-cyan-200" />
+          {checked ? "Enabled" : "Disabled"}
+        </span>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(event) => onChange(event.target.checked)}
+          className="size-5 accent-cyan-300"
+        />
+      </span>
     </label>
   );
 }

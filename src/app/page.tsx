@@ -3,6 +3,9 @@ import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline
 import Logo from "@/components/portfolio/logo/Logo";
 import IntroLoader from "@/components/portfolio/intro/IntroLoader";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
+import ProjectsRadar, {
+  type ProjectsRadarItem,
+} from "@/components/portfolio/projects/ProjectsRadar";
 import ToolsLink from "@/components/portfolio/tool/ToolsLink";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
@@ -20,6 +23,28 @@ function splitNameForHero(name: string) {
   return [parts.slice(0, midpoint).join(" "), parts.slice(midpoint).join(" ")];
 }
 
+function normalizeHeroSubtitle(text: string) {
+  const normalized = text
+    .replace(/\bPipllines\b/gi, "Pipelines")
+    .replace(/\bPiplines\b/gi, "Pipelines")
+    .replace(/\benviroments\b/gi, "environments")
+    .replace(/\benviornments\b/gi, "environments")
+    .replace(/\broll backs\b/gi, "rollbacks");
+
+  return normalized.replace(
+    /Ship confidently\s*[\u00b7-]\s*Pipelines,\s*environments,\s*rollbacks/i,
+    "Ship confidently \u00b7 Pipelines, environments, rollbacks",
+  );
+}
+
+function getProjectUrl(project: {
+  projectUrl?: string | null;
+  liveUrl?: string | null;
+  repoUrl?: string | null;
+}) {
+  return project.projectUrl || project.liveUrl || project.repoUrl || "";
+}
+
 export default async function Home() {
   const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(
     () => null,
@@ -27,10 +52,19 @@ export default async function Home() {
 
   const name = portfolio?.name ?? "Sai Kiran";
   const bottomHeadline =
-    portfolio?.bottomHeadline?.filter(
-      (item): item is string => Boolean(item && item.trim()),
-    ) ?? [];
+    portfolio?.bottomHeadline
+      ?.filter((item): item is string => Boolean(item && item.trim()))
+      .map(normalizeHeroSubtitle) ?? [];
   const nameLines = splitNameForHero(name);
+  const projects: ProjectsRadarItem[] =
+    portfolio?.projects
+      ?.filter((project) => project.isVisible !== false)
+      .map((project) => ({
+        title: project.title,
+        url: getProjectUrl(project),
+        type: project.type,
+      }))
+      .filter((project) => project.title.trim() && project.url.trim()) ?? [];
 
   return (
     <main className="relative min-h-dvh overflow-hidden bg-[#020608] text-white">
@@ -62,6 +96,8 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/90 to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
       </div>
+
+      <ProjectsRadar projects={projects} />
 
       <section className="home-hero-section pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
         <div className="hero-copy-stack relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[46rem]">

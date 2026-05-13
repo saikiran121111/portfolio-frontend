@@ -208,7 +208,7 @@ export default function IntroLoader({
                 height: "min(50vw, 280px)",
                 filter: isComplete ? undefined : "drop-shadow(0 0 6px rgba(255, 215, 0, 0.4))",
               }}
-              viewBox="50 -30 520 560"
+              viewBox="0 0 512 427"
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
@@ -231,20 +231,20 @@ export default function IntroLoader({
               {/* DOT - center starting point */}
               {showDot && (
                 <circle
-                  cx="345"
-                  cy="250"
+                  cx="252"
+                  cy="214"
                   r="10"
                   fill="#FFD700"
                   className="dot-pulse"
                 />
               )}
 
-              {/* K vertical bar - grows from center */}
+              {/* K stem - grows from center */}
               {showLine && (
                 <path
                   className="line-grow"
                   fill="url(#goldVertical)"
-                  d="M330 20 l15 20 l15 -20 v50 l-5 5 v300 l5 5 v50 l-15 -20 l-15 20 v-50 l5 -5 v-300 l-5 -5 z"
+                  d="M 252 98 L 271 96 L 273 198 L 272 304 L 251 367 Z"
                 />
               )}
 
@@ -252,18 +252,20 @@ export default function IntroLoader({
               {showS && (
                 <path
                   className="slide-in-left"
-                  fill="url(#goldGradient)"
-                  d="M140 50c40-40 150-40 190 0-50 0-90 10-115 30-40 30-40 90 40 110 120 30 160 90 90 150-50 40-150 50-200 0 60 10 110-10 130-40 30-50-10-80-60-100-90-40-110-110-35-150z"
+                  fill="#FFFFFF"
+                  d="M 51 63 L 153 184 L 213 189 L 212 236 L 171 212 L 235 367 L 235 164 L 168 164 L 127 112 L 210 118 L 213 144 L 235 145 L 235 98 Z"
                 />
               )}
 
-              {/* K arrow - slashes in */}
+              {/* K - slashes in */}
               {showKArrow && (
-                <path
-                  className="arrow-slash"
-                  fill="url(#goldGradient)"
-                  d="M355 260 l145 -180 h60 l-150 200 160 220h-65L355 270z"
-                />
+                <g transform="translate(-8 0)">
+                  <path
+                    className="arrow-slash"
+                    fill="#C29451"
+                    d="M 430 67 L 277 142 L 271 96 L 252 98 L 251 367 L 272 304 L 273 198 L 307 218 L 318 203 L 283 171 Z"
+                  />
+                </g>
               )}
             </svg>
           </div>

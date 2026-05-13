@@ -1,0 +1,46 @@
+import type { Metadata } from "next";
+import Logo from "@/components/portfolio/logo/Logo";
+import UpdateProfileClient from "@/components/admin/UpdateProfileClient";
+
+export const metadata: Metadata = {
+  title: "Admin Resume",
+  description: "Secure admin editor for updating portfolio resume data",
+};
+
+export default function AdminResumePage() {
+  return (
+    <div className="relative min-h-dvh">
+      <div className="fixed inset-0 z-40 pointer-events-none">
+        <Logo
+          className="text-white hover:text-cyan-400"
+          size={45}
+          xsSize={34}
+          tabletSize={42}
+          desktopSize={45}
+          xsOffsetX={-2}
+          xsOffsetY={10}
+          offsetX={-2}
+          offsetY={16}
+          tabletOffsetX={-4}
+          tabletOffsetY={28}
+          desktopOffsetX={-6}
+          desktopOffsetY={42}
+          xlOffsetY={42}
+          v="top"
+          h="left"
+          minLeftPx={22}
+          xlMinLeftPx={100}
+          desktopMinLeftPx={100}
+          tabletMinLeftPx={30}
+          xsMinLeftPx={10}
+          introGate={false}
+          mobileShell={false}
+        />
+      </div>
+
+      <div className="container mx-auto max-w-6xl px-4 pb-10 pt-[calc(var(--safe-top)+5.35rem)] sm:py-10">
+        <UpdateProfileClient />
+      </div>
+    </div>
+  );
+}
