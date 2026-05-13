@@ -23,6 +23,7 @@ import type {
   IAdminEducationEditor,
   IAdminExperienceEditor,
   IAdminLanguageEditor,
+  IAdminHomepageProjectEditor,
   IAdminPortfolioEditor,
   IAdminProjectEditor,
   IAdminScanReportEditor,
@@ -51,7 +52,8 @@ type CollectionKey =
   | "certifications"
   | "achievements"
   | "languages"
-  | "scanReports";
+  | "scanReports"
+  | "homepageProjects";
 
 type ExperienceListField = "bullets" | "techStack";
 type ProjectListField = "tech" | "highlights";
@@ -142,6 +144,14 @@ function createEmptyLanguage(): IAdminLanguageEditor {
   return {
     name: "",
     level: "",
+  };
+}
+
+function createEmptyHomepageProject(): IAdminHomepageProjectEditor {
+  return {
+    title: "",
+    url: "",
+    order: 0,
   };
 }
 
@@ -1051,6 +1061,49 @@ export default function UpdateProfileClient() {
                         "Ship confidently \u00b7 Pipelines, environments, rollbacks"
                       }
                     />
+                  </ItemCard>
+                ))}
+              </RepeatableSection>
+
+              <RepeatableSection
+                title="Homepage Projects"
+                description="Rotating projects shown in the homepage header component."
+                count={data.homepageProjects.length}
+                addLabel="Add project"
+                onAdd={() =>
+                  addCollectionItem("homepageProjects", createEmptyHomepageProject())
+                }
+              >
+                {data.homepageProjects.map((item, index) => (
+                  <ItemCard
+                    key={`homepage-project-${item.id ?? index}`}
+                    title={`Project ${index + 1}`}
+                    onMoveUp={() => moveCollectionItem("homepageProjects", index, -1)}
+                    onMoveDown={() =>
+                      moveCollectionItem("homepageProjects", index, 1)
+                    }
+                    onRemove={() => removeCollectionItem("homepageProjects", index)}
+                    disableMoveUp={index === 0}
+                    disableMoveDown={index === data.homepageProjects.length - 1}
+                  >
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <TextField
+                        label="Title"
+                        value={item.title}
+                        onChange={(value) =>
+                          updateCollectionItem("homepageProjects", index, "title", value)
+                        }
+                        placeholder="Project Name"
+                      />
+                      <TextField
+                        label="URL"
+                        value={item.url}
+                        onChange={(value) =>
+                          updateCollectionItem("homepageProjects", index, "url", value)
+                        }
+                        placeholder="https://..."
+                      />
+                    </div>
                   </ItemCard>
                 ))}
               </RepeatableSection>

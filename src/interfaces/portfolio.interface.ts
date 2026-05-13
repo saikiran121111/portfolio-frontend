@@ -36,6 +36,7 @@ export interface IPortfolio {
   copyrights?: string; 
   // NEW
   toolDocs?: IToolDoc[];
+  homepageProjects?: IHomepageProject[];
 }
 
 export interface ISocials {
@@ -52,4 +53,11 @@ export interface IToolDoc {
   summary?: string;
   content: string;
   order?: number;
+}
+
+export interface IHomepageProject {
+  id?: number;
+  title: string;
+  url: string;
+  order: number;
 }

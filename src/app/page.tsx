@@ -97,7 +97,7 @@ export default async function Home() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
       </div>
 
-      <ProjectsRadar projects={projects} />
+      <ProjectsRadar projects={portfolio?.homepageProjects || []} />
 
       <section className="home-hero-section pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
         <div className="hero-copy-stack relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[46rem]">

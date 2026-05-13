@@ -214,6 +214,14 @@ export function mapAdminPortfolioToEditor(
         level: item.level,
       }),
     ),
+    homepageProjects: payload.homepageProjects.map(
+      (item) => ({
+        id: item.id,
+        title: item.title,
+        url: item.url,
+        order: item.order,
+      }),
+    ),
     scanReports: payload.scanReports.map(
       (item: IAdminScanReportApi): IAdminScanReportEditor => ({
         id: item.id,
@@ -330,6 +338,12 @@ export function mapEditorPortfolioToApi(
       id: item.id,
       name: item.name,
       level: item.level,
+    })),
+    homepageProjects: payload.homepageProjects.map((item, index) => ({
+      id: item.id,
+      title: item.title,
+      url: item.url,
+      order: index,
     })),
     scanReports: payload.scanReports.map((item, index) => ({
       id: item.id,

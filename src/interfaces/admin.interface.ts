@@ -240,6 +240,7 @@ export interface IAdminPortfolioApi {
   achievements: IAdminAchievementApi[];
   languages: IAdminLanguageApi[];
   scanReports: IAdminScanReportApi[];
+  homepageProjects: IAdminHomepageProjectApi[];
 }
 
 export interface IAdminPortfolioEditor {
@@ -254,9 +255,25 @@ export interface IAdminPortfolioEditor {
   achievements: IAdminAchievementEditor[];
   languages: IAdminLanguageEditor[];
   scanReports: IAdminScanReportEditor[];
+  homepageProjects: IAdminHomepageProjectEditor[];
 }
 
 export interface IAdminSessionResponse {
   authenticated: boolean;
   expiresAt: string | null;
+}
+
+
+export interface IAdminHomepageProjectApi {
+  id?: number;
+  title: string;
+  url: string;
+  order: number;
+}
+
+export interface IAdminHomepageProjectEditor {
+  id?: number;
+  title: string;
+  url: string;
+  order: number;
 }

@@ -37,4 +37,13 @@ export interface PortfolioDto {
   bottomHeadline?: string[];
   copyrights?: string;
   toolDocs?: ToolDocDto[]; 
+  homepageProjects?: HomepageProjectDto[];
+}
+
+
+export interface HomepageProjectDto {
+  id?: number;
+  title: string;
+  url: string;
+  order: number;
 }
