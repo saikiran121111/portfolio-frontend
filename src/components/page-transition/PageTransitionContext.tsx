@@ -70,15 +70,35 @@ export function PageTransitionProvider({
     // Track live mouse position for exit animation
     const liveMousePosition = useRef<CursorPosition>({ x: 0, y: 0 });
 
-    // Track mouse movement globally
+    // Track pointer movement globally so the exit collapse returns to the live cursor.
     useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
+        const handlePointerMove = (e: PointerEvent | MouseEvent) => {
             liveMousePosition.current = { x: e.clientX, y: e.clientY };
         };
 
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+        const supportsPointer = "onpointermove" in window;
+        if (supportsPointer) {
+            window.addEventListener("pointermove", handlePointerMove, { passive: true });
+            return () => window.removeEventListener("pointermove", handlePointerMove);
+        }
+
+        window.addEventListener("mousemove", handlePointerMove, { passive: true });
+        return () => window.removeEventListener("mousemove", handlePointerMove);
     }, []);
+
+    useEffect(() => {
+        if (typeof document === "undefined") return;
+
+        if (state === "idle") {
+            document.documentElement.removeAttribute("data-page-transition-state");
+            return;
+        }
+
+        document.documentElement.setAttribute("data-page-transition-state", state);
+        return () => {
+            document.documentElement.removeAttribute("data-page-transition-state");
+        };
+    }, [state]);
 
     // Watch for pathname changes to trigger exit animation when navigating
     useEffect(() => {
@@ -102,8 +122,10 @@ export function PageTransitionProvider({
 
             // Store the current pathname as origin
             originPathname.current = pathname;
+            liveMousePosition.current = position;
             setTargetHref(href);
             setCursorPosition(position);
+            setExitPosition(position);
             setState("expanding");
         },
         [state, pathname]

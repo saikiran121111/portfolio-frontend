@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import HomepageBackground from "@/components/portfolio/background/HomepageBackground";
 import CustomCursor from "@/components/cursor/CustomCursor";
 import Copyright from "../components/portfolio/footer/Copyright";
 import {
@@ -32,7 +31,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <HomepageBackground />
         {/* Custom cursor above content */}
         <CustomCursor />
         <PageTransitionProvider expansionDuration={800}>

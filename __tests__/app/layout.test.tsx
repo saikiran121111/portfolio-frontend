@@ -2,7 +2,6 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import RootLayout, { metadata } from "@/app/layout";
 
-jest.mock("@/components/portfolio/background/HomepageBackground", () => () => <div>HomepageBackground</div>);
 jest.mock("@/components/cursor/CustomCursor", () => () => <div>CustomCursor</div>);
 jest.mock("@/components/portfolio/footer/Copyright", () => () => <div>Copyright</div>);
 jest.mock("@/components/page-transition", () => ({
@@ -25,7 +24,6 @@ describe("RootLayout", () => {
         );
 
         expect(screen.getByText("Test Child")).toBeInTheDocument();
-        expect(screen.getByText("HomepageBackground")).toBeInTheDocument();
         expect(screen.getByText("CustomCursor")).toBeInTheDocument();
         expect(screen.getByText("PageTransitionOverlay")).toBeInTheDocument();
         expect(screen.getByText("Copyright")).toBeInTheDocument();

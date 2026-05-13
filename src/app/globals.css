@@ -78,6 +78,11 @@ body {
   }
 }
 
+html[data-page-transition-state] [data-custom-cursor] {
+  opacity: 0;
+  transition: opacity 90ms ease;
+}
+
 /* Intro gate animation */
 .intro-gate {
   opacity: 0;
@@ -841,8 +846,8 @@ html[data-intro-done="true"] .intro-gate {
     opacity: 1;
   }
 
-  50% {
-    opacity: 0.8;
+  84% {
+    opacity: 1;
   }
 
   100% {
@@ -1090,8 +1095,4 @@ html[data-intro-done="true"] .intro-gate {
     animation: none !important;
   }
 
-  .page-transition-overlay {
-    animation: none !important;
-    transition: opacity 0.15s ease !important;
-  }
 }

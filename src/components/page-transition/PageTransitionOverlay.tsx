@@ -11,7 +11,7 @@ export interface PageTransitionOverlayProps {
 }
 
 export function PageTransitionOverlay({
-    backgroundColor = "#f7f8fa", // matches cursor color
+    backgroundColor = "#ffffff",
     baseSize = 30,
 }: PageTransitionOverlayProps) {
     const { state, cursorPosition, exitPosition, completeExpansion, completeExit } = usePageTransition();
@@ -20,10 +20,6 @@ export function PageTransitionOverlay({
     const getAnimationDuration = useCallback((fallbackMs: number, propertyName: string) => {
         const overlay = overlayRef.current;
         if (!overlay || typeof window === "undefined") return fallbackMs;
-
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            return 150;
-        }
 
         const rawValue = window
             .getComputedStyle(overlay)
@@ -138,8 +134,10 @@ export function PageTransitionOverlay({
 
     return (
         <div
+            key={state}
             ref={overlayRef}
             className="page-transition-overlay"
+            data-transition-state={state}
             style={{
                 position: "fixed",
                 left: activePosition.x - baseSize / 2,
@@ -150,6 +148,8 @@ export function PageTransitionOverlay({
                 backgroundColor,
                 zIndex: 2147483646, // Just below cursor
                 pointerEvents: "none",
+                transformOrigin: "center center",
+                willChange: "transform, opacity",
                 transform: getTransform(),
                 animation: getAnimation(),
                 ["--transition-scale" as string]: scale,
