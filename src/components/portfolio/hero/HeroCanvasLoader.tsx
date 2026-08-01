@@ -12,7 +12,7 @@ export default function HeroCanvasLoader() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
+    if (reducedMotion || window.innerWidth <= 560) return;
 
     const timeout = window.setTimeout(() => setReady(true), 180);
     return () => window.clearTimeout(timeout);

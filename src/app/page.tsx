@@ -84,20 +84,31 @@ export default async function Home() {
           </dl>
         </div>
 
-        <div className="hero-visual hero-reveal hero-reveal-canvas" aria-label="Abstract engineering signal visualization">
-          <div className="hero-visual-frame" aria-hidden="true">
+        <div
+          className="hero-visual hero-reveal hero-reveal-canvas"
+          aria-label="Engineering path from backend systems through full-stack delivery toward AI engineering"
+        >
+          <div className="hero-visual-frame">
             <div className="hero-visual-topline">
-              <span>Career trajectory</span>
-              <span className="live-indicator">Active</span>
+              <span>Engineering path</span>
+              <span className="live-indicator">In progress</span>
             </div>
-            <div className="hero-fallback-network">
-              <span /><span /><span /><span /><span /><span />
-            </div>
-            <div className="hero-visual-readout">
-              <span>Foundation</span><strong>Backend systems</strong>
-              <span>Direction</span><strong>AI engineering</strong>
-              <span>Focus</span><strong>Practical systems</strong>
-            </div>
+            <ol className="hero-career-path">
+              {siteContent.careerPath.map((stage, index) => (
+                <li className={`hero-career-stage hero-career-stage-${index + 1}`} key={stage.number}>
+                  <span className="hero-career-marker" aria-hidden="true">{stage.number}</span>
+                  <span className="hero-career-copy">
+                    <span>{stage.label}</span>
+                    <strong>{stage.title}</strong>
+                    <small>{stage.detail}</small>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p className="hero-visual-summary">
+              <span>{siteContent.identity.experienceLabel} in production engineering</span>
+              <strong>Building forward from a proven backend foundation.</strong>
+            </p>
           </div>
           <HeroCanvasLoader />
         </div>

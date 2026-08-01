@@ -22,7 +22,10 @@ export function scrollToElement(target: HTMLElement) {
     numericLength(rootStyles.scrollPaddingTop),
     numericLength(targetStyles.scrollMarginTop),
   );
-  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const maxScroll = Math.max(
+    0,
+    document.documentElement.scrollHeight - window.innerHeight,
+  );
   const destination = Math.min(
     maxScroll,
     Math.max(0, target.getBoundingClientRect().top + start - offset),
@@ -30,12 +33,11 @@ export function scrollToElement(target: HTMLElement) {
   const distance = destination - start;
 
   if (reducedMotion || Math.abs(distance) < 2) {
-    window.scrollTo(0, destination);
-    activeFrame = null;
+    window.scrollTo({ top: destination, behavior: "instant" });
     return;
   }
 
-  const duration = Math.min(560, Math.max(320, Math.abs(distance) * 0.26));
+  const duration = Math.min(760, Math.max(480, Math.abs(distance) * 0.28));
   const startedAt = performance.now();
 
   const step = (time: number) => {
@@ -44,7 +46,10 @@ export function scrollToElement(target: HTMLElement) {
       ? 4 * progress * progress * progress
       : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
-    window.scrollTo(0, start + distance * eased);
+    window.scrollTo({
+      top: start + distance * eased,
+      behavior: "instant",
+    });
 
     if (progress < 1) {
       activeFrame = window.requestAnimationFrame(step);

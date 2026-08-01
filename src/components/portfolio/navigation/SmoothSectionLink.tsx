@@ -30,12 +30,14 @@ export default function SmoothSectionLink({
     if (
       destination.origin !== window.location.origin ||
       destination.pathname !== window.location.pathname ||
-      !destination.hash
+      destination.search !== window.location.search
     ) {
       return;
     }
 
-    const target = document.getElementById(decodeURIComponent(destination.hash.slice(1)));
+    const target = destination.hash
+      ? document.getElementById(decodeURIComponent(destination.hash.slice(1)))
+      : document.body;
     if (!target) return;
 
     event.preventDefault();

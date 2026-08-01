@@ -10,6 +10,13 @@ export interface FocusArea {
   detail: string;
 }
 
+export interface CareerStage {
+  number: string;
+  label: string;
+  title: string;
+  detail: string;
+}
+
 export const siteContent = {
   identity: {
     fullName: "Phani Venkata Sai Kiran",
@@ -54,6 +61,26 @@ export const siteContent = {
       detail: "Current learning and practical project work",
     },
   ] satisfies FocusArea[],
+  careerPath: [
+    {
+      number: "01",
+      label: "Foundation",
+      title: "Backend systems",
+      detail: "Java, Spring Boot, AEM, and APIs",
+    },
+    {
+      number: "02",
+      label: "Production delivery",
+      title: "Full-stack engineering",
+      detail: "NestJS, Next.js, GraphQL, and integrations",
+    },
+    {
+      number: "03",
+      label: "Current direction",
+      title: "AI engineering",
+      detail: "Learning and practical project development",
+    },
+  ] satisfies CareerStage[],
   aiFocus: {
     eyebrow: "Current direction",
     title: "Building from backend systems toward AI engineering.",

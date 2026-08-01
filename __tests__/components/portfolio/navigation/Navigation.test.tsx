@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Navigation from "@/components/portfolio/navigation/Navigation";
 
 describe("Navigation section state", () => {
@@ -35,11 +35,49 @@ describe("Navigation section state", () => {
     );
   });
 
+  it("returns home locally when already on the homepage", () => {
+    window.history.replaceState({}, "", "/#projects");
+    const scrollTo = jest
+      .spyOn(window, "scrollTo")
+      .mockImplementation(() => undefined);
+    const matchMedia = jest.spyOn(window, "matchMedia").mockImplementation(
+      (query) =>
+        ({
+          matches: true,
+          media: query,
+          onchange: null,
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }) as MediaQueryList,
+    );
+    render(<Navigation />);
+
+    const navigationWasPrevented = !fireEvent.click(
+      screen.getByRole("link", { name: "Home" }),
+    );
+
+    expect(navigationWasPrevented).toBe(true);
+    expect(window.location.pathname).toBe("/");
+    expect(window.location.hash).toBe("");
+    expect(screen.getByRole("link", { name: "Home" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+
+    scrollTo.mockRestore();
+    matchMedia.mockRestore();
+  });
+
   it("syncs active state during browser hash navigation", async () => {
     render(<Navigation />);
 
-    window.history.replaceState({}, "", "/#experience");
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
+    act(() => {
+      window.history.replaceState({}, "", "/#experience");
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
 
     await waitFor(() => {
       expect(screen.getByRole("link", { name: "Experience" })).toHaveAttribute(

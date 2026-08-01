@@ -114,6 +114,7 @@ export default function Navigation() {
             const active = activeHref === link.href;
             const isDownload = link.href === siteContent.links.resume;
             const isSectionLink = link.href.includes("#");
+            const isHomeLink = link.href === "/";
             const className = isDownload ? "nav-resume" : undefined;
 
             if (isDownload) {
@@ -124,12 +125,12 @@ export default function Navigation() {
               );
             }
 
-            if (isSectionLink && pathname === "/") {
+            if (pathname === "/" && (isHomeLink || isSectionLink)) {
               return (
                 <SmoothSectionLink
                   key={link.href}
                   href={link.href}
-                  aria-current={active ? "location" : undefined}
+                  aria-current={active ? (isHomeLink ? "page" : "location") : undefined}
                   onClick={() => {
                     setActiveHref(link.href);
                     setOpen(false);
