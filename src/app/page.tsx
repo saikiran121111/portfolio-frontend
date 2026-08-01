@@ -9,6 +9,7 @@ import {
 import HeroCanvasLoader from "@/components/portfolio/hero/HeroCanvasLoader";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
+import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import { profileContent } from "@/content/profile";
 import {
   resolveCandidateIdentity,
@@ -58,9 +59,9 @@ export default async function Home() {
             <a className="button button-primary" href={siteContent.links.resume}>
               <Download aria-hidden="true" /> View résumé
             </a>
-            <a className="button button-secondary" href="#projects">
+            <SmoothSectionLink className="button button-secondary" href="#projects">
               Explore projects <ArrowDownRight aria-hidden="true" />
-            </a>
+            </SmoothSectionLink>
             <ProfileLink />
           </div>
 

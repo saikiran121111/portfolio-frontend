@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Github, Linkedin, Menu, X } from "lucide-react";
 import Logo from "@/components/portfolio/logo/Logo";
+import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import { siteContent } from "@/content/site";
+import { cancelSmoothScroll, scrollToElement } from "@/lib/smoothScroll";
 
 function activeHrefForLocation(pathname: string, hash = "") {
   if (pathname.startsWith("/profile")) return siteContent.links.profile;
@@ -39,6 +41,40 @@ export default function Navigation() {
     return () => {
       window.removeEventListener("hashchange", syncActiveHref);
       window.removeEventListener("popstate", syncActiveHref);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!window.location.hash) return;
+    cancelSmoothScroll();
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    let observer: MutationObserver | null = null;
+    let timeout: number | null = null;
+
+    const scrollToTarget = () => {
+      const target = document.getElementById(id);
+      if (!target) return false;
+      scrollToElement(target);
+      return true;
+    };
+
+    const frame = window.requestAnimationFrame(() => {
+      if (scrollToTarget()) return;
+
+      observer = new MutationObserver(() => {
+        if (!scrollToTarget()) return;
+        observer?.disconnect();
+        observer = null;
+        if (timeout !== null) window.clearTimeout(timeout);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      timeout = window.setTimeout(() => observer?.disconnect(), 10_000);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer?.disconnect();
+      if (timeout !== null) window.clearTimeout(timeout);
     };
   }, [pathname]);
 
@@ -77,6 +113,7 @@ export default function Navigation() {
           {siteContent.navigation.map((link) => {
             const active = activeHref === link.href;
             const isDownload = link.href === siteContent.links.resume;
+            const isSectionLink = link.href.includes("#");
             const className = isDownload ? "nav-resume" : undefined;
 
             if (isDownload) {
@@ -87,10 +124,27 @@ export default function Navigation() {
               );
             }
 
+            if (isSectionLink && pathname === "/") {
+              return (
+                <SmoothSectionLink
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "location" : undefined}
+                  onClick={() => {
+                    setActiveHref(link.href);
+                    setOpen(false);
+                  }}
+                >
+                  {link.label}
+                </SmoothSectionLink>
+              );
+            }
+
             return (
               <Link
                 key={link.href}
                 href={link.href}
+                scroll={isSectionLink ? false : undefined}
                 aria-current={active ? (link.href.includes("#") ? "location" : "page") : undefined}
                 onClick={() => {
                   setActiveHref(link.href);

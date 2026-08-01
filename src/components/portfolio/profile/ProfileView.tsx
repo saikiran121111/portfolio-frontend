@@ -16,6 +16,7 @@ import {
   selectRelevantCertifications,
 } from "@/content/selectors";
 import { siteContent } from "@/content/site";
+import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import type { IProjects } from "@/interfaces/user.interface";
 
@@ -87,12 +88,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
       <div className="profile-layout">
         <aside className="profile-index" aria-label={profileContent.indexLabel}>
           <p>{profileContent.indexLabel}</p>
-          <a href="#experience">{profileContent.sections.experience}</a>
-          {aiSkills.length ? <a href="#ai-direction">{profileContent.sections.aiDirection}</a> : null}
-          <a href="#strengths">{profileContent.sections.strengths}</a>
-          <a href="#profile-projects">{profileContent.sections.projects}</a>
-          <a href="#education">{profileContent.sections.education}</a>
-          <a href="#credentials">{profileContent.sections.credentials}</a>
+          <SmoothSectionLink href="#experience">{profileContent.sections.experience}</SmoothSectionLink>
+          {aiSkills.length ? <SmoothSectionLink href="#ai-direction">{profileContent.sections.aiDirection}</SmoothSectionLink> : null}
+          <SmoothSectionLink href="#strengths">{profileContent.sections.strengths}</SmoothSectionLink>
+          <SmoothSectionLink href="#profile-projects">{profileContent.sections.projects}</SmoothSectionLink>
+          <SmoothSectionLink href="#education">{profileContent.sections.education}</SmoothSectionLink>
+          <SmoothSectionLink href="#credentials">{profileContent.sections.credentials}</SmoothSectionLink>
         </aside>
 
         <div className="profile-content">
