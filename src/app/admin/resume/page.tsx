@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function AdminResumePage() {
   return (
     <main id="main-content" className="admin-shell" tabIndex={-1}>
-      <div className="container mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <div className="admin-content-shell py-12 sm:py-16">
         <UpdateProfileClient />
       </div>
     </main>
