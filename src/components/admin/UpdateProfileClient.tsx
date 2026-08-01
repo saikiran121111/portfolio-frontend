@@ -59,7 +59,7 @@ type ExperienceListField = "bullets" | "techStack";
 type ProjectListField = "tech" | "highlights";
 
 const panelClassName =
-  "rounded-[28px] border border-white/10 bg-white/[0.06] p-5 shadow-[0_30px_80px_rgba(3,10,24,0.35)] backdrop-blur-xl";
+  "rounded-[18px] border border-white/10 bg-[#141414] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]";
 
 function createEmptyBottomHeadline(): IAdminBottomHeadlineEditor {
   return {
@@ -730,21 +730,20 @@ export default function UpdateProfileClient() {
   return (
     <div className="space-y-6 text-white">
       <section className={`${panelClassName} overflow-hidden`}>
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.22),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(249,115,22,0.14),transparent_35%)]" />
+        <div className="absolute inset-0 -z-10 bg-[#141414]" />
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-cyan-100">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-amber-100">
               <ShieldCheck className="size-4" />
               Admin Editor
             </div>
             <div className="space-y-2">
               <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Update portfolio data without opening the database
+                Update structured portfolio data
               </h1>
               <p className="max-w-3xl text-sm leading-6 text-white/70 sm:text-base">
-                This page reads the current profile values, lets you update or
-                remove them, and writes the full portfolio document back after
-                you save.
+                Current values load from durable backend storage. Validated
+                changes are written back through the authenticated admin API.
               </p>
             </div>
           </div>
@@ -752,7 +751,7 @@ export default function UpdateProfileClient() {
           <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[340px]">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-                <Clock3 className="size-4 text-cyan-300" />
+                <Clock3 className="size-4 text-amber-300" />
                 Session
               </div>
               <p className="mt-2 text-sm text-white/60">
@@ -775,12 +774,14 @@ export default function UpdateProfileClient() {
 
       {message ? (
         <div
+          role={message.tone === "error" ? "alert" : "status"}
+          aria-live="polite"
           className={`rounded-2xl border px-4 py-3 text-sm ${
             message.tone === "success"
               ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-50"
               : message.tone === "error"
                 ? "border-rose-300/30 bg-rose-300/10 text-rose-50"
-                : "border-cyan-300/30 bg-cyan-300/10 text-cyan-50"
+                : "border-amber-300/30 bg-amber-300/10 text-amber-50"
           }`}
         >
           {message.text}
@@ -802,6 +803,8 @@ export default function UpdateProfileClient() {
           <form className="space-y-4" onSubmit={handleLogin}>
             <TextField
               label="Admin email"
+              type="email"
+              autoComplete="email"
               value={credentials.email}
               onChange={(value) =>
                 setCredentials((current) => ({ ...current, email: value }))
@@ -811,6 +814,7 @@ export default function UpdateProfileClient() {
             <TextField
               label="Password"
               type="password"
+              autoComplete="current-password"
               value={credentials.password}
               onChange={(value) =>
                 setCredentials((current) => ({ ...current, password: value }))
@@ -820,7 +824,7 @@ export default function UpdateProfileClient() {
             <button
               type="submit"
               disabled={authSubmitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-cyan-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:bg-cyan-300/60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-amber-300/60"
             >
               <ShieldCheck className="size-4" />
               {authSubmitting ? "Signing in..." : "Sign in"}
@@ -883,8 +887,8 @@ export default function UpdateProfileClient() {
           ) : data ? (
             <>
               <SectionCard
-                title="Hero / Intro"
-                description="Name, headline, and visual identity used by the landing hero."
+                title="Candidate identity"
+                description="Public name, recruitment headline, and primary contact details."
                 defaultOpen
               >
                 <div className="grid gap-4 md:grid-cols-2">
@@ -919,7 +923,7 @@ export default function UpdateProfileClient() {
 
               <SectionCard
                 title="About"
-                description="Contact details, profile summary, and footer copy."
+                description="Professional summary, location, and profile contact details."
               >
                 <div className="grid gap-4 md:grid-cols-2">
                   <TextField
@@ -954,7 +958,7 @@ export default function UpdateProfileClient() {
 
               <SectionCard
                 title="Social Links"
-                description="These values map directly to the contact/social area."
+                description="Professional links shown in the profile and recruiter resources."
               >
                 <div className="grid gap-4 md:grid-cols-3">
                   <TextField
@@ -979,8 +983,8 @@ export default function UpdateProfileClient() {
               </SectionCard>
 
               <SectionCard
-                title="SEO / Settings"
-                description="Repository and deployment references used across tools and metadata surfaces."
+                title="Repository / Deployment References"
+                description="Technical repository and deployment references stored with the profile."
               >
                 <div className="grid gap-4 md:grid-cols-2">
                   <TextField
@@ -1031,8 +1035,8 @@ export default function UpdateProfileClient() {
               </SectionCard>
 
               <RepeatableSection
-                title="Hero rotating subtitles"
-                description="Short rotating lines shown in the landing hero."
+                title="Stored headline records"
+                description="Legacy headline records retained in the backend data model."
                 count={data.bottomHeadlines.length}
                 addLabel="Add headline"
                 onAdd={() =>
@@ -1066,8 +1070,8 @@ export default function UpdateProfileClient() {
               </RepeatableSection>
 
               <RepeatableSection
-                title="Homepage Projects"
-                description="Rotating projects shown in the homepage header component."
+                title="Stored homepage project links"
+                description="Legacy homepage project references retained in the backend data model."
                 count={data.homepageProjects.length}
                 addLabel="Add project"
                 onAdd={() =>
@@ -1888,6 +1892,7 @@ function TextField({
   placeholder,
   type = "text",
   required = false,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -1895,6 +1900,7 @@ function TextField({
   placeholder?: string;
   type?: string;
   required?: boolean;
+  autoComplete?: string;
 }) {
   return (
     <label className="grid gap-2">
@@ -1905,7 +1911,8 @@ function TextField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         required={required}
-        className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/40 focus:bg-slate-950/70"
+        autoComplete={autoComplete}
+        className="rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70"
       />
     </label>
   );
@@ -1928,7 +1935,7 @@ function SelectField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40 focus:bg-slate-950/70"
+        className="rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300/40 focus:bg-slate-950/70"
       >
         <option value="">Select type</option>
         {options.map((option) => (
@@ -1957,14 +1964,14 @@ function ToggleField({
       <span className="text-sm font-medium text-white/75">{label}</span>
       <span className="inline-flex min-h-[46px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white/80">
         <span className="inline-flex items-center gap-2">
-          <Icon className="size-4 text-cyan-200" />
+          <Icon className="size-4 text-amber-200" />
           {checked ? "Enabled" : "Disabled"}
         </span>
         <input
           type="checkbox"
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
-          className="size-5 accent-cyan-300"
+          className="size-5 accent-amber-300"
         />
       </span>
     </label>
@@ -1994,7 +2001,7 @@ function TextAreaField({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className={`rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/40 focus:bg-slate-950/70 ${
+        className={`rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70 ${
           monospace ? "font-mono" : ""
         }`}
       />
@@ -2036,7 +2043,7 @@ function StringListEditor({
             <input
               value={value}
               onChange={(event) => onChange(index, event.target.value)}
-              className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/40 focus:bg-slate-950/70"
+              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70"
               placeholder={`${label} ${index + 1}`}
             />
             <button

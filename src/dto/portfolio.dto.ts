@@ -8,8 +8,7 @@ import {
   AchievementDto,
   LanguageDto,
   ScanReportDto,
-  SocialsDto,
-  ToolDocDto
+  SocialsDto
 } from './user.dto';
 
 export interface PortfolioDto {
@@ -36,7 +35,6 @@ export interface PortfolioDto {
   scanReports?: ScanReportDto[];
   bottomHeadline?: string[];
   copyrights?: string;
-  toolDocs?: ToolDocDto[]; 
   homepageProjects?: HomepageProjectDto[];
 }
 

@@ -77,10 +77,6 @@ describe("mapPortfolio", () => {
         ],
         bottomHeadline: ["Line 1"],
         copyrights: "Copy",
-        toolDocs: [
-            { key: "tool-a", title: "Tool A", icon: "a.png", content: "Content A", order: 2 },
-            { key: "tool-b", title: "Tool B", icon: "b.png", content: "Content B", order: 1 },
-        ],
     };
 
     it("maps basic fields correctly", () => {
@@ -105,12 +101,6 @@ describe("mapPortfolio", () => {
 
         const result = mapPortfolio(dtoWithNullEnds);
         expect(result.experiences[0].endDate).toBeNull();
-    });
-
-    it("sorts toolDocs by order", () => {
-        const result = mapPortfolio(mockDto);
-        expect(result.toolDocs?.[0].title).toBe("Tool B"); // Order 1
-        expect(result.toolDocs?.[1].title).toBe("Tool A"); // Order 2
     });
 
     it("handles optional arrays being undefined", () => {

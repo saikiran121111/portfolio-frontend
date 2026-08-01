@@ -5,12 +5,20 @@ import type {
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   const payload = (await response.json().catch(() => null)) as
-    | (T & { error?: string; message?: string })
+    | (T & { error?: string; message?: string; fieldErrors?: Record<string, string> })
     | null;
 
   if (!response.ok) {
+    const validationDetails = payload?.fieldErrors
+      ? Object.entries(payload.fieldErrors)
+          .slice(0, 4)
+          .map(([field, message]) => `${field}: ${message}`)
+          .join("; ")
+      : "";
     const errorMessage =
-      payload?.error ||
+      (payload?.error && validationDetails
+        ? `${payload.error}. ${validationDetails}`
+        : payload?.error) ||
       payload?.message ||
       `Request failed with status ${response.status}`;
     throw new Error(errorMessage);

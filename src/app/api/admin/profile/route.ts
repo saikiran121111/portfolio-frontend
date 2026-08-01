@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  IAdminPortfolioApi,
-  IAdminPortfolioEditor,
-} from "@/interfaces/admin.interface";
+import { IAdminPortfolioApi } from "@/interfaces/admin.interface";
 import { fetchBackendAdminProfile, updateBackendAdminProfile } from "@/lib/adminApi";
 import {
   ADMIN_SESSION_COOKIE_NAME,
@@ -12,6 +9,7 @@ import {
   mapAdminPortfolioToEditor,
   mapEditorPortfolioToApi,
 } from "@/lib/adminProfileTransforms";
+import { validateAdminProfileUpdate } from "@/lib/adminProfileValidation";
 
 export const runtime = "nodejs";
 
@@ -80,8 +78,36 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const editorPayload = (await request.json()) as IAdminPortfolioEditor;
-    const apiPayload = mapEditorPortfolioToApi(editorPayload);
+    const submittedPayload = await request.json().catch(() => null);
+    if (!submittedPayload) {
+      return NextResponse.json({ error: "Request body must contain valid JSON" }, { status: 400 });
+    }
+
+    const currentResponse = await fetchBackendAdminProfile();
+    const currentPayload =
+      (await parseBackendJson<IAdminPortfolioApi | { error?: string }>(currentResponse)) ?? null;
+
+    if (!currentResponse.ok || !currentPayload) {
+      return NextResponse.json(
+        {
+          error:
+            (currentPayload as { error?: string } | null)?.error ??
+            "Failed to load current profile before saving",
+        },
+        { status: currentResponse.ok ? 502 : currentResponse.status },
+      );
+    }
+
+    const currentEditor = mapAdminPortfolioToEditor(currentPayload as IAdminPortfolioApi);
+    const validation = validateAdminProfileUpdate(submittedPayload, currentEditor);
+    if (!validation.success || !validation.data) {
+      return NextResponse.json(
+        { error: "Profile validation failed", fieldErrors: validation.fieldErrors },
+        { status: 400 },
+      );
+    }
+
+    const apiPayload = mapEditorPortfolioToApi(validation.data);
     const backendResponse = await updateBackendAdminProfile(
       JSON.stringify(apiPayload),
     );

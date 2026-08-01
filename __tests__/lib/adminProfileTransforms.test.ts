@@ -31,6 +31,7 @@ describe("adminProfileTransforms", () => {
         postgresDeployedServer: null,
       },
       bottomHeadlines: [{ text: "Headline", order: 0 }],
+      homepageProjects: [],
       skills: [{ name: "TypeScript", category: "Backend", level: "Advanced", order: 0 }],
       experiences: [],
       projects: [],
@@ -83,6 +84,7 @@ describe("adminProfileTransforms", () => {
         postgresDeployedServer: "",
       },
       bottomHeadlines: [{ text: "Headline", order: 0 }],
+      homepageProjects: [],
       skills: [{ name: "TypeScript", category: "Backend", level: "Advanced", order: 0 }],
       experiences: [
         {

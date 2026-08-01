@@ -34,8 +34,6 @@ export interface IPortfolio {
   scanReports?: IscanReports[];
   bottomHeadline?: string[]; // NEW
   copyrights?: string; 
-  // NEW
-  toolDocs?: IToolDoc[];
   homepageProjects?: IHomepageProject[];
 }
 
@@ -43,16 +41,6 @@ export interface ISocials {
   github?: string;
   linkedin?: string;
   portfolio?: string;
-}
-
-// NEW
-export interface IToolDoc {
-  key: string;
-  title: string;
-  icon: string;
-  summary?: string;
-  content: string;
-  order?: number;
 }
 
 export interface IHomepageProject {

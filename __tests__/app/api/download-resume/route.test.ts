@@ -9,6 +9,10 @@ global.fetch = jest.fn();
 jest.mock("next/server", () => {
     return {
         NextResponse: class {
+            body: any;
+            init?: any;
+            headers: Map<string, unknown>;
+            status: number;
             constructor(body: any, init?: any) {
                 this.body = body;
                 this.init = init;

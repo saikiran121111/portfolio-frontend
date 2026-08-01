@@ -10,7 +10,7 @@ jest.mock("@/components/admin/UpdateProfileClient", () => () => (
 describe("UpdateProfile Page", () => {
   it("renders the admin editor shell", () => {
     render(<UpdateProfilePage />);
-    expect(screen.getByText("Logo")).toBeInTheDocument();
     expect(screen.getByText("UpdateProfileClient")).toBeInTheDocument();
+    expect(screen.getByRole("main")).toHaveClass("admin-shell");
   });
 });
