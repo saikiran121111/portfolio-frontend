@@ -10,7 +10,6 @@ import HeroCanvasLoader from "@/components/portfolio/hero/HeroCanvasLoader";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
-import { profileContent } from "@/content/profile";
 import {
   resolveCandidateIdentity,
   selectAiSkills,
@@ -57,7 +56,7 @@ export default async function Home() {
 
           <div className="hero-actions hero-reveal hero-reveal-5">
             <a className="button button-primary" href={siteContent.links.resume}>
-              <Download aria-hidden="true" /> View résumé
+              <Download aria-hidden="true" /> View Resume
             </a>
             <SmoothSectionLink className="button button-secondary" href="#projects">
               Explore projects <ArrowDownRight aria-hidden="true" />
@@ -115,23 +114,25 @@ export default async function Home() {
       </section>
 
       <section className="focus-strip" aria-label="Target roles and engineering direction">
-        <div className="content-shell focus-grid">
-          {siteContent.focusAreas.map((area) => (
-            <div className="focus-item" key={area.number}>
-              <span>{area.number}</span>
-              <div><h2>{area.title}</h2><p>{area.detail}</p></div>
-            </div>
+        <ol className="content-shell focus-grid">
+          {siteContent.focusAreas.map((area, index) => (
+            <li
+              className={`focus-item${index === siteContent.focusAreas.length - 1 ? " focus-item-current" : ""}`}
+              key={area.number}
+            >
+              <span className="focus-marker" aria-hidden="true">{area.number}</span>
+              <div className="focus-copy">
+                <h2>{area.title}</h2>
+                <p>{area.detail}</p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="direction-section content-shell" aria-labelledby="direction-title">
-        <div className="section-heading">
-          <div>
-            <p className="section-kicker">{siteContent.aiFocus.eyebrow}</p>
-            <h2 id="direction-title">{siteContent.aiFocus.title}</h2>
-          </div>
-          <p>{siteContent.aiFocus.summary}</p>
+        <div className="section-heading section-heading-simple">
+          <h2 id="direction-title">Engineering direction</h2>
         </div>
 
         <div className="direction-grid">
@@ -162,44 +163,30 @@ export default async function Home() {
       <ProjectsRadar projects={projects} />
 
       <section id="experience" className="profile-preview content-shell" aria-labelledby="profile-preview-title">
-        <div className="section-heading">
-          <div>
-            <p className="section-kicker">{profileContent.experiencePreview.eyebrow}</p>
-            <h2 id="profile-preview-title">{profileContent.experiencePreview.title}</h2>
-          </div>
-          <p>{profileContent.experiencePreview.summary}</p>
+        <div className="section-heading section-heading-simple section-heading-actions">
+          <h2 id="profile-preview-title">Experience</h2>
+          <ProfileLink label="View full experience" />
         </div>
 
-        <div className="profile-preview-grid">
-          <div className="profile-preview-intro">
-            <p>{profileContent.experiencePreview.supportingCopy}</p>
-            <ProfileLink label="Review full experience" />
-          </div>
-
-          {recentExperience ? (
-            <article className="experience-preview">
-              <p className="section-kicker">Most recent role</p>
-              <div className="experience-preview-heading">
-                <h3>{recentExperience.title.replace(/SWE\s*-\s*/i, "Software Engineer / ")}</h3>
-                <span>{experiencePeriod(recentExperience.startDate, recentExperience.endDate)}</span>
-              </div>
-              <p>{recentExperience.company} / {recentExperience.location}</p>
-              <ul>
-                {recentExperience.bullets.slice(0, 3).map((bullet) => <li key={bullet}>{bullet}</li>)}
-              </ul>
-            </article>
-          ) : null}
-        </div>
+        {recentExperience ? (
+          <article className="experience-preview experience-preview-wide">
+            <p className="section-kicker">Most recent role</p>
+            <div className="experience-preview-heading">
+              <h3>{recentExperience.title.replace(/SWE\s*-\s*/i, "Software Engineer / ")}</h3>
+              <span>{experiencePeriod(recentExperience.startDate, recentExperience.endDate)}</span>
+            </div>
+            <p>{recentExperience.company} / {recentExperience.location}</p>
+            <ul>
+              {recentExperience.bullets.slice(0, 3).map((bullet) => <li key={bullet}>{bullet}</li>)}
+            </ul>
+          </article>
+        ) : null}
       </section>
 
       {(primaryEducation || certifications.length) ? (
         <section className="evidence-section content-shell" aria-labelledby="evidence-title">
-          <div className="section-heading">
-            <div>
-              <p className="section-kicker">Education &amp; credentials</p>
-              <h2 id="evidence-title">Relevant academic and professional foundation.</h2>
-            </div>
-            <p>Concise evidence for application review. Full details remain available in the profile.</p>
+          <div className="section-heading section-heading-simple">
+            <h2 id="evidence-title">Education &amp; certifications</h2>
           </div>
           <div className="evidence-grid">
             {primaryEducation ? (
@@ -231,22 +218,6 @@ export default async function Home() {
         </section>
       ) : null}
 
-      <section className="recruiter-resources content-shell" aria-labelledby="resources-title">
-        <div>
-          <p className="section-kicker">{profileContent.recruiterActions.eyebrow}</p>
-          <h2 id="resources-title">{profileContent.recruiterActions.title}</h2>
-          <p>{profileContent.recruiterActions.summary}</p>
-        </div>
-        <div className="resource-actions">
-          <a className="button button-primary" href={siteContent.links.resume}>
-            <Download aria-hidden="true" /> View résumé
-          </a>
-          <ProfileLink label="View full profile" />
-          <a className="text-link" href={identity.linkedin} target="_blank" rel="noreferrer">
-            LinkedIn <ArrowUpRight aria-hidden="true" />
-          </a>
-        </div>
-      </section>
     </main>
   );
 }

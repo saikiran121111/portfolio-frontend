@@ -66,7 +66,7 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           </div>
           <div className="profile-actions">
             <a className="button button-primary" href={siteContent.links.resume}>
-              <Download aria-hidden="true" /> Download résumé
+              <Download aria-hidden="true" /> Download Resume
             </a>
             <a className="button button-secondary" href={linkedin} target="_blank" rel="noreferrer">
               <Linkedin aria-hidden="true" /> LinkedIn <ArrowUpRight aria-hidden="true" />

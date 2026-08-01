@@ -1,8 +1,5 @@
 export const projectShowcaseContent = {
-  eyebrow: "Selected projects",
-  title: "Evidence of engineering depth.",
-  description:
-    "A curated view of enterprise and independent work. Select a project to review its purpose, contribution, implementation, status, and available links.",
+  title: "Selected projects",
   featuredTitles: [
     "Portfolio Website",
     "Qurate Retail group(Accenture Client)",

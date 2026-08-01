@@ -106,7 +106,7 @@ export const siteContent = {
     baseUrl: "https://portfolio-sai-kiran.vercel.app",
     title: "Sai Kiran — Backend & Full-Stack Engineer",
     description:
-      "Backend and full-stack engineer with 4+ years of experience, moving toward AI engineering. Explore selected projects, experience, skills, and résumé.",
+      "Backend and full-stack engineer with 4+ years of experience, moving toward AI engineering. Explore selected projects, experience, skills, and Resume.",
   },
 } as const;
 

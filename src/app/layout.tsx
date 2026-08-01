@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import Navigation from "@/components/portfolio/navigation/Navigation";
-import Copyright from "@/components/portfolio/footer/Copyright";
 import { siteContent } from "@/content/site";
 import "./globals.css";
 
@@ -57,7 +56,6 @@ export default function RootLayout({
         </a>
         <Navigation />
         {children}
-        <Copyright />
       </body>
     </html>
   );

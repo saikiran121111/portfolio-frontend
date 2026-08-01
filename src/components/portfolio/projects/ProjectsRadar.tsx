@@ -140,12 +140,8 @@ export default function ProjectsRadar({ projects }: { projects: IProjects[] }) {
 
   return (
     <section id="projects" className="projects-section content-shell" aria-labelledby="projects-title">
-      <div className="section-heading">
-        <div>
-          <p className="section-kicker">{projectShowcaseContent.eyebrow}</p>
-          <h2 id="projects-title">{projectShowcaseContent.title}</h2>
-        </div>
-        <p>{projectShowcaseContent.description}</p>
+      <div className="section-heading section-heading-simple">
+        <h2 id="projects-title">{projectShowcaseContent.title}</h2>
       </div>
 
       <div className="project-explorer">

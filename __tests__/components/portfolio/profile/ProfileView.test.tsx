@@ -32,6 +32,6 @@ describe("ProfileView", () => {
     expect(screen.getByText("Software Engineer / Analyst")).toBeInTheDocument();
     expect(screen.getByText("NestJS")).toBeInTheDocument();
     expect(screen.getByText("Portfolio Website")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /download résumé/i })).toHaveAttribute("href", "/api/download-resume");
+    expect(screen.getByRole("link", { name: /download resume/i })).toHaveAttribute("href", "/api/download-resume");
   });
 });

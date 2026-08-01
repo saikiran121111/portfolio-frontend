@@ -16,6 +16,6 @@ describe("ProfilePage", () => {
     (fetchUserPortfolio as jest.MockedFunction<typeof fetchUserPortfolio>).mockRejectedValue(new Error("offline"));
     render(await ProfilePage());
     expect(screen.getByRole("heading", { name: /could not be loaded/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /view résumé/i })).toHaveAttribute("href", "/api/download-resume");
+    expect(screen.getByRole("link", { name: /view resume/i })).toHaveAttribute("href", "/api/download-resume");
   });
 });

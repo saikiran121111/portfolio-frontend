@@ -7,6 +7,6 @@ describe("Logo", () => {
     expect(screen.getByRole("link", { name: /sai kiran, home/i })).toHaveAttribute("href", "/");
     expect(container.querySelector(".brand-s")).toBeInTheDocument();
     expect(container.querySelector(".brand-k")).toBeInTheDocument();
-    expect(screen.getByText("Backend / AI direction")).toBeInTheDocument();
+    expect(screen.queryByText("Sai Kiran")).not.toBeInTheDocument();
   });
 });

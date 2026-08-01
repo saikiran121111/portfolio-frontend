@@ -69,10 +69,6 @@ export function Logo({ className, size = 48 }: LogoProps) {
   return (
     <Link href="/" className="brand-link" aria-label={`${siteContent.identity.shortName}, home`}>
       <LogoMark className={className} size={size} decorative />
-      <span className="brand-wordmark">
-        <strong>{siteContent.identity.shortName}</strong>
-        <small>Backend / AI direction</small>
-      </span>
     </Link>
   );
 }

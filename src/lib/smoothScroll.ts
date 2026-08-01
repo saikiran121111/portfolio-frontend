@@ -32,12 +32,14 @@ export function scrollToElement(target: HTMLElement) {
   );
   const distance = destination - start;
 
-  if (reducedMotion || Math.abs(distance) < 2) {
+  if (Math.abs(distance) < 2) {
     window.scrollTo({ top: destination, behavior: "instant" });
     return;
   }
 
-  const duration = Math.min(760, Math.max(480, Math.abs(distance) * 0.28));
+  const duration = reducedMotion
+    ? Math.min(360, Math.max(240, Math.abs(distance) * 0.12))
+    : Math.min(760, Math.max(480, Math.abs(distance) * 0.28));
   const startedAt = performance.now();
 
   const step = (time: number) => {

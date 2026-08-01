@@ -19,8 +19,8 @@ export default async function ProfilePage() {
         <section className="profile-error content-shell">
           <p className="section-kicker">Profile unavailable</p>
           <h1>The profile data could not be loaded.</h1>
-          <p>Please try again shortly or use the résumé for an offline review.</p>
-          <a className="button button-primary" href={siteContent.links.resume}>View résumé</a>
+          <p>Please try again shortly or use the Resume for an offline review.</p>
+          <a className="button button-primary" href={siteContent.links.resume}>View Resume</a>
         </section>
       )}
     </main>
