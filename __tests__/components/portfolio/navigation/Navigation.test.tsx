@@ -98,4 +98,33 @@ describe("Navigation section state", () => {
       "/api/download-resume",
     );
   });
+
+  it("closes the mobile navigation when tapping outside it", () => {
+    const matchMedia = jest.spyOn(window, "matchMedia").mockImplementation(
+      (query) =>
+        ({
+          matches: query === "(max-width: 820px)",
+          media: query,
+          onchange: null,
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+          addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
+          dispatchEvent: jest.fn(),
+        }) as MediaQueryList,
+    );
+    render(<Navigation />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+    expect(
+      screen.getByRole("button", { name: "Close navigation" }),
+    ).toHaveAttribute("aria-expanded", "true");
+
+    fireEvent.pointerDown(document.body);
+
+    expect(
+      screen.getByRole("button", { name: "Open navigation" }),
+    ).toHaveAttribute("aria-expanded", "false");
+    matchMedia.mockRestore();
+  });
 });

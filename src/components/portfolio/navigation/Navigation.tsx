@@ -35,6 +35,8 @@ export default function Navigation({ profile }: NavigationProps) {
   const [open, setOpen] = useState(false);
   const [resumeMenuOpen, setResumeMenuOpen] = useState(false);
   const [resumeViewerOpen, setResumeViewerOpen] = useState(false);
+  const navigationRef = useRef<HTMLElement>(null);
+  const navToggleRef = useRef<HTMLButtonElement>(null);
   const resumeMenuRef = useRef<HTMLDivElement>(null);
   const [activeHref, setActiveHref] = useState(() =>
     activeHrefForLocation(pathname),
@@ -109,6 +111,28 @@ export default function Navigation({ profile }: NavigationProps) {
   }, [open, resumeMenuOpen]);
 
   useEffect(() => {
+    if (!open) return;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (!window.matchMedia("(max-width: 820px)").matches) return;
+
+      const target = event.target as Node;
+      if (
+        navigationRef.current?.contains(target) ||
+        navToggleRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setOpen(false);
+      setResumeMenuOpen(false);
+    };
+
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
+
+  useEffect(() => {
     if (!resumeMenuOpen) return;
 
     const onPointerDown = (event: PointerEvent) => {
@@ -134,6 +158,7 @@ export default function Navigation({ profile }: NavigationProps) {
         </div>
 
         <button
+          ref={navToggleRef}
           type="button"
           className="nav-toggle"
           aria-label={open ? "Close navigation" : "Open navigation"}
@@ -145,6 +170,7 @@ export default function Navigation({ profile }: NavigationProps) {
         </button>
 
         <nav
+          ref={navigationRef}
           id="site-navigation"
           className={open ? "site-navigation is-open" : "site-navigation"}
           aria-label="Primary navigation"
