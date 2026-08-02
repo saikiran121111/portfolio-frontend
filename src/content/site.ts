@@ -98,6 +98,7 @@ export const siteContent = {
   ] satisfies SiteLink[],
   links: {
     resume: "/api/download-resume",
+    resumeView: "/api/download-resume?view=1",
     profile: "/profile",
     github: "https://github.com/saikiran121111",
     linkedin: "https://www.linkedin.com/in/saikiran1211/",

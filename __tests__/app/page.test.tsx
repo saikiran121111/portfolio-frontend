@@ -21,7 +21,7 @@ describe("Home", () => {
     render(await Home());
     expect(screen.getByRole("heading", { name: "Phani Venkata Sai Kiran" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /explore projects/i })).toHaveAttribute("href", "#projects");
-    expect(screen.getAllByRole("link", { name: /view resume/i })[0]).toHaveAttribute("href", "/api/download-resume");
+    expect(screen.getByRole("button", { name: /view resume/i })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /profile/i })[0]).toHaveAttribute("href", "/profile");
     expect(screen.getByText("Projects: 1")).toBeInTheDocument();
     expect(screen.getByText("Engineering path")).toBeInTheDocument();

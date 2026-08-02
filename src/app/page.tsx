@@ -1,13 +1,13 @@
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Download,
   Github,
   Linkedin,
   Mail,
 } from "lucide-react";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
+import ResumeViewButton from "@/components/portfolio/resume/ResumeViewButton";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import {
   resolveCandidateIdentity,
@@ -54,9 +54,7 @@ export default async function Home() {
           </p>
 
           <div className="hero-actions hero-reveal hero-reveal-5">
-            <a className="button button-primary" href={siteContent.links.resume}>
-              <Download aria-hidden="true" /> View Resume
-            </a>
+            <ResumeViewButton />
             <SmoothSectionLink className="button button-secondary" href="#projects">
               Explore projects <ArrowDownRight aria-hidden="true" />
             </SmoothSectionLink>
