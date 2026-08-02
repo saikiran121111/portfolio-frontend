@@ -21,8 +21,11 @@ export interface ExperienceDto {
 export interface ProjectDto {
   title: string;
   description: string;
+  projectUrl?: string | null;
   repoUrl: string | null;
   liveUrl: string | null;
+  type?: string | null;
+  isVisible?: boolean;
   tech: string[];
   highlights: string[];
   startDate: string | null;
@@ -79,14 +82,4 @@ export interface SocialsDto {
   github?: string;
   linkedin?: string;
   portfolio?: string;
-}
-
-// NEW: ToolDoc DTO (mirrors backend ToolDocDto)
-export interface ToolDocDto {
-  key: string;
-  title: string;
-  icon: string;
-  summary?: string;
-  content: string;
-  order?: number;
 }
