@@ -41,6 +41,28 @@ function projectLink(project: IProjects) {
   return project.liveUrl || project.projectUrl || project.repoUrl;
 }
 
+function ProfileSectionHeading({
+  index,
+  label,
+  title,
+  titleId,
+}: {
+  index: string;
+  label: string;
+  title: string;
+  titleId: string;
+}) {
+  return (
+    <div className="resume-section-heading">
+      <p className="section-kicker">
+        <span className="section-kicker-number">{index}</span>
+        <span className="section-kicker-label">{label}</span>
+      </p>
+      <h2 id={titleId}>{title}</h2>
+    </div>
+  );
+}
+
 export default function ProfileView({ data }: { data: IPortfolio }) {
   const skillGroups = groupRecruiterSkills(data.skills);
   const aiSkills = selectAiSkills(data.skills);
@@ -103,10 +125,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
 
         <div className="profile-content">
           <section className="resume-section" id="experience" aria-labelledby="experience-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">01 / {profileContent.sections.experience}</p>
-              <h2 id="experience-title">Professional experience</h2>
-            </div>
+            <ProfileSectionHeading
+              index="01"
+              label={profileContent.sections.experience}
+              title="Professional experience"
+              titleId="experience-title"
+            />
             <div className="timeline">
               {data.experiences.map((experience) => (
                 <article className="timeline-entry" key={`${experience.company}-${experience.startDate.toISOString()}`}>
@@ -133,10 +157,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
 
           {aiSkills.length ? (
             <section className="resume-section" id="ai-direction" aria-labelledby="ai-direction-title">
-              <div className="resume-section-heading">
-                <p className="section-kicker">02 / {profileContent.sections.aiDirection}</p>
-                <h2 id="ai-direction-title">{aiFocus.title}</h2>
-              </div>
+              <ProfileSectionHeading
+                index="02"
+                label={profileContent.sections.aiDirection}
+                title={aiFocus.title}
+                titleId="ai-direction-title"
+              />
               <div className="ai-profile-focus">
                 <div>
                   <p className="direction-label">Positioning</p>
@@ -153,10 +179,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           ) : null}
 
           <section className="resume-section" id="strengths" aria-labelledby="strengths-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">03 / Strengths</p>
-              <h2 id="strengths-title">Technical strengths</h2>
-            </div>
+            <ProfileSectionHeading
+              index="03"
+              label="Strengths"
+              title="Technical strengths"
+              titleId="strengths-title"
+            />
             <div className="skills-groups">
               {skillGroups.map((group) => (
                 <div className="skill-group" key={group.category}>
@@ -169,16 +197,20 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
 
           {visibleProjects.length ? (
             <section className="resume-section" id="profile-projects" aria-labelledby="profile-projects-title">
-              <div className="resume-section-heading">
-                <p className="section-kicker">04 / {profileContent.sections.projects}</p>
-                <h2 id="profile-projects-title">Selected engineering work</h2>
-              </div>
+              <ProfileSectionHeading
+                index="04"
+                label={profileContent.sections.projects}
+                title="Selected engineering work"
+                titleId="profile-projects-title"
+              />
               <div className="resume-project-list">
                 {visibleProjects.map((project, index) => {
                   const href = projectLink(project);
                   return (
                     <article className="resume-project" key={project.title}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <span className="resume-project-index" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                       <div>
                         <h3>{cleanProjectTitle(project.title)}</h3>
                         {project.type ? <p className="resume-project-type">{project.type}</p> : null}
@@ -202,10 +234,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           ) : null}
 
           <section className="resume-section" id="education" aria-labelledby="education-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">05 / {profileContent.sections.education}</p>
-              <h2 id="education-title">Education</h2>
-            </div>
+            <ProfileSectionHeading
+              index="05"
+              label={profileContent.sections.education}
+              title="Education"
+              titleId="education-title"
+            />
             <div className="education-list">
               {data.education.map((education) => (
                 <article key={`${education.institution}-${education.degree}`}>
@@ -219,10 +253,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           </section>
 
           <section className="resume-section" id="credentials" aria-labelledby="credentials-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">06 / {profileContent.sections.credentials}</p>
-              <h2 id="credentials-title">Relevant credentials and recognition</h2>
-            </div>
+            <ProfileSectionHeading
+              index="06"
+              label={profileContent.sections.credentials}
+              title="Relevant credentials and recognition"
+              titleId="credentials-title"
+            />
             <div className="credentials-grid">
               <div>
                 <h3>Selected certifications</h3>
