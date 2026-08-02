@@ -22,11 +22,13 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
       startDate: new Date(e.startDate),
       endDate: e.endDate ? new Date(e.endDate) : null,
     })),
-    projects: dto.projects?.map(p => ({
-      ...p,
-      startDate: p.startDate ? new Date(p.startDate) : null,
-      endDate: p.endDate ? new Date(p.endDate) : null,
-    })),
+    projects: dto.projects
+      ?.filter((p) => p.isVisible !== false)
+      .map(p => ({
+        ...p,
+        startDate: p.startDate ? new Date(p.startDate) : null,
+        endDate: p.endDate ? new Date(p.endDate) : null,
+      })),
     education: dto.education.map(ed => ({
       ...ed,
       startDate: new Date(ed.startDate),
@@ -47,6 +49,6 @@ export function mapPortfolio(dto: PortfolioDto): IPortfolio {
     })),
     bottomHeadline: dto.bottomHeadline, 
     copyrights: dto.copyrights, 
-    toolDocs: dto.toolDocs?.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    homepageProjects: dto.homepageProjects,
   };
 }

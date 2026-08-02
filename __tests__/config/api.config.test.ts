@@ -32,4 +32,8 @@ describe("API Config", () => {
     it("paths.portfolio.user returns correct path", () => {
         expect(paths.portfolio.user()).toBe("/api/portfolio/user");
     });
+
+    it("paths.portfolio.adminProfile returns correct path", () => {
+        expect(paths.portfolio.adminProfile()).toBe("/api/portfolio/admin/profile");
+    });
 });

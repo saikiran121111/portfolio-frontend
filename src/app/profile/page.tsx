@@ -1,48 +1,28 @@
 import type { Metadata } from "next";
-import Logo from "@/components/portfolio/logo/Logo";
-import ProfileViewClient from "@/components/portfolio/profile/ProfileViewClient";
-import ProfileGuardWrapper from "./ProfileGuardWrapper";
+import ProfileView from "@/components/portfolio/profile/ProfileView";
+import { siteContent } from "@/content/site";
+import { fetchUserPortfolio } from "@/services/portfolio.service";
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "View Sai Kiran's professional profile - Experience, skills, and achievements",
+  description: `${siteContent.identity.shortName}'s engineering experience, AI direction, projects, skills, education, and credentials.`,
 };
-// Server Component by default (App Router)
-export default function PortfolioPage() {
-  return (
-    <ProfileGuardWrapper>
-      <div className="relative min-h-dvh">
-        {/* Clickable logo overlay (pointer-events enabled only on the logo) */}
-        <div className="fixed inset-0 pointer-events-none">
-          <Logo
-            className="text-white hover:text-cyan-400"
-            size={45}
-            xsOffsetX={-2}
-            xsOffsetY={30}
-            offsetX={-2}
-            offsetY={75}
-            tabletOffsetX={-4}
-            tabletOffsetY={70}
-            desktopOffsetX={-6}
-            desktopOffsetY={75}
-            xlOffsetY={75}
-            v="top"
-            h="left"
-            // Clamp to 50px from the screen's left edge
-            minLeftPx={30}
-            xlMinLeftPx={100}
-            desktopMinLeftPx={100}
-            tabletMinLeftPx={30}
-            xsMinLeftPx={8}
-            introGate={false}
-          />
-        </div>
 
-        <div className="container mx-auto max-w-6xl py-10 px-4 flex flex-col gap-10">
-          <ProfileViewClient />
-        </div>
-      </div>
-    </ProfileGuardWrapper>
+export default async function ProfilePage() {
+  const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);
+
+  return (
+    <main id="main-content" className="profile-main" tabIndex={-1}>
+      {portfolio ? (
+        <ProfileView data={portfolio} />
+      ) : (
+        <section className="profile-error content-shell">
+          <p className="section-kicker">Profile unavailable</p>
+          <h1>The profile data could not be loaded.</h1>
+          <p>Please try again shortly or use the Resume for an offline review.</p>
+          <a className="button button-primary" href={siteContent.links.resume}>View Resume</a>
+        </section>
+      )}
+    </main>
   );
 }
-
