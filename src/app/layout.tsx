@@ -45,12 +45,30 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
 };
 
+const themeInitializationScript = `
+  try {
+    var theme = localStorage.getItem("portfolio-color-theme") === "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    var themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) themeMeta.setAttribute("content", theme === "light" ? "#F2E8D5" : "#090909");
+  } catch (_) {
+    document.documentElement.dataset.theme = "dark";
+  }
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      data-theme="dark"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body className={`${bodyFont.variable} ${displayFont.variable}`}>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
