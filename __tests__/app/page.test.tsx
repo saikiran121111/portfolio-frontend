@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import Home from "@/app/page";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
-jest.mock("@/components/portfolio/hero/HeroCanvasLoader", () => () => <div>Signal canvas</div>);
 jest.mock("@/components/portfolio/profile/ProfileLink", () => ({ label = "View profile" }: { label?: string }) => <a href="/profile">{label}</a>);
 jest.mock("@/components/portfolio/projects/ProjectsRadar", () => ({ projects }: { projects: unknown[] }) => <div>Projects: {projects.length}</div>);
 jest.mock("@/services/portfolio.service", () => ({ fetchUserPortfolio: jest.fn() }));
@@ -25,6 +24,6 @@ describe("Home", () => {
     expect(screen.getAllByRole("link", { name: /view resume/i })[0]).toHaveAttribute("href", "/api/download-resume");
     expect(screen.getAllByRole("link", { name: /profile/i })[0]).toHaveAttribute("href", "/profile");
     expect(screen.getByText("Projects: 1")).toBeInTheDocument();
-    expect(screen.getByText("Signal canvas")).toBeInTheDocument();
+    expect(screen.getByText("Engineering path")).toBeInTheDocument();
   });
 });

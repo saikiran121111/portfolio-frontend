@@ -6,7 +6,6 @@ import {
   Linkedin,
   Mail,
 } from "lucide-react";
-import HeroCanvasLoader from "@/components/portfolio/hero/HeroCanvasLoader";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
@@ -84,23 +83,23 @@ export default async function Home() {
         </div>
 
         <div
-          className="hero-visual hero-reveal hero-reveal-canvas"
+          className="hero-visual"
           aria-label="Engineering path from backend systems through full-stack delivery toward AI engineering"
         >
           <div className="hero-visual-frame">
             <div className="hero-visual-topline">
               <span>Engineering path</span>
-              <span className="live-indicator">In progress</span>
+              <span className="live-indicator">Current focus</span>
             </div>
             <ol className="hero-career-path">
               {siteContent.careerPath.map((stage, index) => (
                 <li className={`hero-career-stage hero-career-stage-${index + 1}`} key={stage.number}>
                   <span className="hero-career-marker" aria-hidden="true">{stage.number}</span>
-                  <span className="hero-career-copy">
+                  <span className="hero-career-heading">
                     <span>{stage.label}</span>
                     <strong>{stage.title}</strong>
-                    <small>{stage.detail}</small>
                   </span>
+                  <small>{stage.detail}</small>
                 </li>
               ))}
             </ol>
@@ -109,7 +108,6 @@ export default async function Home() {
               <strong>Building forward from a proven backend foundation.</strong>
             </p>
           </div>
-          <HeroCanvasLoader />
         </div>
       </section>
 

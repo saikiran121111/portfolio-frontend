@@ -480,34 +480,31 @@ canvas {
 
 .hero-visual {
   position: relative;
-  isolation: isolate;
   min-height: 470px;
   overflow: hidden;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
-  background: var(--surface-soft);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(194, 148, 81, 0.08), transparent 34%),
+    linear-gradient(145deg, #11110f 0%, var(--surface-soft) 64%);
   box-shadow: var(--shadow-raised);
 }
 
 .hero-visual::before {
   position: absolute;
-  inset: 0;
-  z-index: -1;
+  top: 0;
+  right: 0;
+  width: 34%;
+  height: 1px;
   content: "";
-  background-image: linear-gradient(rgba(194, 148, 81, 0.065) 1px, transparent 1px), linear-gradient(90deg, rgba(194, 148, 81, 0.065) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, black 20%, transparent 90%);
+  background: linear-gradient(90deg, transparent, var(--accent));
 }
 
 .hero-visual-frame {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+  min-height: 470px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 22px;
-  pointer-events: none;
+  padding: 24px 26px 22px;
 }
 
 .hero-visual-topline,
@@ -527,7 +524,7 @@ canvas {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: var(--muted);
+  color: var(--accent-bright);
 }
 
 .live-indicator::before {
@@ -541,62 +538,70 @@ canvas {
 .hero-career-path {
   position: relative;
   flex: 1;
-  margin: 20px 0 14px;
-  padding: 0;
+  display: grid;
+  align-content: center;
+  margin: 22px 0 18px;
+  padding: 4px 0;
   list-style: none;
 }
 
 .hero-career-path::before {
   position: absolute;
-  top: 50%;
-  right: 9%;
-  left: 9%;
-  height: 1px;
-  background: rgba(194, 148, 81, 0.2);
+  top: 38px;
+  bottom: 38px;
+  left: 18px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--border-strong), var(--accent), var(--accent-bright));
   content: "";
-  transform: rotate(-24deg);
-  transform-origin: center;
 }
 
 .hero-career-stage {
-  position: absolute;
-  z-index: 2;
+  position: relative;
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  width: min(205px, 38%);
-  gap: 10px;
+  grid-template-columns: 36px minmax(135px, 0.9fr) minmax(120px, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px 10px 16px 0;
 }
 
-.hero-career-stage-1 { bottom: 3%; left: calc(9% - 14px); }
-.hero-career-stage-2 { top: 60%; left: calc(50% - 14px); transform: translateY(-50%); }
-.hero-career-stage-3 { top: 18%; right: 11%; grid-template-columns: minmax(0, 1fr) 28px; }
-.hero-career-stage-3 .hero-career-marker { grid-column: 2; }
-.hero-career-stage-3 .hero-career-copy { grid-row: 1; grid-column: 1; text-align: right; }
+.hero-career-stage + .hero-career-stage { border-top: 1px solid rgba(59, 57, 50, 0.55); }
+
+.hero-career-stage-3 {
+  margin-right: -10px;
+  padding-right: 20px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, transparent 0%, rgba(194, 148, 81, 0.08) 100%);
+}
 
 .hero-career-marker {
-  width: 28px;
-  height: 28px;
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(194, 148, 81, 0.55);
+  border: 1px solid var(--border-strong);
   border-radius: 50%;
-  background: #0d0d0d;
+  background: var(--surface);
   color: var(--accent-bright);
   font-family: var(--font-display), sans-serif;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 700;
+  box-shadow: 0 0 0 6px var(--surface-soft);
 }
 
 .hero-career-stage-3 .hero-career-marker {
-  border-color: var(--accent-bright);
+  border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-ink);
 }
 
-.hero-career-copy { display: grid; gap: 3px; min-width: 0; padding: 2px 6px; background: rgba(13, 13, 13, 0.88); }
-.hero-career-copy > span { color: var(--accent-bright); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
-.hero-career-copy strong { color: var(--text); font-family: var(--font-display), sans-serif; font-size: 0.88rem; font-weight: 600; line-height: 1.25; }
-.hero-career-copy small { color: var(--muted); font-size: 0.65rem; line-height: 1.45; }
+.hero-career-heading { display: grid; gap: 3px; min-width: 0; }
+.hero-career-heading > span { color: var(--accent-bright); font-size: 0.58rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+.hero-career-heading strong { color: var(--text); font-family: var(--font-display), sans-serif; font-size: 0.92rem; font-weight: 600; line-height: 1.3; }
+.hero-career-stage > small { color: var(--muted); font-size: 0.67rem; line-height: 1.5; }
+.hero-career-stage-3 > small { color: #bbb7ad; }
 .hero-visual-summary {
   display: flex;
   align-items: center;
@@ -614,15 +619,6 @@ canvas {
   color: var(--muted);
   font-weight: 500;
   text-align: right;
-}
-
-.hero-signal-canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  opacity: 0.93;
 }
 
 .focus-strip {
@@ -1182,11 +1178,11 @@ canvas {
 .hero-reveal-3 { animation-delay: 260ms; }
 .hero-reveal-4 { animation-delay: 340ms; }
 .hero-reveal-5 { animation-delay: 430ms; }
-.hero-reveal-canvas { animation-delay: 480ms; animation-duration: 620ms; }
 
 @media (max-width: 1020px) {
   .hero-section { grid-template-columns: minmax(0, 1fr) minmax(310px, 0.78fr); gap: 44px; }
-  .hero-visual { min-height: 420px; }
+  .hero-visual, .hero-visual-frame { min-height: 420px; }
+  .hero-career-stage { grid-template-columns: 36px minmax(118px, 0.9fr) minmax(100px, 1fr); gap: 12px; }
   .project-panel { grid-template-columns: 0.78fr 1.22fr; }
   .project-preview { min-width: 0; }
   .project-panel-copy { padding: 32px; }
@@ -1206,7 +1202,7 @@ canvas {
 
   .hero-section { min-height: 0; grid-template-columns: 1fr; gap: 48px; padding-block: 62px 72px; }
   .hero-copy { max-width: 720px; }
-  .hero-visual { min-height: 380px; }
+  .hero-visual, .hero-visual-frame { min-height: 380px; }
   .focus-item { padding-inline: 20px; }
   .section-heading { grid-template-columns: 1fr; gap: 20px; }
   .project-panel { grid-template-columns: 0.75fr 1.25fr; }
@@ -1276,17 +1272,20 @@ canvas {
   .hero-facts { gap: 10px; margin-top: 28px; padding-top: 18px; }
   .hero-facts dd { font-size: 0.73rem; }
   .hero-facts dt { font-size: 0.57rem; }
-  .hero-visual { min-height: 350px; border-radius: var(--radius-md); }
-  .hero-visual-frame { padding: 16px; }
-  .hero-career-path { display: grid; align-content: center; gap: 16px; margin-block: 14px 10px; padding-left: 13px; }
-  .hero-career-path::before { top: 16%; bottom: 16%; left: 26px; width: 1px; height: auto; transform: none; }
-  .hero-career-stage, .hero-career-stage-1, .hero-career-stage-2, .hero-career-stage-3 { position: relative; top: auto; right: auto; bottom: auto; left: auto; width: 100%; transform: none; }
-  .hero-career-stage-3 { grid-template-columns: 28px minmax(0, 1fr); }
-  .hero-career-stage-3 .hero-career-marker { grid-column: 1; }
-  .hero-career-stage-3 .hero-career-copy { grid-row: 1; grid-column: 2; text-align: left; }
-  .hero-career-copy small { font-size: 0.62rem; }
+  .hero-visual, .hero-visual-frame { min-height: 0; }
+  .hero-visual { border-radius: var(--radius-md); }
+  .hero-visual-frame { padding: 18px; }
+  .hero-career-path { margin-block: 16px 12px; padding-block: 0; }
+  .hero-career-path::before { top: 34px; bottom: 34px; left: 17px; }
+  .hero-career-stage {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px 0;
+  }
+  .hero-career-stage-3 { margin-right: 0; padding-right: 8px; }
+  .hero-career-marker { width: 34px; height: 34px; }
+  .hero-career-stage > small { grid-column: 2; margin-top: -7px; }
   .hero-visual-summary strong { display: none; }
-  .hero-signal-canvas { display: none; }
   .projects-section, .direction-section, .profile-preview, .evidence-section { padding-block: 64px; }
   .direction-section { padding-bottom: 0; }
   .section-heading { margin-bottom: 38px; }
@@ -1326,15 +1325,10 @@ canvas {
     animation-delay: 0ms;
   }
   .project-panel-enter { animation-duration: 160ms; }
-  .hero-signal-canvas { display: none; }
   .route-loading-content { animation: none !important; }
   .loading-mark-shine {
     animation-name: loading-mark-shine !important;
     animation-duration: 1800ms !important;
     animation-iteration-count: infinite !important;
   }
-}
-
-@media (prefers-reduced-data: reduce) {
-  .hero-signal-canvas { display: none; }
 }
