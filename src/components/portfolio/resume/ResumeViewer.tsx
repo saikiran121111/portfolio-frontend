@@ -7,9 +7,10 @@ import { siteContent } from "@/content/site";
 interface ResumeViewerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  ownerName?: string;
 }
 
-export default function ResumeViewer({ open, onOpenChange }: ResumeViewerProps) {
+export default function ResumeViewer({ open, onOpenChange, ownerName }: ResumeViewerProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const [loaded, setLoaded] = useState(false);
@@ -56,7 +57,7 @@ export default function ResumeViewer({ open, onOpenChange }: ResumeViewerProps) 
             <span className="resume-viewer-icon" aria-hidden="true"><FileText /></span>
             <span>
               <small>Resume preview</small>
-              <strong id={titleId}>{siteContent.identity.fullName}</strong>
+              <strong id={titleId}>{ownerName || siteContent.identity.fullName}</strong>
             </span>
           </div>
 
@@ -76,7 +77,7 @@ export default function ResumeViewer({ open, onOpenChange }: ResumeViewerProps) 
             <iframe
               className={loaded ? "resume-document is-loaded" : "resume-document"}
               src={siteContent.links.resumeView}
-              title={`${siteContent.identity.fullName} resume`}
+              title={`${ownerName || siteContent.identity.fullName} resume`}
               onLoad={() => setLoaded(true)}
             />
           ) : null}

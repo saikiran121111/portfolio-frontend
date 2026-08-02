@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { profileContent } from "@/content/profile";
 import {
+  aiFocusContent,
+  currentRole,
+  experienceLabel,
   groupRecruiterSkills,
   resolveProfessionalSummary,
   selectAiSkills,
@@ -40,6 +43,12 @@ function projectLink(project: IProjects) {
 export default function ProfileView({ data }: { data: IPortfolio }) {
   const skillGroups = groupRecruiterSkills(data.skills);
   const aiSkills = selectAiSkills(data.skills);
+  const aiFocus = aiFocusContent(data.skills);
+  const experience = experienceLabel(data.experiences);
+  const recentExperience = currentRole(data.experiences);
+  const availability = data.bottomHeadline?.find((line) =>
+    /\b(open to|seeking)\b/i.test(line),
+  );
   const certifications = selectRelevantCertifications(data.certifications);
   const achievements = selectRecruiterAchievements(data.achievements);
   const visibleProjects = data.projects?.filter((project) => project.isVisible !== false) ?? [];
@@ -52,14 +61,17 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
         <div className="profile-hero-copy">
           <p className="section-kicker">{profileContent.eyebrow}</p>
           <h1>{data.name}</h1>
-          <p className="profile-headline">{siteContent.identity.professionalTitle}</p>
-          <p className="profile-transition">{siteContent.identity.transitionLabel}</p>
+          {data.headline ? <p className="profile-headline">{data.headline}</p> : null}
+          {recentExperience ? (
+            <p className="profile-transition">{cleanTitle(recentExperience.title)} / {recentExperience.company}</p>
+          ) : null}
           <p className="profile-summary">{resolveProfessionalSummary(data.summary)}</p>
-          {data.headline ? <p className="profile-specialization">{data.headline}</p> : null}
-          <div className="target-role-list" aria-label="Target roles">
-            <span>Target roles</span>
-            <p>{siteContent.targetRoles.join(" · ")}</p>
-          </div>
+          {availability ? (
+            <div className="target-role-list" aria-label="Opportunity focus">
+              <span>Opportunity focus</span>
+              <p>{availability}</p>
+            </div>
+          ) : null}
           <div className="profile-contact-row">
             {data.location ? <span><MapPin aria-hidden="true" /> {data.location}</span> : null}
             <a href={`mailto:${data.email}`}><Mail aria-hidden="true" /> {data.email}</a>
@@ -78,10 +90,10 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
         </div>
 
         <dl className="profile-snapshot" aria-label="Profile summary">
-          <div><dt>Experience</dt><dd>{siteContent.identity.experienceLabel}</dd></div>
+          {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
           <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
           <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
-          <div><dt>Current direction</dt><dd>AI engineering</dd></div>
+          {aiSkills.length ? <div><dt>Current direction</dt><dd>{aiFocus.title}</dd></div> : null}
         </dl>
       </header>
 
@@ -125,13 +137,13 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
             <section className="resume-section" id="ai-direction" aria-labelledby="ai-direction-title">
               <div className="resume-section-heading">
                 <p className="section-kicker">02 / {profileContent.sections.aiDirection}</p>
-                <h2 id="ai-direction-title">{siteContent.aiFocus.title}</h2>
+                <h2 id="ai-direction-title">{aiFocus.title}</h2>
               </div>
               <div className="ai-profile-focus">
                 <div>
                   <p className="direction-label">Positioning</p>
-                  <h3>{siteContent.aiFocus.status}</h3>
-                  <p>{siteContent.aiFocus.summary}</p>
+                  <h3>{aiFocus.status}</h3>
+                  <p>{aiFocus.summary}</p>
                 </div>
                 <ul aria-label="AI engineering technologies listed in profile data">
                   {aiSkills.map((skill) => (

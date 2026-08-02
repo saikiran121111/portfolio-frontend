@@ -21,7 +21,15 @@ function activeHrefForLocation(pathname: string, hash = "") {
   return hash && sectionHref ? sectionHref.href : "/";
 }
 
-export default function Navigation() {
+interface NavigationProps {
+  profile?: {
+    name?: string;
+    github?: string;
+    linkedin?: string;
+  };
+}
+
+export default function Navigation({ profile }: NavigationProps) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [resumeMenuOpen, setResumeMenuOpen] = useState(false);
@@ -30,6 +38,8 @@ export default function Navigation() {
   const [activeHref, setActiveHref] = useState(() =>
     activeHrefForLocation(pathname),
   );
+  const github = profile?.github || siteContent.links.github;
+  const linkedin = profile?.linkedin || siteContent.links.linkedin;
 
   useEffect(() => {
     setOpen(false);
@@ -113,7 +123,13 @@ export default function Navigation() {
     <header className="site-header">
       <div className="site-nav-shell">
         <div className="nav-reveal nav-reveal-1">
-          <Logo size={38} animate={false} introGate={false} mobileShell={false} />
+          <Logo
+            size={38}
+            animate={false}
+            introGate={false}
+            mobileShell={false}
+            ownerName={profile?.name}
+          />
         </div>
 
         <button
@@ -216,16 +232,20 @@ export default function Navigation() {
             );
           })}
           <span className="nav-utilities" role="group" aria-label="Professional profiles">
-            <a href={siteContent.links.github} target="_blank" rel="noreferrer" aria-label="GitHub profile">
+            <a href={github} target="_blank" rel="noreferrer" aria-label="GitHub profile">
               <Github aria-hidden="true" />
             </a>
-            <a href={siteContent.links.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn profile">
+            <a href={linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn profile">
               <Linkedin aria-hidden="true" />
             </a>
           </span>
         </nav>
       </div>
-      <ResumeViewer open={resumeViewerOpen} onOpenChange={setResumeViewerOpen} />
+      <ResumeViewer
+        open={resumeViewerOpen}
+        onOpenChange={setResumeViewerOpen}
+        ownerName={profile?.name}
+      />
     </header>
   );
 }

@@ -11,8 +11,13 @@ describe("Home", () => {
     (fetchUserPortfolio as jest.MockedFunction<typeof fetchUserPortfolio>).mockResolvedValue({
       name: "Phani Venkata Sai Kiran",
       email: "sai@example.com",
+      headline: "Backend engineer expanding into AI engineering",
+      summary: "API-provided professional summary.",
       location: "Hyderabad, India",
-      skills: [],
+      skills: [
+        { name: "NestJS", category: "Backend", level: "Advanced" },
+        { name: "LangChain", category: "AI", level: "Intermediate" },
+      ],
       experiences: [],
       education: [],
       projects: [{ title: "Portfolio Website", description: "Portfolio", repoUrl: null, liveUrl: "https://example.com", tech: [], highlights: [], startDate: null, endDate: null }],
@@ -20,6 +25,8 @@ describe("Home", () => {
 
     render(await Home());
     expect(screen.getByRole("heading", { name: "Phani Venkata Sai Kiran" })).toBeInTheDocument();
+    expect(screen.getByText("Backend engineer expanding into AI engineering")).toBeInTheDocument();
+    expect(screen.getByText("API-provided professional summary.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /explore projects/i })).toHaveAttribute("href", "#projects");
     expect(screen.getByRole("button", { name: /view resume/i })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /profile/i })[0]).toHaveAttribute("href", "/profile");

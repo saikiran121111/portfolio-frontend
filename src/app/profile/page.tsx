@@ -4,10 +4,14 @@ import ResumeViewButton from "@/components/portfolio/resume/ResumeViewButton";
 import { siteContent } from "@/content/site";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
-export const metadata: Metadata = {
-  title: "Profile",
-  description: `${siteContent.identity.shortName}'s engineering experience, AI direction, projects, skills, education, and credentials.`,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);
+  const name = portfolio?.name || siteContent.identity.fullName;
+  return {
+    title: "Profile",
+    description: `${name}'s engineering experience, projects, skills, education, and credentials.`,
+  };
+}
 
 export default async function ProfilePage() {
   const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);

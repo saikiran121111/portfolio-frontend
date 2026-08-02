@@ -7,11 +7,13 @@ import ResumeViewer from "@/components/portfolio/resume/ResumeViewer";
 interface ResumeViewButtonProps {
   className?: string;
   label?: string;
+  ownerName?: string;
 }
 
 export default function ResumeViewButton({
   className = "button button-primary",
   label = "View Resume",
+  ownerName,
 }: ResumeViewButtonProps) {
   const [viewerOpen, setViewerOpen] = useState(false);
 
@@ -20,7 +22,7 @@ export default function ResumeViewButton({
       <button type="button" className={className} onClick={() => setViewerOpen(true)}>
         <Eye aria-hidden="true" /> {label}
       </button>
-      <ResumeViewer open={viewerOpen} onOpenChange={setViewerOpen} />
+      <ResumeViewer open={viewerOpen} onOpenChange={setViewerOpen} ownerName={ownerName} />
     </>
   );
 }
