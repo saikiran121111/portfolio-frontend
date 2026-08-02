@@ -7,6 +7,7 @@ import { ChevronDown, Download, Eye, FileText, Github, Linkedin, Menu, X } from 
 import Logo from "@/components/portfolio/logo/Logo";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import ResumeViewer from "@/components/portfolio/resume/ResumeViewer";
+import ThemeToggle from "@/components/portfolio/theme/ThemeToggle";
 import { siteContent } from "@/content/site";
 import { cancelSmoothScroll, scrollToElement } from "@/lib/smoothScroll";
 
@@ -231,7 +232,8 @@ export default function Navigation({ profile }: NavigationProps) {
               </Link>
             );
           })}
-          <span className="nav-utilities" role="group" aria-label="Professional profiles">
+          <span className="nav-utilities" role="group" aria-label="Display and professional profiles">
+            <ThemeToggle />
             <a href={github} target="_blank" rel="noreferrer" aria-label="GitHub profile">
               <Github aria-hidden="true" />
             </a>
