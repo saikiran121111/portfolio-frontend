@@ -20,6 +20,7 @@ import {
 } from "@/content/selectors";
 import { siteContent } from "@/content/site";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
+import TechnologyList from "@/components/portfolio/skills/TechnologyList";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import type { IProjects } from "@/interfaces/user.interface";
 
@@ -126,7 +127,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
                     <p className="timeline-company">{experience.company}</p>
                     {experience.description ? <p>{experience.description}</p> : null}
                     <ul>{experience.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
-                    <p className="profile-stack"><span>Technologies</span>{experience.techStack.join(" / ")}</p>
+                    <TechnologyList
+                      items={experience.techStack}
+                      label="Technologies used"
+                      ariaLabel={`Technologies used at ${experience.company}`}
+                      compact
+                    />
                   </div>
                 </article>
               ))}
@@ -188,7 +194,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
                         {project.highlights.length ? (
                           <ul>{project.highlights.slice(0, 4).map((item) => <li key={item}>{item}</li>)}</ul>
                         ) : null}
-                        <p className="profile-stack"><span>Technologies</span>{project.tech.join(" / ")}</p>
+                        <TechnologyList
+                          items={project.tech}
+                          label="Technologies"
+                          ariaLabel={`Technologies used for ${cleanProjectTitle(project.title)}`}
+                          compact
+                        />
                       </div>
                       {href ? <a href={href} target="_blank" rel="noreferrer" aria-label={`Open ${cleanProjectTitle(project.title)}`}><ArrowUpRight aria-hidden="true" /></a> : null}
                     </article>
