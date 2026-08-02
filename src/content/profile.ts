@@ -1,5 +1,5 @@
 export const profileContent = {
-  eyebrow: "Candidate profile",
+  eyebrow: "My Professional Journey",
   summaryTitle: "Professional summary",
   indexLabel: "Profile sections",
   sections: {

@@ -19,7 +19,7 @@ import {
   selectRelevantCertifications,
 } from "@/content/selectors";
 import { siteContent } from "@/content/site";
-import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
+import ProfileSectionIndex from "@/components/portfolio/profile/ProfileSectionIndex";
 import TechnologyList from "@/components/portfolio/skills/TechnologyList";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import type { IProjects } from "@/interfaces/user.interface";
@@ -99,15 +99,7 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
       </header>
 
       <div className="profile-layout">
-        <aside className="profile-index" aria-label={profileContent.indexLabel}>
-          <p>{profileContent.indexLabel}</p>
-          <SmoothSectionLink href="#experience">{profileContent.sections.experience}</SmoothSectionLink>
-          {aiSkills.length ? <SmoothSectionLink href="#ai-direction">{profileContent.sections.aiDirection}</SmoothSectionLink> : null}
-          <SmoothSectionLink href="#strengths">{profileContent.sections.strengths}</SmoothSectionLink>
-          <SmoothSectionLink href="#profile-projects">{profileContent.sections.projects}</SmoothSectionLink>
-          <SmoothSectionLink href="#education">{profileContent.sections.education}</SmoothSectionLink>
-          <SmoothSectionLink href="#credentials">{profileContent.sections.credentials}</SmoothSectionLink>
-        </aside>
+        <ProfileSectionIndex hasAiSkills={Boolean(aiSkills.length)} />
 
         <div className="profile-content">
           <section className="resume-section" id="experience" aria-labelledby="experience-title">
