@@ -1,210 +1,221 @@
-import Spline from "@splinetool/react-spline/next";
-import BottomHeadline from "@/components/portfolio/bottomHeadline/BottomHeadline";
-import Logo from "@/components/portfolio/logo/Logo";
-import IntroLoader from "@/components/portfolio/intro/IntroLoader";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Download,
+  Github,
+  Linkedin,
+  Mail,
+} from "lucide-react";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
-import ProjectsRadar, {
-  type ProjectsRadarItem,
-} from "@/components/portfolio/projects/ProjectsRadar";
-import ToolsLink from "@/components/portfolio/tool/ToolsLink";
+import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
+import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
+import {
+  resolveCandidateIdentity,
+  selectAiSkills,
+  selectFeaturedProjects,
+  selectStrongestSkills,
+} from "@/content/selectors";
+import { siteContent } from "@/content/site";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
-const HOME_SCENE =
-  "https://prod.spline.design/EpgWOnq1XVRNVaXu/scene.splinecode";
-
-function splitNameForHero(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-
-  if (parts.length <= 2) return [name];
-  if (parts.length === 3) return [parts[0], parts.slice(1).join(" ")];
-  if (parts.length === 4) return [parts[0], parts[1], parts.slice(2).join(" ")];
-
-  const midpoint = Math.ceil(parts.length / 2);
-  return [parts.slice(0, midpoint).join(" "), parts.slice(midpoint).join(" ")];
-}
-
-function normalizeHeroSubtitle(text: string) {
-  const normalized = text
-    .replace(/\bPipllines\b/gi, "Pipelines")
-    .replace(/\bPiplines\b/gi, "Pipelines")
-    .replace(/\benviroments\b/gi, "environments")
-    .replace(/\benviornments\b/gi, "environments")
-    .replace(/\broll backs\b/gi, "rollbacks");
-
-  return normalized.replace(
-    /Ship confidently\s*[\u00b7-]\s*Pipelines,\s*environments,\s*rollbacks/i,
-    "Ship confidently \u00b7 Pipelines, environments, rollbacks",
-  );
-}
-
-function getProjectUrl(project: {
-  projectUrl?: string | null;
-  liveUrl?: string | null;
-  repoUrl?: string | null;
-}) {
-  return project.projectUrl || project.liveUrl || project.repoUrl || "";
+function experiencePeriod(startDate: Date, endDate?: Date | null) {
+  const format = new Intl.DateTimeFormat("en", { month: "short", year: "numeric" });
+  return `${format.format(startDate)} – ${endDate ? format.format(endDate) : "Present"}`;
 }
 
 export default async function Home() {
-  const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(
-    () => null,
-  );
-
-  const name = portfolio?.name ?? "Sai Kiran";
-  const bottomHeadline =
-    portfolio?.bottomHeadline
-      ?.filter((item): item is string => Boolean(item && item.trim()))
-      .map(normalizeHeroSubtitle) ?? [];
-  const nameLines = splitNameForHero(name);
-  const projects: ProjectsRadarItem[] =
-    portfolio?.projects
-      ?.filter((project) => project.isVisible !== false)
-      .map((project) => ({
-        title: project.title,
-        url: getProjectUrl(project),
-        type: project.type,
-      }))
-      .filter((project) => project.title.trim() && project.url.trim()) ?? [];
+  const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);
+  const identity = resolveCandidateIdentity(portfolio);
+  const projects = selectFeaturedProjects(portfolio?.projects);
+  const aiSkills = selectAiSkills(portfolio?.skills);
+  const strongestSkills = selectStrongestSkills(portfolio?.skills);
+  const recentExperience = portfolio?.experiences?.[0];
+  const primaryEducation = portfolio?.education?.[0];
+  const certifications = portfolio?.certifications
+    ?.filter((item) => !/sales accredit/i.test(item.title))
+    .slice(0, 3) ?? [];
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-[#020608] text-white">
-      <IntroLoader />
+    <main id="main-content" className="portfolio-main" tabIndex={-1}>
+      <section className="hero-section content-shell" aria-labelledby="hero-title">
+        <div className="hero-copy">
+          <p className="section-kicker hero-reveal hero-reveal-1">
+            {siteContent.identity.professionalTitle}
+          </p>
+          <h1 id="hero-title" className="hero-reveal hero-reveal-2">{identity.name}</h1>
+          <p className="hero-statement hero-reveal hero-reveal-3">
+            {siteContent.identity.headline}
+          </p>
+          <p className="hero-summary hero-reveal hero-reveal-4">
+            {siteContent.identity.summary}
+          </p>
+          <p className="hero-availability hero-reveal hero-reveal-4">
+            <span aria-hidden="true" /> {siteContent.identity.availability}
+          </p>
 
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <div
-          aria-hidden
-          className="hero-aurora absolute -left-[20%] top-[12%] h-[22rem] w-[22rem] sm:-left-[10%] sm:h-[28rem] sm:w-[28rem] lg:left-[3%] lg:top-[16%] lg:h-[32rem] lg:w-[32rem]"
-        />
-        <div
-          aria-hidden
-          className="hero-aurora hero-aurora-secondary absolute left-[40%] top-[8%] h-[18rem] w-[18rem] sm:left-[48%] sm:h-[22rem] sm:w-[22rem] lg:left-[46%] lg:top-[18%] lg:h-[24rem] lg:w-[24rem]"
-        />
-        <div className="home-spline-shell absolute inset-0">
-          <div className="home-spline-stage">
-            <Spline
-              scene={HOME_SCENE}
-              className="home-spline h-full w-full"
-            />
+          <div className="hero-actions hero-reveal hero-reveal-5">
+            <a className="button button-primary" href={siteContent.links.resume}>
+              <Download aria-hidden="true" /> View Resume
+            </a>
+            <SmoothSectionLink className="button button-secondary" href="#projects">
+              Explore projects <ArrowDownRight aria-hidden="true" />
+            </SmoothSectionLink>
+            <ProfileLink />
           </div>
+
+          <div className="hero-socials hero-reveal hero-reveal-5" aria-label="Professional links">
+            <a href={identity.github} target="_blank" rel="noreferrer">
+              <Github aria-hidden="true" /> GitHub
+            </a>
+            <a href={identity.linkedin} target="_blank" rel="noreferrer">
+              <Linkedin aria-hidden="true" /> LinkedIn
+            </a>
+            <a href={`mailto:${identity.email}`}>
+              <Mail aria-hidden="true" /> Email
+            </a>
+          </div>
+
+          <dl className="hero-facts hero-reveal hero-reveal-5">
+            <div><dt>Experience</dt><dd>{siteContent.identity.experienceLabel}</dd></div>
+            <div><dt>Target</dt><dd>Backend / Full-stack / AI</dd></div>
+            <div><dt>Location</dt><dd>{identity.location}</dd></div>
+          </dl>
         </div>
+
         <div
-          aria-hidden
-          className="hero-bottom-sheen absolute inset-x-[-14%] bottom-[4%] h-40 sm:h-44 lg:bottom-[8%] lg:h-52"
-        />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(1,3,4,0.78)_0%,rgba(1,3,4,0.5)_24%,rgba(1,3,4,0.86)_100%)] lg:bg-[linear-gradient(90deg,rgba(1,3,4,0.96)_0%,rgba(1,3,4,0.92)_26%,rgba(1,3,4,0.62)_47%,rgba(1,3,4,0.18)_70%,rgba(1,3,4,0.92)_100%)]" />
-        <div className="home-grid pointer-events-none absolute inset-0 opacity-45" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/90 to-transparent" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/95 to-transparent" />
-      </div>
-
-      <ProjectsRadar projects={portfolio?.homepageProjects || []} />
-
-      <section className="home-hero-section pointer-events-none relative z-10 flex min-h-dvh w-full items-start px-5 pb-20 pt-28 sm:px-8 sm:pb-24 sm:pt-32 md:items-center md:px-10 md:pt-24 lg:px-[7vw] lg:pb-20 lg:pt-20 xl:px-[7.5vw]">
-        <div className="hero-copy-stack relative w-full max-w-[18rem] sm:max-w-[24rem] md:max-w-[32rem] lg:max-w-[46rem]">
-          <div className="hero-copy-glow absolute -inset-x-8 -inset-y-10 sm:-inset-x-10 sm:-inset-y-12" />
-          <div className="intro-gate relative">
-            <h1 className="hero-name text-[3.05rem] font-[320] leading-[0.92] tracking-normal text-white sm:text-[4.1rem] md:text-[4.8rem] lg:text-[5.45rem] xl:text-[5.95rem] 2xl:text-[6.35rem]">
-              {nameLines.map((line) => (
-                <span
-                  key={line}
-                  className="hero-name-line block"
-                >
-                  {line}
-                </span>
+          className="hero-visual"
+          aria-label="Engineering path from backend systems through full-stack delivery toward AI engineering"
+        >
+          <div className="hero-visual-frame">
+            <div className="hero-visual-topline">
+              <span>Engineering path</span>
+              <span className="live-indicator">Current focus</span>
+            </div>
+            <ol className="hero-career-path">
+              {siteContent.careerPath.map((stage, index) => (
+                <li className={`hero-career-stage hero-career-stage-${index + 1}`} key={stage.number}>
+                  <span className="hero-career-marker" aria-hidden="true">{stage.number}</span>
+                  <span className="hero-career-heading">
+                    <span>{stage.label}</span>
+                    <strong>{stage.title}</strong>
+                  </span>
+                  <small>{stage.detail}</small>
+                </li>
               ))}
-              <span className="hero-portfolio mt-1 block">
-                Portfolio
-              </span>
-            </h1>
-
-            {bottomHeadline.length > 0 ? (
-              <div className="hero-headline-wrap mt-5 max-w-[16rem] sm:mt-7 sm:max-w-[22rem] md:max-w-[26rem] lg:mt-8 lg:max-w-[32rem]">
-                <BottomHeadline
-                  items={bottomHeadline}
-                  v="top"
-                  h="left"
-                  xsOffsetX={-6}
-                  xsOffsetY={0}
-                  offsetX={-8}
-                  offsetY={0}
-                  tabletOffsetX={-10}
-                  tabletOffsetY={0}
-                  desktopOffsetX={-16}
-                  desktopOffsetY={0}
-                  xlOffsetX={-16}
-                  xlOffsetY={0}
-                  showCursor={false}
-                  className="hero-rotating-copy !text-left text-[0.92rem] leading-6 text-white/80 sm:text-base sm:leading-7 md:text-[1.02rem] lg:text-lg lg:leading-8"
-                />
-              </div>
-            ) : null}
-
-            <div className="hero-divider mt-7 h-px w-24 sm:mt-9 sm:w-28 lg:mt-10 lg:w-36" />
+            </ol>
+            <p className="hero-visual-summary">
+              <span>{siteContent.identity.experienceLabel} in production engineering</span>
+              <strong>Building forward from a proven backend foundation.</strong>
+            </p>
           </div>
         </div>
       </section>
 
-      <div className="fixed inset-0 z-20 pointer-events-none">
-        <Logo
-          className="text-white hover:text-cyan-300"
-          size={56}
-          xsOffsetX={-2}
-          xsOffsetY={26}
-          offsetX={-2}
-          offsetY={34}
-          tabletOffsetX={-4}
-          tabletOffsetY={34}
-          desktopOffsetX={-6}
-          desktopOffsetY={38}
-          xlOffsetY={38}
-          v="top"
-          h="left"
-          minLeftPx={30}
-          xlMinLeftPx={100}
-          desktopMinLeftPx={100}
-          tabletMinLeftPx={30}
-          xsMinLeftPx={8}
-        />
-      </div>
+      <section className="focus-strip" aria-label="Target roles and engineering direction">
+        <ol className="content-shell focus-grid">
+          {siteContent.focusAreas.map((area, index) => (
+            <li
+              className={`focus-item${index === siteContent.focusAreas.length - 1 ? " focus-item-current" : ""}`}
+              key={area.number}
+            >
+              <span className="focus-marker" aria-hidden="true">{area.number}</span>
+              <div className="focus-copy">
+                <h2>{area.title}</h2>
+                <p>{area.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
 
-      <div className="fixed inset-0 z-20 pointer-events-none">
-        <ToolsLink
-          xsOffsetX={-10}
-          xsOffsetY={18}
-          offsetX={-12}
-          offsetY={22}
-          tabletOffsetX={-18}
-          tabletOffsetY={24}
-          desktopOffsetX={-28}
-          desktopOffsetY={36}
-          xlOffsetX={-40}
-          xlOffsetY={36}
-          v="top"
-          h="right"
-          introGate
-          scale={0.72}
-          iconSizePx={30}
-        />
-      </div>
+      <section className="direction-section content-shell" aria-labelledby="direction-title">
+        <div className="section-heading section-heading-simple">
+          <h2 id="direction-title">Engineering direction</h2>
+        </div>
 
-      <div className="fixed inset-0 z-20 pointer-events-none">
-        <ProfileLink
-          xsOffsetX={-10}
-          xsOffsetY={-10}
-          offsetX={-12}
-          offsetY={-12}
-          tabletOffsetX={-18}
-          tabletOffsetY={-18}
-          desktopOffsetX={-28}
-          desktopOffsetY={-32}
-          xlOffsetX={-40}
-          xlOffsetY={-36}
-          v="bottom"
-          h="right"
-          introGate
-          scale={0.72}
-        />
-      </div>
+        <div className="direction-grid">
+          <div>
+            <p className="direction-label">Engineering foundation</p>
+            <h3>{siteContent.identity.professionalTitle}</h3>
+            <p>Reliable APIs, enterprise content platforms, integrations, testing, and production delivery.</p>
+            <ul className="inline-skill-list" aria-label="Strongest technologies">
+              {(strongestSkills.length
+                ? strongestSkills.map((skill) => skill.name)
+                : siteContent.strongestTechnologies
+              ).map((skill) => <li key={skill}>{skill}</li>)}
+            </ul>
+          </div>
+          <div>
+            <p className="direction-label">AI engineering focus</p>
+            <h3>{siteContent.aiFocus.status}</h3>
+            <p>Current focus is learning and project development, grounded in existing backend and data experience.</p>
+            {aiSkills.length ? (
+              <ul className="inline-skill-list" aria-label="Current AI technologies">
+                {aiSkills.map((skill) => <li key={skill.name}>{skill.name}</li>)}
+              </ul>
+            ) : null}
+          </div>
+        </div>
+      </section>
+
+      <ProjectsRadar projects={projects} />
+
+      <section id="experience" className="profile-preview content-shell" aria-labelledby="profile-preview-title">
+        <div className="section-heading section-heading-simple section-heading-actions">
+          <h2 id="profile-preview-title">Experience</h2>
+          <ProfileLink label="View full experience" />
+        </div>
+
+        {recentExperience ? (
+          <article className="experience-preview experience-preview-wide">
+            <p className="section-kicker">Most recent role</p>
+            <div className="experience-preview-heading">
+              <h3>{recentExperience.title.replace(/SWE\s*-\s*/i, "Software Engineer / ")}</h3>
+              <span>{experiencePeriod(recentExperience.startDate, recentExperience.endDate)}</span>
+            </div>
+            <p>{recentExperience.company} / {recentExperience.location}</p>
+            <ul>
+              {recentExperience.bullets.slice(0, 3).map((bullet) => <li key={bullet}>{bullet}</li>)}
+            </ul>
+          </article>
+        ) : null}
+      </section>
+
+      {(primaryEducation || certifications.length) ? (
+        <section className="evidence-section content-shell" aria-labelledby="evidence-title">
+          <div className="section-heading section-heading-simple">
+            <h2 id="evidence-title">Education &amp; certifications</h2>
+          </div>
+          <div className="evidence-grid">
+            {primaryEducation ? (
+              <article>
+                <p className="direction-label">Education</p>
+                <h3>{primaryEducation.degree}</h3>
+                <p>{primaryEducation.field}</p>
+                <span>{primaryEducation.institution}</span>
+              </article>
+            ) : null}
+            {certifications.length ? (
+              <div>
+                <p className="direction-label">Selected credentials</p>
+                <ul>
+                  {certifications.map((item) => (
+                    <li key={item.title}>
+                      {item.link ? (
+                        <a href={item.link} target="_blank" rel="noreferrer">
+                          {item.title} <ArrowUpRight aria-hidden="true" />
+                        </a>
+                      ) : item.title}
+                      <span>{item.issuer}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
     </main>
   );
 }

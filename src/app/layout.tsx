@@ -1,59 +1,62 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Sora } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Manrope, Space_Grotesk } from "next/font/google";
+import Navigation from "@/components/portfolio/navigation/Navigation";
+import { siteContent } from "@/content/site";
 import "./globals.css";
-import CustomCursor from "@/components/cursor/CustomCursor";
-import Copyright from "../components/portfolio/footer/Copyright";
-import {
-  PageTransitionProvider,
-  PageTransitionOverlay,
-} from "@/components/page-transition";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const bodyFont = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const displayFont = Space_Grotesk({
+  variable: "--font-display",
   subsets: ["latin"],
-});
-
-const sora = Sora({
-  variable: "--font-sora",
-  subsets: ["latin"],
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Sai Kiran's Portfolio - Full Stack Developer",
+  metadataBase: new URL(siteContent.metadata.baseUrl),
+  title: {
+    default: siteContent.metadata.title,
+    template: `%s | ${siteContent.identity.shortName}`,
+  },
+  description: siteContent.metadata.description,
+  authors: [{ name: siteContent.identity.fullName }],
+  openGraph: {
+    title: siteContent.metadata.title,
+    description: siteContent.metadata.description,
+    type: "website",
+    locale: "en_IN",
+    siteName: `${siteContent.identity.shortName} Portfolio`,
+  },
+  robots: { index: true, follow: true },
   icons: {
     icon: [{ url: "/icon.svg", type: "image/svg+xml", sizes: "any" }],
-    shortcut: [{ url: "/icon.svg", type: "image/svg+xml", sizes: "any" }],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} antialiased`}
-      >
-        {/* Custom cursor above content */}
-        <CustomCursor />
-        <PageTransitionProvider expansionDuration={800}>
-          <div className="relative z-10 min-h-dvh">{children}</div>
-          {/* Page transition overlay for cursor expansion effect */}
-          <PageTransitionOverlay />
-        </PageTransitionProvider>
-        {/* Copyright fetched client-side to avoid blocking SSR */}
-        <Copyright />
+      <body className={`${bodyFont.variable} ${displayFont.variable}`}>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        <Navigation />
+        {children}
       </body>
     </html>
   );
 }
-

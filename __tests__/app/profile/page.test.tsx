@@ -1,14 +1,21 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import PortfolioPage from "@/app/profile/page";
+import ProfilePage from "@/app/profile/page";
+import { fetchUserPortfolio } from "@/services/portfolio.service";
 
-jest.mock("@/components/portfolio/logo/Logo", () => () => <div>Logo</div>);
-jest.mock("@/components/portfolio/profile/ProfileViewClient", () => () => <div>ProfileViewClient</div>);
+jest.mock("@/components/portfolio/profile/ProfileView", () => ({ data }: { data: { name: string } }) => <div>{data.name} profile</div>);
+jest.mock("@/services/portfolio.service", () => ({ fetchUserPortfolio: jest.fn() }));
 
-describe("Portfolio Page", () => {
-    it("renders components", () => {
-        render(<PortfolioPage />);
-        expect(screen.getByText("Logo")).toBeInTheDocument();
-        expect(screen.getByText("ProfileViewClient")).toBeInTheDocument();
-    });
+describe("ProfilePage", () => {
+  it("renders the server-fetched profile directly", async () => {
+    (fetchUserPortfolio as jest.MockedFunction<typeof fetchUserPortfolio>).mockResolvedValue({ name: "Sai Kiran", email: "sai@example.com", skills: [], experiences: [], education: [] });
+    render(await ProfilePage());
+    expect(screen.getByText("Sai Kiran profile")).toBeInTheDocument();
+  });
+
+  it("shows a useful fallback when data cannot load", async () => {
+    (fetchUserPortfolio as jest.MockedFunction<typeof fetchUserPortfolio>).mockRejectedValue(new Error("offline"));
+    render(await ProfilePage());
+    expect(screen.getByRole("heading", { name: /could not be loaded/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /view resume/i })).toHaveAttribute("href", "/api/download-resume");
+  });
 });

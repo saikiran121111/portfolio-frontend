@@ -1,324 +1,232 @@
-"use client";
-
-import { useEffect, useMemo, useState, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  MapPin,
-  Globe,
-  BriefcaseBusiness,
-  GraduationCap,
-  BadgeCheck,
-  Trophy,
   ArrowUpRight,
-  Menu,
-  FileText,
+  CalendarDays,
+  Download,
+  Github,
+  Linkedin,
+  Mail,
+  MapPin,
 } from "lucide-react";
-import { fetchUserPortfolio } from "@/services/portfolio.service";
+import { profileContent } from "@/content/profile";
+import {
+  groupRecruiterSkills,
+  resolveProfessionalSummary,
+  selectAiSkills,
+  selectRecruiterAchievements,
+  selectRelevantCertifications,
+} from "@/content/selectors";
+import { siteContent } from "@/content/site";
+import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
-// Import shared utils and section components
-import { classNames, containerVariants, fadeUpVariants, EASE_OUT } from "./sections/utils";
-import HeaderCard from "./sections/HeaderCard";
-import SkillsSection from "./sections/SkillsSection";
-import ExperienceSection from "./sections/ExperienceSection";
-import ProjectsSection from "./sections/ProjectsSection";
-import EducationCertsSection from "./sections/EducationCertsSection";
-import AchievementsLanguagesSection from "./sections/AchievementsLanguagesSection";
-import ResumeSection from "./sections/ResumeSection";
+import type { IProjects } from "@/interfaces/user.interface";
 
-// Navigation Tab Component
-function NavigationTab({ sections }: { sections: Array<{ id: string; label: string; icon: React.ComponentType<{ className?: string }> }> }) {
-  const [activeSection, setActiveSection] = useState<string>("");
-  const [isTabOpen, setIsTabOpen] = useState(false);
-
-  useEffect(() => {
-    const observers = sections.map(({ id }) => {
-      const element = document.getElementById(id);
-      if (!element) return null;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(id);
-          }
-        },
-        { threshold: 0.3, rootMargin: "-20% 0px -60% 0px" }
-      );
-
-      observer.observe(element);
-      return observer;
-    });
-
-    return () => {
-      observers.forEach(observer => observer?.disconnect());
-    };
-  }, [sections]);
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest"
-      });
-    }
-    setIsTabOpen(false);
-  };
-
-  // Fixed, anchored drawer
-  const PANEL_WIDTH = 288; // w-72
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, delay: 0.6, ease: EASE_OUT }}
-      className="fixed right-0 top-1/2 -translate-y-1/2 z-50 hidden lg:block"
-    >
-      {/* Drawer track (anchored to right). When closed, shift by +100% (panel width). */}
-      <motion.div
-        className="relative w-72 pointer-events-auto"
-        style={{ width: PANEL_WIDTH }}
-        initial={false}
-        animate={{ x: isTabOpen ? 0 : PANEL_WIDTH }}
-        transition={{ duration: 0.45, ease: EASE_OUT }}
-      >
-        {/* Toggle Button */}
-        <motion.button
-          onClick={() => setIsTabOpen(!isTabOpen)}
-          aria-label={isTabOpen ? "Close quick navigation" : "Open quick navigation"}
-          className={classNames(
-            "contrast-surface-soft absolute left-0 top-1/2 z-10 flex h-14 w-14 -translate-x-full -translate-y-1/2 items-center justify-center transition-all duration-300 shadow-lg",
-            isTabOpen
-              ? "rounded-l-2xl text-white shadow-white/10"
-              : "rounded-l-2xl text-white/80 hover:text-white hover:shadow-xl"
-          )}
-          whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)" }}
-          whileTap={{ scale: 0.95 }}
-          animate={isTabOpen ? { rotate: [0, 5, -5, 0] } : {}}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.div animate={{ rotate: isTabOpen ? 90 : 0 }} transition={{ duration: 0.3, ease: EASE_OUT }}>
-            <Menu className="size-5" />
-          </motion.div>
-        </motion.button>
-
-        {/* Navigation Panel */}
-        <motion.div
-          initial={false}
-          animate={{ opacity: isTabOpen ? 1 : 1 }}
-          className="contrast-surface relative max-w-[min(288px,calc(100vw-120px))] overflow-hidden rounded-l-2xl border-l-0 shadow-2xl shadow-black/40"
-          style={{ width: PANEL_WIDTH }}
-        >
-          <motion.div
-            className="p-6"
-            initial={false}
-            animate={isTabOpen ? { opacity: 1, y: 0 } : { opacity: 0.85, y: 4 }}
-            transition={{ duration: 0.25 }}
-          >
-            <motion.h3
-              className="text-sm font-semibold text-white/90 mb-4 flex items-center gap-2"
-              initial={false}
-              animate={isTabOpen ? { opacity: 1, x: 0 } : { opacity: 0.9, x: -6 }}
-              transition={{ duration: 0.25 }}
-            >
-              <div className="w-2 h-2 rounded-full bg-white/70 animate-pulse" />
-              Quick Navigation
-            </motion.h3>
-            <nav className="space-y-1">
-              {sections.map(({ id, label, icon: Icon }, index) => (
-                <motion.button
-                  key={id}
-                  onClick={() => scrollToSection(id)}
-                  className={classNames(
-                    "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm transition-all duration-300 group",
-                    activeSection === id
-                      ? "contrast-pill border text-white shadow-lg shadow-white/10"
-                      : "text-white/80 hover:bg-white/10 hover:text-white hover:shadow-md"
-                  )}
-                  initial={false}
-                  animate={isTabOpen ? { opacity: 1, x: 0, transition: { delay: 0.05 + index * 0.04 } } : { opacity: 0.85, x: -8 }}
-                  whileHover={{ x: 6, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <motion.div whileHover={{ rotate: 10, scale: 1.1 }} transition={{ duration: 0.2 }}>
-                    <Icon className="size-4 flex-shrink-0" />
-                  </motion.div>
-                  <span className="truncate font-medium">{label}</span>
-                  {activeSection === id && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="w-2 h-2 rounded-full bg-white/70 ml-auto shadow-lg shadow-white/15"
-                      initial={false}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    />
-                  )}
-                  <motion.div className="opacity-0 group-hover:opacity-100 transition-opacity" initial={false} whileHover={{ x: 2 }}>
-                    <ArrowUpRight className="size-3" />
-                  </motion.div>
-                </motion.button>
-              ))}
-            </nav>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </motion.div>
-  );
+function formatDate(date?: Date | null) {
+  if (!date) return "Present";
+  return new Intl.DateTimeFormat("en", { month: "short", year: "numeric" }).format(date);
 }
 
-export default function ProfileView() {
-  const [data, setData] = useState<IPortfolio | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+function cleanTitle(title: string) {
+  return title.replace(/SWE\s*-\s*/i, "Software Engineer / ");
+}
 
-  // Scroll hooks - must be called unconditionally
-  const { scrollY, scrollYProgress } = useScroll();
-  const headerOpacity = useTransform(scrollY, [0, 200], [1, 0.8]);
-  const headerScale = useTransform(scrollY, [0, 200], [1, 0.98]);
+function cleanProjectTitle(title: string) {
+  return title.replace(/\s*\(Accenture Client\)/i, "");
+}
 
-  // Define navigation sections based on available data
-  const navigationSections = useMemo(() => {
-    if (!data) return [];
+function projectLink(project: IProjects) {
+  return project.liveUrl || project.projectUrl || project.repoUrl;
+}
 
-    const sections = [
-      { id: "header", label: "Profile", icon: MapPin },
-      { id: "resume", label: "Resume", icon: FileText },
-      { id: "skills", label: "Skills", icon: BadgeCheck },
-    ];
-
-    if (data.experiences?.length) {
-      sections.push({ id: "experience", label: "Experience", icon: BriefcaseBusiness });
-    }
-    if (data.projects?.length) {
-      sections.push({ id: "projects", label: "Projects", icon: Globe });
-    }
-    if (data.education?.length || data.certifications?.length) {
-      sections.push({ id: "education", label: "Education & Certifications", icon: GraduationCap });
-    }
-    if (data.achievements?.length || data.languages?.length) {
-      sections.push({ id: "achievements", label: "Achievements & Languages", icon: Trophy });
-    }
-
-    return sections;
-  }, [data]);
-
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const p = await fetchUserPortfolio({ cache: "no-store" });
-        if (!mounted) return;
-        setData(p);
-      } catch (e) {
-        if (!mounted) return;
-        const msg = e instanceof Error ? e.message : "Failed to load profile";
-        setError(msg);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  // Group skills by category (must be defined before any early returns)
-  const skillsByCat = useMemo((): Array<[string, { name: string; level: string }[]]> => {
-    if (!data?.skills) return [];
-    const g = new Map<string, { name: string; level: string }[]>();
-    for (const s of data.skills) {
-      const arr = g.get(s.category) ?? [];
-      arr.push({ name: s.name, level: s.level });
-      g.set(s.category, arr);
-    }
-    return Array.from(g.entries());
-  }, [data?.skills]);
-
-  if (loading) {
-    return (
-      <div className="container mx-auto max-w-6xl px-4 py-10">
-        <div className="animate-pulse grid gap-6">
-          <div className="h-24 rounded-lg bg-white/10" />
-          <div className="h-48 rounded-lg bg-white/10" />
-          <div className="h-64 rounded-lg bg-white/10" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto max-w-4xl px-4 py-10">
-        <div className="rounded-lg border border-white/20 bg-white/10 p-4 text-white/80">{error}</div>
-      </div>
-    );
-  }
-
-  if (!data) return null;
-
-  const mapSrc = data.location
-    ? `https://www.google.com/maps?q=${encodeURIComponent(data.location)}&output=embed&z=12`
-    : null;
+export default function ProfileView({ data }: { data: IPortfolio }) {
+  const skillGroups = groupRecruiterSkills(data.skills);
+  const aiSkills = selectAiSkills(data.skills);
+  const certifications = selectRelevantCertifications(data.certifications);
+  const achievements = selectRecruiterAchievements(data.achievements);
+  const visibleProjects = data.projects?.filter((project) => project.isVisible !== false) ?? [];
+  const github = data.socials?.github || siteContent.links.github;
+  const linkedin = data.socials?.linkedin || siteContent.links.linkedin;
 
   return (
-    <>
-      {/* Scroll Progress Indicator */}
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-white/20 z-50 origin-left shadow-lg shadow-white/10"
-        style={{ scaleX: scrollYProgress }}
-        initial={{ scaleX: 0 }}
-      />
+    <div className="profile-page content-shell">
+      <header className="profile-hero" id="profile-overview">
+        <div className="profile-hero-copy">
+          <p className="section-kicker">{profileContent.eyebrow}</p>
+          <h1>{data.name}</h1>
+          <p className="profile-headline">{siteContent.identity.professionalTitle}</p>
+          <p className="profile-transition">{siteContent.identity.transitionLabel}</p>
+          <p className="profile-summary">{resolveProfessionalSummary(data.summary)}</p>
+          {data.headline ? <p className="profile-specialization">{data.headline}</p> : null}
+          <div className="target-role-list" aria-label="Target roles">
+            <span>Target roles</span>
+            <p>{siteContent.targetRoles.join(" · ")}</p>
+          </div>
+          <div className="profile-contact-row">
+            {data.location ? <span><MapPin aria-hidden="true" /> {data.location}</span> : null}
+            <a href={`mailto:${data.email}`}><Mail aria-hidden="true" /> {data.email}</a>
+          </div>
+          <div className="profile-actions">
+            <a className="button button-primary" href={siteContent.links.resume}>
+              <Download aria-hidden="true" /> Download Resume
+            </a>
+            <a className="button button-secondary" href={linkedin} target="_blank" rel="noreferrer">
+              <Linkedin aria-hidden="true" /> LinkedIn <ArrowUpRight aria-hidden="true" />
+            </a>
+            <a className="text-link" href={github} target="_blank" rel="noreferrer">
+              <Github aria-hidden="true" /> GitHub <ArrowUpRight aria-hidden="true" />
+            </a>
+          </div>
+        </div>
 
-      <div ref={containerRef} className="container mx-auto max-w-6xl px-0 py-0 sm:px-4 sm:py-10">
-        {/* Header */}
-        <motion.section
-          id="header"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          style={{ opacity: headerOpacity, scale: headerScale }}
-          className="grid grid-cols-1 gap-6 md:grid-cols-[1.3fr_.7fr]"
-        >
-          <HeaderCard data={data} />
+        <dl className="profile-snapshot" aria-label="Profile summary">
+          <div><dt>Experience</dt><dd>{siteContent.identity.experienceLabel}</dd></div>
+          <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
+          <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
+          <div><dt>Current direction</dt><dd>AI engineering</dd></div>
+        </dl>
+      </header>
 
-          <motion.div variants={fadeUpVariants} className="contrast-surface overflow-hidden rounded-2xl">
-            {mapSrc ? (
-              <iframe
-                title="Location Map"
-                src={mapSrc}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="h-52 w-full sm:h-60 md:h-full"
-              />
-            ) : (
-              <div className="flex h-52 items-center justify-center text-white/80 sm:h-60 md:h-64">No location provided</div>
-            )}
-          </motion.div>
-        </motion.section>
+      <div className="profile-layout">
+        <aside className="profile-index" aria-label={profileContent.indexLabel}>
+          <p>{profileContent.indexLabel}</p>
+          <SmoothSectionLink href="#experience">{profileContent.sections.experience}</SmoothSectionLink>
+          {aiSkills.length ? <SmoothSectionLink href="#ai-direction">{profileContent.sections.aiDirection}</SmoothSectionLink> : null}
+          <SmoothSectionLink href="#strengths">{profileContent.sections.strengths}</SmoothSectionLink>
+          <SmoothSectionLink href="#profile-projects">{profileContent.sections.projects}</SmoothSectionLink>
+          <SmoothSectionLink href="#education">{profileContent.sections.education}</SmoothSectionLink>
+          <SmoothSectionLink href="#credentials">{profileContent.sections.credentials}</SmoothSectionLink>
+        </aside>
 
-        {/* Resume Download */}
-        <ResumeSection />
+        <div className="profile-content">
+          <section className="resume-section" id="experience" aria-labelledby="experience-title">
+            <div className="resume-section-heading">
+              <p className="section-kicker">01 / {profileContent.sections.experience}</p>
+              <h2 id="experience-title">Professional experience</h2>
+            </div>
+            <div className="timeline">
+              {data.experiences.map((experience) => (
+                <article className="timeline-entry" key={`${experience.company}-${experience.startDate.toISOString()}`}>
+                  <div className="timeline-meta">
+                    <span><CalendarDays aria-hidden="true" /> {formatDate(experience.startDate)} – {formatDate(experience.endDate)}</span>
+                    {experience.location ? <span>{experience.location}</span> : null}
+                  </div>
+                  <div className="timeline-copy">
+                    <h3>{cleanTitle(experience.title)}</h3>
+                    <p className="timeline-company">{experience.company}</p>
+                    {experience.description ? <p>{experience.description}</p> : null}
+                    <ul>{experience.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+                    <p className="profile-stack"><span>Technologies</span>{experience.techStack.join(" / ")}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
 
-        {/* Skills */}
-        <SkillsSection skillsByCat={skillsByCat} />
+          {aiSkills.length ? (
+            <section className="resume-section" id="ai-direction" aria-labelledby="ai-direction-title">
+              <div className="resume-section-heading">
+                <p className="section-kicker">02 / {profileContent.sections.aiDirection}</p>
+                <h2 id="ai-direction-title">{siteContent.aiFocus.title}</h2>
+              </div>
+              <div className="ai-profile-focus">
+                <div>
+                  <p className="direction-label">Positioning</p>
+                  <h3>{siteContent.aiFocus.status}</h3>
+                  <p>{siteContent.aiFocus.summary}</p>
+                </div>
+                <ul aria-label="AI engineering technologies listed in profile data">
+                  {aiSkills.map((skill) => (
+                    <li key={skill.name}><span>{skill.name}</span><small>{skill.level}</small></li>
+                  ))}
+                </ul>
+              </div>
+            </section>
+          ) : null}
 
-        {/* Experience */}
-        <ExperienceSection experiences={data.experiences ?? []} />
+          <section className="resume-section" id="strengths" aria-labelledby="strengths-title">
+            <div className="resume-section-heading">
+              <p className="section-kicker">03 / Strengths</p>
+              <h2 id="strengths-title">Technical strengths</h2>
+            </div>
+            <div className="skills-groups">
+              {skillGroups.map((group) => (
+                <div className="skill-group" key={group.category}>
+                  <h3>{group.label}</h3>
+                  <ul>{group.skills.map((skill) => <li key={skill.name}><span>{skill.name}</span><small>{skill.level}</small></li>)}</ul>
+                </div>
+              ))}
+            </div>
+          </section>
 
-        {/* Projects */}
-        <ProjectsSection projects={data.projects ?? []} />
+          {visibleProjects.length ? (
+            <section className="resume-section" id="profile-projects" aria-labelledby="profile-projects-title">
+              <div className="resume-section-heading">
+                <p className="section-kicker">04 / {profileContent.sections.projects}</p>
+                <h2 id="profile-projects-title">Selected engineering work</h2>
+              </div>
+              <div className="resume-project-list">
+                {visibleProjects.map((project, index) => {
+                  const href = projectLink(project);
+                  return (
+                    <article className="resume-project" key={project.title}>
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <div>
+                        <h3>{cleanProjectTitle(project.title)}</h3>
+                        {project.type ? <p className="resume-project-type">{project.type}</p> : null}
+                        <p>{project.description}</p>
+                        {project.highlights.length ? (
+                          <ul>{project.highlights.slice(0, 4).map((item) => <li key={item}>{item}</li>)}</ul>
+                        ) : null}
+                        <p className="profile-stack"><span>Technologies</span>{project.tech.join(" / ")}</p>
+                      </div>
+                      {href ? <a href={href} target="_blank" rel="noreferrer" aria-label={`Open ${cleanProjectTitle(project.title)}`}><ArrowUpRight aria-hidden="true" /></a> : null}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
 
-        {/* Education and Certifications */}
-        <EducationCertsSection education={data.education ?? []} certifications={data.certifications ?? []} />
+          <section className="resume-section" id="education" aria-labelledby="education-title">
+            <div className="resume-section-heading">
+              <p className="section-kicker">05 / {profileContent.sections.education}</p>
+              <h2 id="education-title">Education</h2>
+            </div>
+            <div className="education-list">
+              {data.education.map((education) => (
+                <article key={`${education.institution}-${education.degree}`}>
+                  <p>{formatDate(education.startDate)} – {formatDate(education.endDate)}</p>
+                  <h3>{education.degree}{education.field ? ` / ${education.field}` : ""}</h3>
+                  <span>{education.institution}</span>
+                  {education.description ? <p>{education.description}</p> : null}
+                </article>
+              ))}
+            </div>
+          </section>
 
-        {/* Achievements and Languages */}
-        <AchievementsLanguagesSection achievements={data.achievements ?? []} languages={data.languages ?? []} />
-
+          <section className="resume-section" id="credentials" aria-labelledby="credentials-title">
+            <div className="resume-section-heading">
+              <p className="section-kicker">06 / {profileContent.sections.credentials}</p>
+              <h2 id="credentials-title">Relevant credentials and recognition</h2>
+            </div>
+            <div className="credentials-grid">
+              <div>
+                <h3>Selected certifications</h3>
+                {certifications.length ? certifications.map((item) => (
+                  <p key={item.title}>{item.link ? <a href={item.link} target="_blank" rel="noreferrer">{item.title} <ArrowUpRight aria-hidden="true" /></a> : item.title}<span>{item.issuer} / {formatDate(item.date)}</span></p>
+                )) : <p>No certifications listed.</p>}
+              </div>
+              <div>
+                <h3>Engineering achievements</h3>
+                {achievements.length ? achievements.map((item) => <p key={item.title}>{item.title}{item.date ? <span>{formatDate(item.date)}</span> : null}</p>) : <p>No achievements listed.</p>}
+              </div>
+              <div>
+                <h3>Languages</h3>
+                {data.languages?.length ? data.languages.map((item) => <p key={item.name}>{item.name}<span>{item.level}</span></p>) : <p>No languages listed.</p>}
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
-
-      {/* Navigation Tab */}
-      <NavigationTab sections={navigationSections} />
-    </>
+    </div>
   );
 }
