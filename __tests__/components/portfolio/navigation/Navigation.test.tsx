@@ -86,4 +86,16 @@ describe("Navigation section state", () => {
       );
     });
   });
+
+  it("offers separate resume viewing and download actions", () => {
+    render(<Navigation />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Resume" }));
+
+    expect(screen.getByRole("button", { name: /view resume/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /download pdf/i })).toHaveAttribute(
+      "href",
+      "/api/download-resume",
+    );
+  });
 });

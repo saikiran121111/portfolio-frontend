@@ -5,6 +5,10 @@ import { NextResponse } from "next/server";
 // Mock fetch globally
 global.fetch = jest.fn();
 
+const resumeRequest = (query = "") => ({
+    nextUrl: { searchParams: new URLSearchParams(query) },
+}) as Parameters<typeof GET>[0];
+
 // Mock NextResponse
 jest.mock("next/server", () => {
     return {
@@ -45,11 +49,24 @@ describe("Download Resume API", () => {
             arrayBuffer: async () => mockBuffer,
         });
 
-        const response = await GET();
+        const response = await GET(resumeRequest());
 
         expect(response).toBeInstanceOf(NextResponse);
         expect(response.status).toBe(200);
         expect(response.headers.get("Content-Type")).toBe("application/pdf");
+        expect(response.headers.get("Content-Disposition")).toContain("attachment");
+    });
+
+    it("serves the PDF inline for the resume viewer", async () => {
+        const mockBuffer = new ArrayBuffer(10);
+        (global.fetch as jest.Mock).mockResolvedValue({
+            ok: true,
+            arrayBuffer: async () => mockBuffer,
+        });
+
+        const response = await GET(resumeRequest("view=1"));
+
+        expect(response.headers.get("Content-Disposition")).toContain("inline");
     });
 
     it("handles fetch failure", async () => {
@@ -57,7 +74,7 @@ describe("Download Resume API", () => {
             ok: false,
         });
 
-        const response = await GET();
+        const response = await GET(resumeRequest());
 
         expect(response.status).toBe(500);
         const data = await response.json();
@@ -67,7 +84,7 @@ describe("Download Resume API", () => {
     it("handles exception", async () => {
         (global.fetch as jest.Mock).mockRejectedValue(new Error("Network error"));
 
-        const response = await GET();
+        const response = await GET(resumeRequest());
 
         expect(response.status).toBe(500);
         const data = await response.json();

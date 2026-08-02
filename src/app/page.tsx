@@ -1,21 +1,25 @@
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Download,
   Github,
   Linkedin,
   Mail,
 } from "lucide-react";
 import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
+import ResumeViewButton from "@/components/portfolio/resume/ResumeViewButton";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
 import {
+  aiFocusContent,
+  createHomepageSummary,
+  currentRole,
+  engineeringFocusAreas,
+  experienceLabel,
   resolveCandidateIdentity,
   selectAiSkills,
   selectFeaturedProjects,
   selectStrongestSkills,
 } from "@/content/selectors";
-import { siteContent } from "@/content/site";
 import { fetchUserPortfolio } from "@/services/portfolio.service";
 
 function experiencePeriod(startDate: Date, endDate?: Date | null) {
@@ -23,13 +27,23 @@ function experiencePeriod(startDate: Date, endDate?: Date | null) {
   return `${format.format(startDate)} – ${endDate ? format.format(endDate) : "Present"}`;
 }
 
+function roleTitle(title: string) {
+  return title.replace(/SWE\s*-\s*/i, "Software Engineer / ");
+}
+
 export default async function Home() {
   const portfolio = await fetchUserPortfolio({ cache: "no-store" }).catch(() => null);
   const identity = resolveCandidateIdentity(portfolio);
-  const projects = selectFeaturedProjects(portfolio?.projects);
+  const projects = selectFeaturedProjects(
+    portfolio?.projects,
+    portfolio?.homepageProjects,
+  );
   const aiSkills = selectAiSkills(portfolio?.skills);
   const strongestSkills = selectStrongestSkills(portfolio?.skills);
-  const recentExperience = portfolio?.experiences?.[0];
+  const aiFocus = aiFocusContent(portfolio?.skills);
+  const focusAreas = engineeringFocusAreas(portfolio?.skills);
+  const experience = experienceLabel(portfolio?.experiences);
+  const recentExperience = currentRole(portfolio?.experiences);
   const primaryEducation = portfolio?.education?.[0];
   const certifications = portfolio?.certifications
     ?.filter((item) => !/sales accredit/i.test(item.title))
@@ -40,23 +54,25 @@ export default async function Home() {
       <section className="hero-section content-shell" aria-labelledby="hero-title">
         <div className="hero-copy">
           <p className="section-kicker hero-reveal hero-reveal-1">
-            {siteContent.identity.professionalTitle}
+            {recentExperience
+              ? `${roleTitle(recentExperience.title)} / ${recentExperience.company}`
+              : "Engineering portfolio"}
           </p>
           <h1 id="hero-title" className="hero-reveal hero-reveal-2">{identity.name}</h1>
           <p className="hero-statement hero-reveal hero-reveal-3">
-            {siteContent.identity.headline}
+            {identity.headline}
           </p>
           <p className="hero-summary hero-reveal hero-reveal-4">
-            {siteContent.identity.summary}
+            {createHomepageSummary(identity.summary)}
           </p>
-          <p className="hero-availability hero-reveal hero-reveal-4">
-            <span aria-hidden="true" /> {siteContent.identity.availability}
-          </p>
+          {identity.availability ? (
+            <p className="hero-availability hero-reveal hero-reveal-4">
+              <span aria-hidden="true" /> {identity.availability}
+            </p>
+          ) : null}
 
           <div className="hero-actions hero-reveal hero-reveal-5">
-            <a className="button button-primary" href={siteContent.links.resume}>
-              <Download aria-hidden="true" /> View Resume
-            </a>
+            <ResumeViewButton ownerName={identity.name} />
             <SmoothSectionLink className="button button-secondary" href="#projects">
               Explore projects <ArrowDownRight aria-hidden="true" />
             </SmoothSectionLink>
@@ -76,15 +92,15 @@ export default async function Home() {
           </div>
 
           <dl className="hero-facts hero-reveal hero-reveal-5">
-            <div><dt>Experience</dt><dd>{siteContent.identity.experienceLabel}</dd></div>
-            <div><dt>Target</dt><dd>Backend / Full-stack / AI</dd></div>
+            {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
+            {recentExperience ? <div><dt>Latest role</dt><dd>{roleTitle(recentExperience.title)}</dd></div> : null}
             <div><dt>Location</dt><dd>{identity.location}</dd></div>
           </dl>
         </div>
 
-        <div
+        {focusAreas.length ? <div
           className="hero-visual"
-          aria-label="Engineering path from backend systems through full-stack delivery toward AI engineering"
+          aria-label="Engineering focus areas from profile data"
         >
           <div className="hero-visual-frame">
             <div className="hero-visual-topline">
@@ -92,7 +108,7 @@ export default async function Home() {
               <span className="live-indicator">Current focus</span>
             </div>
             <ol className="hero-career-path">
-              {siteContent.careerPath.map((stage, index) => (
+              {focusAreas.map((stage, index) => (
                 <li className={`hero-career-stage hero-career-stage-${index + 1}`} key={stage.number}>
                   <span className="hero-career-marker" aria-hidden="true">{stage.number}</span>
                   <span className="hero-career-heading">
@@ -104,18 +120,18 @@ export default async function Home() {
               ))}
             </ol>
             <p className="hero-visual-summary">
-              <span>{siteContent.identity.experienceLabel} in production engineering</span>
-              <strong>Building forward from a proven backend foundation.</strong>
+              {experience ? <span>{experience} in production engineering</span> : null}
+              <strong>{portfolio?.skills.length ?? 0} skills in the current profile</strong>
             </p>
           </div>
-        </div>
+        </div> : null}
       </section>
 
-      <section className="focus-strip" aria-label="Target roles and engineering direction">
+      {focusAreas.length ? <section className="focus-strip" aria-label="Engineering focus areas">
         <ol className="content-shell focus-grid">
-          {siteContent.focusAreas.map((area, index) => (
+          {focusAreas.map((area, index) => (
             <li
-              className={`focus-item${index === siteContent.focusAreas.length - 1 ? " focus-item-current" : ""}`}
+              className={`focus-item${index === focusAreas.length - 1 ? " focus-item-current" : ""}`}
               key={area.number}
             >
               <span className="focus-marker" aria-hidden="true">{area.number}</span>
@@ -126,7 +142,7 @@ export default async function Home() {
             </li>
           ))}
         </ol>
-      </section>
+      </section> : null}
 
       <section className="direction-section content-shell" aria-labelledby="direction-title">
         <div className="section-heading section-heading-simple">
@@ -136,19 +152,18 @@ export default async function Home() {
         <div className="direction-grid">
           <div>
             <p className="direction-label">Engineering foundation</p>
-            <h3>{siteContent.identity.professionalTitle}</h3>
-            <p>Reliable APIs, enterprise content platforms, integrations, testing, and production delivery.</p>
+            <h3>Backend engineering</h3>
+            {strongestSkills.length ? (
+              <p>{strongestSkills.map((skill) => skill.name).join(", ")}.</p>
+            ) : null}
             <ul className="inline-skill-list" aria-label="Strongest technologies">
-              {(strongestSkills.length
-                ? strongestSkills.map((skill) => skill.name)
-                : siteContent.strongestTechnologies
-              ).map((skill) => <li key={skill}>{skill}</li>)}
+              {strongestSkills.map((skill) => <li key={skill.name}>{skill.name}</li>)}
             </ul>
           </div>
           <div>
             <p className="direction-label">AI engineering focus</p>
-            <h3>{siteContent.aiFocus.status}</h3>
-            <p>Current focus is learning and project development, grounded in existing backend and data experience.</p>
+            <h3>{aiFocus.status}</h3>
+            {aiFocus.summary ? <p>{aiFocus.summary}</p> : null}
             {aiSkills.length ? (
               <ul className="inline-skill-list" aria-label="Current AI technologies">
                 {aiSkills.map((skill) => <li key={skill.name}>{skill.name}</li>)}
