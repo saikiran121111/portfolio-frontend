@@ -57,6 +57,28 @@ describe("portfolio data selectors", () => {
     expect(selected.map((item) => item.title)).toEqual(["Two", "One", "Three"]);
   });
 
+  it("keeps a homepage project selected when its database title changes", () => {
+    const renamedProject = {
+      ...project("Renamed portfolio"),
+      liveUrl: "https://example.com/portfolio/",
+    };
+
+    const selected = selectFeaturedProjects(
+      [project("One"), renamedProject, project("Three")],
+      [{
+        title: "Previous portfolio title",
+        url: "https://example.com/portfolio",
+        order: 0,
+      }],
+    );
+
+    expect(selected.map((item) => item.title)).toEqual([
+      "Renamed portfolio",
+      "One",
+      "Three",
+    ]);
+  });
+
   it("calculates experience from database date ranges", () => {
     expect(experienceLabel([
       {

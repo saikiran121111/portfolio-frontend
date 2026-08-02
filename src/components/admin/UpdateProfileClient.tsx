@@ -5,17 +5,13 @@ import {
   ArrowDown,
   ArrowUp,
   ChevronDown,
-  Clock3,
-  Database,
-  Eye,
-  EyeOff,
   LogOut,
   Plus,
   RefreshCw,
   Save,
-  ShieldCheck,
   Trash2,
 } from "lucide-react";
+import styles from "./UpdateProfileClient.module.css";
 import type {
   IAdminAchievementEditor,
   IAdminBottomHeadlineEditor,
@@ -58,12 +54,22 @@ type CollectionKey =
 type ExperienceListField = "bullets" | "techStack";
 type ProjectListField = "tech" | "highlights";
 
-const panelClassName =
-  "rounded-[18px] border border-white/10 bg-[#141414] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]";
+const panelClassName = styles.panel;
+
+function isOpportunityHeadline(text: string) {
+  return /\b(open to|seeking)\b/i.test(text);
+}
 
 function createEmptyBottomHeadline(): IAdminBottomHeadlineEditor {
   return {
     text: "",
+    order: 0,
+  };
+}
+
+function createEmptyOpportunityHeadline(): IAdminBottomHeadlineEditor {
+  return {
+    text: "Seeking ",
     order: 0,
   };
 }
@@ -205,8 +211,23 @@ export default function UpdateProfileClient() {
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<MessageState | null>(null);
+  const [showHiddenFields, setShowHiddenFields] = useState(false);
 
   const isAuthenticated = Boolean(session?.authenticated);
+  const opportunityHeadlineIndex = data?.bottomHeadlines.findIndex((item) =>
+    isOpportunityHeadline(item.text),
+  ) ?? -1;
+  const legacyHeadlineEntries = data?.bottomHeadlines
+    .map((item, index) => ({ item, index }))
+    .filter(({ index }) => index !== opportunityHeadlineIndex) ?? [];
+  const hiddenFieldCount = data
+    ? 4
+      + Object.keys(data.repoData).length
+      + legacyHeadlineEntries.length
+      + data.education.length
+      + data.achievements.length
+      + data.scanReports.length
+    : 0;
 
   useEffect(() => {
     let mounted = true;
@@ -716,59 +737,40 @@ export default function UpdateProfileClient() {
 
   if (checkingSession) {
     return (
-      <div className={`${panelClassName} min-h-[320px] animate-pulse`}>
-        <div className="h-6 w-40 rounded-full bg-white/10" />
-        <div className="mt-4 h-4 w-72 rounded-full bg-white/10" />
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="h-12 rounded-2xl bg-white/10" />
-          <div className="h-12 rounded-2xl bg-white/10" />
+      <div className={`${panelClassName} ${styles.loadingPanel}`} aria-label="Loading admin editor">
+        <div className={styles.loadingLineLarge} />
+        <div className={styles.loadingLine} />
+        <div className={styles.loadingGrid}>
+          <div />
+          <div />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white">
-      <section className={`${panelClassName} overflow-hidden`}>
-        <div className="absolute inset-0 -z-10 bg-[#141414]" />
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-amber-100">
-              <ShieldCheck className="size-4" />
-              Admin Editor
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-                Update structured portfolio data
-              </h1>
-              <p className="max-w-3xl text-sm leading-6 text-white/70 sm:text-base">
-                Current values load from durable backend storage. Validated
-                changes are written back through the authenticated admin API.
-              </p>
-            </div>
+    <div className={styles.editor}>
+      <section className={`${panelClassName} ${styles.introPanel}`}>
+        <div className={styles.introLayout}>
+          <div>
+            <p className={styles.eyebrow}>Portfolio content console</p>
+            <h1>Update portfolio data</h1>
+            <p className={styles.introCopy}>
+              Edit the information shown on the public portfolio. Fields that are
+              stored by the API but not currently displayed are separated at the end.
+            </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[340px]">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-                <Clock3 className="size-4 text-amber-300" />
-                Session
-              </div>
-              <p className="mt-2 text-sm text-white/60">
-                Expires: {formatSessionExpiry(session)}
-              </p>
+          <dl className={styles.introFacts}>
+            <div>
+              <dt>Session expires</dt>
+              <dd>{formatSessionExpiry(session)}</dd>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <div className="flex items-center gap-2 text-sm font-medium text-white/80">
-                <Database className="size-4 text-amber-300" />
-                Scope
-              </div>
-              <p className="mt-2 text-sm text-white/60">
-                Core profile, repo links, skills, experience, projects,
-                education, languages, and reports.
-              </p>
+            <div>
+              <dt>Editing source</dt>
+              <dd>Live database records</dd>
             </div>
-          </div>
+          </dl>
         </div>
       </section>
 
@@ -776,12 +778,12 @@ export default function UpdateProfileClient() {
         <div
           role={message.tone === "error" ? "alert" : "status"}
           aria-live="polite"
-          className={`rounded-2xl border px-4 py-3 text-sm ${
+          className={`${styles.message} ${
             message.tone === "success"
-              ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-50"
+              ? styles.messageSuccess
               : message.tone === "error"
-                ? "border-rose-300/30 bg-rose-300/10 text-rose-50"
-                : "border-amber-300/30 bg-amber-300/10 text-amber-50"
+                ? styles.messageError
+                : styles.messageInfo
           }`}
         >
           {message.text}
@@ -789,18 +791,17 @@ export default function UpdateProfileClient() {
       ) : null}
 
       {!isAuthenticated ? (
-        <section className={`${panelClassName} mx-auto max-w-xl`}>
-          <div className="mb-6 space-y-2">
-            <h2 className="text-2xl font-semibold text-white">
-              Sign in to edit portfolio data
-            </h2>
-            <p className="text-sm leading-6 text-white/65">
+        <section className={`${panelClassName} ${styles.loginPanel}`}>
+          <div className={styles.loginHeading}>
+            <p className={styles.eyebrow}>Protected workspace</p>
+            <h2>Sign in to edit</h2>
+            <p>
               The editor stores a secure session cookie for 7 days. After that,
               you&apos;ll need to sign in again before making more changes.
             </p>
           </div>
 
-          <form className="space-y-4" onSubmit={handleLogin}>
+          <form className={styles.loginForm} onSubmit={handleLogin}>
             <TextField
               label="Admin email"
               type="email"
@@ -824,32 +825,28 @@ export default function UpdateProfileClient() {
             <button
               type="submit"
               disabled={authSubmitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-300 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-amber-300/60"
+              className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonWide}`}
             >
-              <ShieldCheck className="size-4" />
               {authSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </section>
       ) : (
-        <form className="space-y-6" onSubmit={handleSave}>
-          <section className={`${panelClassName}`}>
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <form className={styles.workspace} onSubmit={handleSave}>
+          <section className={`${panelClassName} ${styles.actionBar}`}>
+            <div className={styles.actionBarLayout}>
               <div>
-                <h2 className="text-xl font-semibold text-white">
-                  Editing workspace
-                </h2>
-                <p className="mt-1 text-sm text-white/60">
-                  Refresh to pull current database values, then save once you&apos;re
-                  done updating fields.
+                <h2>Editing public content</h2>
+                <p>
+                  Save once after completing your changes. Refresh discards unsaved edits.
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className={styles.actionButtons}>
                 <button
                   type="button"
                   onClick={refreshProfile}
                   disabled={loadingProfile || saving || authSubmitting}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/80 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  className={`${styles.button} ${styles.buttonSecondary}`}
                 >
                   <RefreshCw className="size-4" />
                   {loadingProfile ? "Refreshing..." : "Refresh"}
@@ -857,7 +854,7 @@ export default function UpdateProfileClient() {
                 <button
                   type="submit"
                   disabled={loadingProfile || saving || authSubmitting || !data}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-emerald-300 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:bg-emerald-300/60"
+                  className={`${styles.button} ${styles.buttonSave}`}
                 >
                   <Save className="size-4" />
                   {saving ? "Saving..." : "Save all changes"}
@@ -866,7 +863,7 @@ export default function UpdateProfileClient() {
                   type="button"
                   onClick={handleLogout}
                   disabled={loadingProfile || saving || authSubmitting}
-                  className="inline-flex items-center gap-2 rounded-2xl border border-rose-300/25 bg-rose-300/10 px-4 py-2.5 text-sm font-medium text-rose-50 transition hover:bg-rose-300/20 disabled:cursor-not-allowed disabled:opacity-60"
+                  className={`${styles.button} ${styles.buttonDanger}`}
                 >
                   <LogOut className="size-4" />
                   {authSubmitting ? "Signing out..." : "Logout"}
@@ -876,11 +873,11 @@ export default function UpdateProfileClient() {
           </section>
 
           {loadingProfile && !data ? (
-            <div className="grid gap-6">
+            <div className={styles.loadingSections}>
               {Array.from({ length: 4 }, (_, index) => (
                 <div
                   key={index}
-                  className={`${panelClassName} h-44 animate-pulse bg-white/[0.04]`}
+                  className={`${panelClassName} ${styles.loadingSection}`}
                 />
               ))}
             </div>
@@ -888,7 +885,7 @@ export default function UpdateProfileClient() {
             <>
               <SectionCard
                 title="Candidate identity"
-                description="Public name, recruitment headline, and primary contact details."
+                description="Name, public email, and the headline shown on the homepage and profile."
                 defaultOpen
               >
                 <div className="grid gap-4 md:grid-cols-2">
@@ -906,40 +903,28 @@ export default function UpdateProfileClient() {
                     placeholder="Public contact email"
                     required
                   />
-                  <TextField
-                    label="Avatar URL"
-                    value={data.user.avatarUrl}
-                    onChange={(value) => updateUserField("avatarUrl", value)}
-                    placeholder="https://..."
-                  />
-                  <TextField
-                    label="Headline"
-                    value={data.user.headline}
-                    onChange={(value) => updateUserField("headline", value)}
-                    placeholder="Short professional headline"
-                  />
+                  <div className="md:col-span-2">
+                    <TextField
+                      label="Professional headline"
+                      value={data.user.headline}
+                      onChange={(value) => updateUserField("headline", value)}
+                      placeholder="Short professional headline"
+                    />
+                  </div>
                 </div>
               </SectionCard>
 
               <SectionCard
-                title="About"
-                description="Professional summary, location, and profile contact details."
+                title="Professional summary"
+                description="Location and summary shown across the public portfolio."
               >
-                <div className="grid gap-4 md:grid-cols-2">
-                  <TextField
-                    label="Phone"
-                    value={data.user.phone}
-                    onChange={(value) => updateUserField("phone", value)}
-                    placeholder="Phone number"
-                  />
+                <div className="grid gap-4">
                   <TextField
                     label="Location"
                     value={data.user.location}
                     onChange={(value) => updateUserField("location", value)}
                     placeholder="City, country"
                   />
-                </div>
-                <div className="mt-4 grid gap-4">
                   <TextAreaField
                     label="Summary"
                     value={data.user.summary}
@@ -947,20 +932,14 @@ export default function UpdateProfileClient() {
                     rows={5}
                     placeholder="Profile summary"
                   />
-                  <TextField
-                    label="Copyright text"
-                    value={data.user.copyrights}
-                    onChange={(value) => updateUserField("copyrights", value)}
-                    placeholder="Footer copyright"
-                  />
                 </div>
               </SectionCard>
 
               <SectionCard
-                title="Social Links"
-                description="Professional links shown in the profile and recruiter resources."
+                title="Professional links"
+                description="GitHub and LinkedIn links displayed throughout the portfolio."
               >
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2">
                   <TextField
                     label="GitHub"
                     value={data.user.socials.github}
@@ -973,105 +952,49 @@ export default function UpdateProfileClient() {
                     onChange={(value) => updateSocialField("linkedin", value)}
                     placeholder="https://linkedin.com/in/..."
                   />
-                  <TextField
-                    label="Portfolio"
-                    value={data.user.socials.portfolio}
-                    onChange={(value) => updateSocialField("portfolio", value)}
-                    placeholder="https://your-site.com"
-                  />
                 </div>
               </SectionCard>
 
               <SectionCard
-                title="Repository / Deployment References"
-                description="Technical repository and deployment references stored with the profile."
+                title="Opportunity status"
+                description="The first line containing seeking or open to is displayed on the homepage and profile."
               >
-                <div className="grid gap-4 md:grid-cols-2">
+                {opportunityHeadlineIndex >= 0 ? (
                   <TextField
-                    label="NestJS Git repository"
-                    value={data.repoData.nestJSGitRepo}
-                    onChange={(value) => updateRepoField("nestJSGitRepo", value)}
-                    placeholder="https://github.com/..."
-                  />
-                  <TextField
-                    label="NestJS deployed server"
-                    value={data.repoData.nestJSDeployedServer}
+                    label="Public opportunity message"
+                    value={data.bottomHeadlines[opportunityHeadlineIndex].text}
                     onChange={(value) =>
-                      updateRepoField("nestJSDeployedServer", value)
+                      updateCollectionItem(
+                        "bottomHeadlines",
+                        opportunityHeadlineIndex,
+                        "text",
+                        value,
+                      )
                     }
-                    placeholder="https://..."
+                    placeholder="Seeking backend and full-stack engineering roles"
                   />
-                  <TextField
-                    label="NestJS Swagger URL"
-                    value={data.repoData.nestJSSwaggerUrl}
-                    onChange={(value) =>
-                      updateRepoField("nestJSSwaggerUrl", value)
-                    }
-                    placeholder="https://..."
-                  />
-                  <TextField
-                    label="NextJS Git repository"
-                    value={data.repoData.nextJSGitRepo}
-                    onChange={(value) => updateRepoField("nextJSGitRepo", value)}
-                    placeholder="https://github.com/..."
-                  />
-                  <TextField
-                    label="NextJS deployed server"
-                    value={data.repoData.nextJSDeployedServer}
-                    onChange={(value) =>
-                      updateRepoField("nextJSDeployedServer", value)
-                    }
-                    placeholder="https://..."
-                  />
-                  <TextField
-                    label="PostgreSQL deployed server"
-                    value={data.repoData.postgresDeployedServer}
-                    onChange={(value) =>
-                      updateRepoField("postgresDeployedServer", value)
-                    }
-                    placeholder="Database host or dashboard URL"
-                  />
-                </div>
+                ) : (
+                  <div className={styles.emptyFieldState}>
+                    <p>No public opportunity message is configured.</p>
+                    <button
+                      type="button"
+                      className={`${styles.button} ${styles.buttonSecondary}`}
+                      onClick={() =>
+                        addCollectionItem(
+                          "bottomHeadlines",
+                          createEmptyOpportunityHeadline(),
+                        )
+                      }
+                    >
+                      Add opportunity message
+                    </button>
+                  </div>
+                )}
               </SectionCard>
 
               <RepeatableSection
-                title="Stored headline records"
-                description="Legacy headline records retained in the backend data model."
-                count={data.bottomHeadlines.length}
-                addLabel="Add headline"
-                onAdd={() =>
-                  addCollectionItem("bottomHeadlines", createEmptyBottomHeadline())
-                }
-              >
-                {data.bottomHeadlines.map((item, index) => (
-                  <ItemCard
-                    key={`bottom-headline-${item.id ?? index}`}
-                    title={`Headline ${index + 1}`}
-                    onMoveUp={() => moveCollectionItem("bottomHeadlines", index, -1)}
-                    onMoveDown={() =>
-                      moveCollectionItem("bottomHeadlines", index, 1)
-                    }
-                    onRemove={() => removeCollectionItem("bottomHeadlines", index)}
-                    disableMoveUp={index === 0}
-                    disableMoveDown={index === data.bottomHeadlines.length - 1}
-                  >
-                    <TextField
-                      label="Text"
-                      value={item.text}
-                      onChange={(value) =>
-                        updateCollectionItem("bottomHeadlines", index, "text", value)
-                      }
-                      placeholder={
-                        "Ship confidently \u00b7 Pipelines, environments, rollbacks"
-                      }
-                    />
-                  </ItemCard>
-                ))}
-              </RepeatableSection>
-
-              <RepeatableSection
-                title="Stored homepage project links"
-                description="Legacy homepage project references retained in the backend data model."
+                title="Homepage project selection"
+                description="Order projects featured on the homepage. Use the title or URL from an existing Projects record."
                 count={data.homepageProjects.length}
                 addLabel="Add project"
                 onAdd={() =>
@@ -1081,7 +1004,7 @@ export default function UpdateProfileClient() {
                 {data.homepageProjects.map((item, index) => (
                   <ItemCard
                     key={`homepage-project-${item.id ?? index}`}
-                    title={`Project ${index + 1}`}
+                    title={item.title || `Homepage project ${index + 1}`}
                     onMoveUp={() => moveCollectionItem("homepageProjects", index, -1)}
                     onMoveDown={() =>
                       moveCollectionItem("homepageProjects", index, 1)
@@ -1114,7 +1037,7 @@ export default function UpdateProfileClient() {
 
               <RepeatableSection
                 title="Skills"
-                description="Skill cards and categories shown on the profile page."
+                description="Names, categories, and proficiency levels used across the homepage and profile."
                 count={data.skills.length}
                 addLabel="Add skill"
                 onAdd={() => addCollectionItem("skills", createEmptySkill())}
@@ -1122,7 +1045,7 @@ export default function UpdateProfileClient() {
                 {data.skills.map((item, index) => (
                   <ItemCard
                     key={`skill-${item.id ?? index}`}
-                    title={`Skill ${index + 1}`}
+                    title={item.name || `Skill ${index + 1}`}
                     onMoveUp={() => moveCollectionItem("skills", index, -1)}
                     onMoveDown={() => moveCollectionItem("skills", index, 1)}
                     onRemove={() => removeCollectionItem("skills", index)}
@@ -1410,7 +1333,7 @@ export default function UpdateProfileClient() {
 
               <RepeatableSection
                 title="Education"
-                description="Degrees, institutions, date range, and descriptions."
+                description="Degrees, institutions, date ranges, and descriptions shown on the profile."
                 count={data.education.length}
                 addLabel="Add education"
                 onAdd={() => addCollectionItem("education", createEmptyEducation())}
@@ -1449,14 +1372,6 @@ export default function UpdateProfileClient() {
                           updateCollectionItem("education", index, "field", value)
                         }
                         placeholder="Field of study"
-                      />
-                      <TextField
-                        label="Location"
-                        value={item.location}
-                        onChange={(value) =>
-                          updateCollectionItem("education", index, "location", value)
-                        }
-                        placeholder="Location"
                       />
                       <TextField
                         label="Start date"
@@ -1568,7 +1483,7 @@ export default function UpdateProfileClient() {
 
               <RepeatableSection
                 title="Achievements"
-                description="Awards, milestones, and optional links."
+                description="Awards and milestones shown in profile credentials."
                 count={data.achievements.length}
                 addLabel="Add achievement"
                 onAdd={() =>
@@ -1585,7 +1500,7 @@ export default function UpdateProfileClient() {
                     disableMoveUp={index === 0}
                     disableMoveDown={index === data.achievements.length - 1}
                   >
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-4 md:grid-cols-2">
                       <TextField
                         label="Title"
                         value={item.title}
@@ -1601,14 +1516,6 @@ export default function UpdateProfileClient() {
                         onChange={(value) =>
                           updateCollectionItem("achievements", index, "date", value)
                         }
-                      />
-                      <TextField
-                        label="Link"
-                        value={item.link}
-                        onChange={(value) =>
-                          updateCollectionItem("achievements", index, "link", value)
-                        }
-                        placeholder="https://..."
                       />
                     </div>
                   </ItemCard>
@@ -1654,87 +1561,260 @@ export default function UpdateProfileClient() {
                 ))}
               </RepeatableSection>
 
-              <RepeatableSection
-                title="Scan reports"
-                description="Security, quality, coverage, or any other report snapshots."
-                count={data.scanReports.length}
-                addLabel="Add scan report"
-                onAdd={() => addCollectionItem("scanReports", createEmptyScanReport())}
-              >
-                {data.scanReports.map((item, index) => (
-                  <ItemCard
-                    key={`scan-report-${item.id ?? index}`}
-                    title={item.type || `Scan report ${index + 1}`}
-                    onMoveUp={() => moveCollectionItem("scanReports", index, -1)}
-                    onMoveDown={() => moveCollectionItem("scanReports", index, 1)}
-                    onRemove={() => removeCollectionItem("scanReports", index)}
-                    disableMoveUp={index === 0}
-                    disableMoveDown={index === data.scanReports.length - 1}
+              <section className={styles.hiddenRegion} aria-labelledby="hidden-fields-title">
+                <div className={styles.hiddenRegionSummary}>
+                  <div>
+                    <p className={styles.eyebrow}>Not shown publicly</p>
+                    <h2 id="hidden-fields-title">Unused API fields</h2>
+                    <p>
+                      These values remain supported by the database and save API, but the
+                      current public portfolio does not render them.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.hiddenToggle}
+                    aria-expanded={showHiddenFields}
+                    aria-controls="hidden-fields-content"
+                    onClick={() => setShowHiddenFields((current) => !current)}
                   >
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <TextField
-                        label="Type"
-                        value={item.type}
-                        onChange={(value) =>
-                          updateCollectionItem("scanReports", index, "type", value)
-                        }
-                        placeholder="security / sonar / coverage"
-                      />
-                      <TextField
-                        label="Commit SHA"
-                        value={item.commitSha}
-                        onChange={(value) =>
-                          updateCollectionItem(
-                            "scanReports",
-                            index,
-                            "commitSha",
-                            value,
-                          )
-                        }
-                        placeholder="abc123"
-                      />
-                      <TextField
-                        label="Run at"
-                        type="datetime-local"
-                        value={item.runAt}
-                        onChange={(value) =>
-                          updateCollectionItem("scanReports", index, "runAt", value)
-                        }
-                      />
-                      <TextField
-                        label="Artifact URL"
-                        value={item.artifactUrl}
-                        onChange={(value) =>
-                          updateCollectionItem(
-                            "scanReports",
-                            index,
-                            "artifactUrl",
-                            value,
-                          )
-                        }
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div className="mt-4">
-                      <TextAreaField
-                        label="Summary JSON"
-                        value={item.summaryText}
-                        onChange={(value) =>
-                          updateCollectionItem(
-                            "scanReports",
-                            index,
-                            "summaryText",
-                            value,
-                          )
-                        }
-                        rows={8}
-                        placeholder='{"coverage": 95}'
-                        monospace
-                      />
-                    </div>
-                  </ItemCard>
-                ))}
-              </RepeatableSection>
+                    {showHiddenFields ? "Hide hidden fields" : "Show hidden fields"}
+                    <span>{hiddenFieldCount}</span>
+                  </button>
+                </div>
+
+                {showHiddenFields ? (
+                  <div id="hidden-fields-content" className={styles.hiddenContent}>
+                    <p className={styles.hiddenNotice}>
+                      Greyed fields are intentionally separated from public content. They
+                      remain fully editable and are saved normally.
+                    </p>
+
+                    <SectionCard
+                      title="Unused profile fields"
+                      description="Stored identity and contact values not rendered by the current portfolio."
+                      tone="muted"
+                      defaultOpen
+                    >
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <TextField
+                          label="Avatar URL"
+                          value={data.user.avatarUrl}
+                          onChange={(value) => updateUserField("avatarUrl", value)}
+                          placeholder="https://..."
+                        />
+                        <TextField
+                          label="Phone"
+                          value={data.user.phone}
+                          onChange={(value) => updateUserField("phone", value)}
+                          placeholder="Phone number"
+                        />
+                        <TextField
+                          label="Copyright text"
+                          value={data.user.copyrights}
+                          onChange={(value) => updateUserField("copyrights", value)}
+                          placeholder="Footer copyright"
+                        />
+                        <TextField
+                          label="Portfolio URL"
+                          value={data.user.socials.portfolio}
+                          onChange={(value) => updateSocialField("portfolio", value)}
+                          placeholder="https://your-site.com"
+                        />
+                      </div>
+                    </SectionCard>
+
+                    <SectionCard
+                      title="Repository and deployment references"
+                      description="Stored backend references that are not linked from public pages."
+                      tone="muted"
+                    >
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <TextField
+                          label="NestJS Git repository"
+                          value={data.repoData.nestJSGitRepo}
+                          onChange={(value) => updateRepoField("nestJSGitRepo", value)}
+                          placeholder="https://github.com/..."
+                        />
+                        <TextField
+                          label="NestJS deployed server"
+                          value={data.repoData.nestJSDeployedServer}
+                          onChange={(value) => updateRepoField("nestJSDeployedServer", value)}
+                          placeholder="https://..."
+                        />
+                        <TextField
+                          label="NestJS Swagger URL"
+                          value={data.repoData.nestJSSwaggerUrl}
+                          onChange={(value) => updateRepoField("nestJSSwaggerUrl", value)}
+                          placeholder="https://..."
+                        />
+                        <TextField
+                          label="NextJS Git repository"
+                          value={data.repoData.nextJSGitRepo}
+                          onChange={(value) => updateRepoField("nextJSGitRepo", value)}
+                          placeholder="https://github.com/..."
+                        />
+                        <TextField
+                          label="NextJS deployed server"
+                          value={data.repoData.nextJSDeployedServer}
+                          onChange={(value) => updateRepoField("nextJSDeployedServer", value)}
+                          placeholder="https://..."
+                        />
+                        <TextField
+                          label="PostgreSQL deployed server"
+                          value={data.repoData.postgresDeployedServer}
+                          onChange={(value) => updateRepoField("postgresDeployedServer", value)}
+                          placeholder="Database host or dashboard URL"
+                        />
+                      </div>
+                    </SectionCard>
+
+                    <RepeatableSection
+                      title="Legacy headline records"
+                      description="Stored headline rows that do not drive the current opportunity message."
+                      count={legacyHeadlineEntries.length}
+                      addLabel="Add legacy headline"
+                      onAdd={() =>
+                        addCollectionItem("bottomHeadlines", createEmptyBottomHeadline())
+                      }
+                      tone="muted"
+                    >
+                      {legacyHeadlineEntries.map(({ item, index }) => (
+                        <ItemCard
+                          key={`bottom-headline-${item.id ?? index}`}
+                          title={`Headline ${index + 1}`}
+                          onMoveUp={() => moveCollectionItem("bottomHeadlines", index, -1)}
+                          onMoveDown={() => moveCollectionItem("bottomHeadlines", index, 1)}
+                          onRemove={() => removeCollectionItem("bottomHeadlines", index)}
+                          disableMoveUp={index === 0}
+                          disableMoveDown={index === data.bottomHeadlines.length - 1}
+                        >
+                          <TextField
+                            label="Text"
+                            value={item.text}
+                            onChange={(value) =>
+                              updateCollectionItem("bottomHeadlines", index, "text", value)
+                            }
+                            placeholder="Stored headline"
+                          />
+                        </ItemCard>
+                      ))}
+                    </RepeatableSection>
+
+                    <SectionCard
+                      title="Education locations"
+                      description="Locations are stored for education entries but not shown publicly."
+                      tone="muted"
+                    >
+                      <div className={styles.hiddenFieldRows}>
+                        {data.education.map((item, index) => (
+                          <div key={`education-location-${item.id ?? index}`}>
+                            <h4>{item.degree || `Education ${index + 1}`}</h4>
+                            <TextField
+                              label="Location"
+                              value={item.location}
+                              onChange={(value) =>
+                                updateCollectionItem("education", index, "location", value)
+                              }
+                              placeholder="Location"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </SectionCard>
+
+                    <SectionCard
+                      title="Achievement links"
+                      description="Links are stored with achievements but are not linked by the public profile."
+                      tone="muted"
+                    >
+                      <div className={styles.hiddenFieldRows}>
+                        {data.achievements.map((item, index) => (
+                          <div key={`achievement-link-${item.id ?? index}`}>
+                            <h4>{item.title || `Achievement ${index + 1}`}</h4>
+                            <TextField
+                              label="Link"
+                              value={item.link}
+                              onChange={(value) =>
+                                updateCollectionItem("achievements", index, "link", value)
+                              }
+                              placeholder="https://..."
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </SectionCard>
+
+                    <RepeatableSection
+                      title="Scan reports"
+                      description="Stored quality and security snapshots not rendered on public pages."
+                      count={data.scanReports.length}
+                      addLabel="Add scan report"
+                      onAdd={() => addCollectionItem("scanReports", createEmptyScanReport())}
+                      tone="muted"
+                    >
+                      {data.scanReports.map((item, index) => (
+                        <ItemCard
+                          key={`scan-report-${item.id ?? index}`}
+                          title={item.type || `Scan report ${index + 1}`}
+                          onMoveUp={() => moveCollectionItem("scanReports", index, -1)}
+                          onMoveDown={() => moveCollectionItem("scanReports", index, 1)}
+                          onRemove={() => removeCollectionItem("scanReports", index)}
+                          disableMoveUp={index === 0}
+                          disableMoveDown={index === data.scanReports.length - 1}
+                        >
+                          <div className="grid gap-4 md:grid-cols-2">
+                            <TextField
+                              label="Type"
+                              value={item.type}
+                              onChange={(value) =>
+                                updateCollectionItem("scanReports", index, "type", value)
+                              }
+                              placeholder="security / sonar / coverage"
+                            />
+                            <TextField
+                              label="Commit SHA"
+                              value={item.commitSha}
+                              onChange={(value) =>
+                                updateCollectionItem("scanReports", index, "commitSha", value)
+                              }
+                              placeholder="abc123"
+                            />
+                            <TextField
+                              label="Run at"
+                              type="datetime-local"
+                              value={item.runAt}
+                              onChange={(value) =>
+                                updateCollectionItem("scanReports", index, "runAt", value)
+                              }
+                            />
+                            <TextField
+                              label="Artifact URL"
+                              value={item.artifactUrl}
+                              onChange={(value) =>
+                                updateCollectionItem("scanReports", index, "artifactUrl", value)
+                              }
+                              placeholder="https://..."
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <TextAreaField
+                              label="Summary JSON"
+                              value={item.summaryText}
+                              onChange={(value) =>
+                                updateCollectionItem("scanReports", index, "summaryText", value)
+                              }
+                              rows={8}
+                              placeholder='{"coverage": 95}'
+                              monospace
+                            />
+                          </div>
+                        </ItemCard>
+                      ))}
+                    </RepeatableSection>
+                  </div>
+                ) : null}
+              </section>
             </>
           ) : null}
         </form>
@@ -1747,30 +1827,37 @@ function SectionCard({
   title,
   description,
   defaultOpen = false,
+  tone = "public",
   children,
 }: {
   title: string;
   description: string;
   defaultOpen?: boolean;
+  tone?: "public" | "muted";
   children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <section className={panelClassName}>
+    <section className={`${panelClassName} ${styles.sectionCard} ${tone === "muted" ? styles.sectionMuted : ""}`}>
       <details
-        className="group"
+        className={styles.sectionDetails}
         open={isOpen}
         onToggle={(event) => setIsOpen(event.currentTarget.open)}
       >
-        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
-          <div className="space-y-1">
-            <h3 className="text-xl font-semibold text-white">{title}</h3>
-            <p className="text-sm leading-6 text-white/60">{description}</p>
+        <summary className={styles.sectionSummary}>
+          <div className={styles.sectionHeading}>
+            <div className={styles.sectionTitleRow}>
+              <h3>{title}</h3>
+              <span className={tone === "muted" ? styles.storedBadge : styles.publicBadge}>
+                {tone === "muted" ? "Stored only" : "Public"}
+              </span>
+            </div>
+            <p>{description}</p>
           </div>
-          <ChevronDown className="mt-1 size-5 shrink-0 text-white/50 transition group-open:rotate-180" />
+          <ChevronDown className={styles.chevron} aria-hidden="true" />
         </summary>
-        <div className="mt-5">{children}</div>
+        <div className={styles.sectionBody}>{children}</div>
       </details>
     </section>
   );
@@ -1783,6 +1870,7 @@ function RepeatableSection({
   addLabel,
   onAdd,
   defaultOpen = false,
+  tone = "public",
   children,
 }: {
   title: string;
@@ -1791,39 +1879,41 @@ function RepeatableSection({
   addLabel: string;
   onAdd: () => void;
   defaultOpen?: boolean;
+  tone?: "public" | "muted";
   children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <section className={panelClassName}>
+    <section className={`${panelClassName} ${styles.sectionCard} ${tone === "muted" ? styles.sectionMuted : ""}`}>
       <details
-        className="group"
+        className={styles.sectionDetails}
         open={isOpen}
         onToggle={(event) => setIsOpen(event.currentTarget.open)}
       >
-        <summary className="flex cursor-pointer list-none items-start justify-between gap-4 [&::-webkit-details-marker]:hidden">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold text-white">{title}</h3>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs text-white/60">
-                {count}
+        <summary className={styles.sectionSummary}>
+          <div className={styles.sectionHeading}>
+            <div className={styles.sectionTitleRow}>
+              <h3>{title}</h3>
+              <span className={styles.countBadge}>{count}</span>
+              <span className={tone === "muted" ? styles.storedBadge : styles.publicBadge}>
+                {tone === "muted" ? "Stored only" : "Public"}
               </span>
             </div>
-            <p className="text-sm leading-6 text-white/60">{description}</p>
+            <p>{description}</p>
           </div>
-          <ChevronDown className="mt-1 size-5 shrink-0 text-white/50 transition group-open:rotate-180" />
+          <ChevronDown className={styles.chevron} aria-hidden="true" />
         </summary>
-        <div className="mt-5 space-y-4">
+        <div className={styles.sectionBody}>
           <button
             type="button"
             onClick={onAdd}
-            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/80 transition hover:bg-white/10"
+            className={`${styles.button} ${styles.buttonSecondary} ${styles.addButton}`}
           >
             <Plus className="size-4" />
             {addLabel}
           </button>
-          <div className="space-y-4">{children}</div>
+          <div className={styles.itemList}>{children}</div>
         </div>
       </details>
     </section>
@@ -1848,15 +1938,16 @@ function ItemCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-black/20 p-4">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h4 className="text-base font-semibold text-white">{title}</h4>
-        <div className="flex flex-wrap items-center gap-2">
+    <div className={styles.itemCard}>
+      <div className={styles.itemHeader}>
+        <h4>{title}</h4>
+        <div className={styles.itemActions}>
           <button
             type="button"
             onClick={onMoveUp}
             disabled={disableMoveUp}
-            className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            className={styles.itemAction}
+            aria-label={`Move ${title} up`}
           >
             <ArrowUp className="size-3.5" />
             Up
@@ -1865,7 +1956,8 @@ function ItemCard({
             type="button"
             onClick={onMoveDown}
             disabled={disableMoveDown}
-            className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+            className={styles.itemAction}
+            aria-label={`Move ${title} down`}
           >
             <ArrowDown className="size-3.5" />
             Down
@@ -1873,7 +1965,8 @@ function ItemCard({
           <button
             type="button"
             onClick={onRemove}
-            className="inline-flex items-center gap-1 rounded-xl border border-rose-300/25 bg-rose-300/10 px-3 py-2 text-xs font-medium text-rose-50 transition hover:bg-rose-300/20"
+            className={`${styles.itemAction} ${styles.itemRemove}`}
+            aria-label={`Remove ${title}`}
           >
             <Trash2 className="size-3.5" />
             Remove
@@ -1903,8 +1996,8 @@ function TextField({
   autoComplete?: string;
 }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium text-white/75">{label}</span>
+    <label className={styles.field}>
+      <span>{label}</span>
       <input
         type={type}
         value={value}
@@ -1912,7 +2005,7 @@ function TextField({
         placeholder={placeholder}
         required={required}
         autoComplete={autoComplete}
-        className="rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70"
+        className={styles.input}
       />
     </label>
   );
@@ -1930,12 +2023,12 @@ function SelectField({
   onChange: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium text-white/75">{label}</span>
+    <label className={styles.field}>
+      <span>{label}</span>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition focus:border-amber-300/40 focus:bg-slate-950/70"
+        className={styles.input}
       >
         <option value="">Select type</option>
         {options.map((option) => (
@@ -1957,22 +2050,18 @@ function ToggleField({
   checked: boolean;
   onChange: (value: boolean) => void;
 }) {
-  const Icon = checked ? Eye : EyeOff;
-
   return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium text-white/75">{label}</span>
-      <span className="inline-flex min-h-[46px] items-center justify-between gap-3 rounded-2xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white/80">
-        <span className="inline-flex items-center gap-2">
-          <Icon className="size-4 text-amber-200" />
-          {checked ? "Enabled" : "Disabled"}
-        </span>
+    <label className={styles.field}>
+      <span>{label}</span>
+      <span className={styles.toggleField}>
+        <span>{checked ? "Visible" : "Hidden"}</span>
         <input
           type="checkbox"
           checked={checked}
           onChange={(event) => onChange(event.target.checked)}
-          className="size-5 accent-amber-300"
+          className={styles.toggleInput}
         />
+        <span className={styles.toggleTrack} aria-hidden="true"><span /></span>
       </span>
     </label>
   );
@@ -1994,16 +2083,14 @@ function TextAreaField({
   monospace?: boolean;
 }) {
   return (
-    <label className="grid gap-2">
-      <span className="text-sm font-medium text-white/75">{label}</span>
+    <label className={styles.field}>
+      <span>{label}</span>
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className={`rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70 ${
-          monospace ? "font-mono" : ""
-        }`}
+        className={`${styles.input} ${styles.textarea} ${monospace ? styles.monospace : ""}`}
       />
     </label>
   );
@@ -2025,31 +2112,32 @@ function StringListEditor({
   const listValues = values.length ? values : [""];
 
   return (
-    <div className="grid gap-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-white/75">{label}</span>
+    <div className={styles.listEditor}>
+      <div className={styles.listEditorHeader}>
+        <span>{label}</span>
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex items-center gap-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/75 transition hover:bg-white/10"
+          className={styles.smallButton}
         >
           <Plus className="size-3.5" />
           Add item
         </button>
       </div>
-      <div className="space-y-3">
+      <div className={styles.listValues}>
         {listValues.map((value, index) => (
-          <div key={`${label}-${index}`} className="flex gap-3">
+          <div key={`${label}-${index}`} className={styles.listValue}>
             <input
               value={value}
               onChange={(event) => onChange(index, event.target.value)}
-              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-slate-950/45 px-4 py-3 text-sm text-white outline-none transition placeholder:text-white/25 focus:border-amber-300/40 focus:bg-slate-950/70"
+              className={styles.input}
               placeholder={`${label} ${index + 1}`}
             />
             <button
               type="button"
               onClick={() => onRemove(index)}
-              className="inline-flex items-center justify-center rounded-2xl border border-rose-300/25 bg-rose-300/10 px-3 text-rose-50 transition hover:bg-rose-300/20"
+              className={styles.listRemove}
+              aria-label={`Remove ${label} ${index + 1}`}
             >
               <Trash2 className="size-4" />
             </button>

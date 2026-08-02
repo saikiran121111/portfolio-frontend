@@ -17,12 +17,24 @@ export function selectFeaturedProjects(
     (project) => project.isVisible !== false && project.title.trim(),
   );
   const normalizedTitle = (value: string) => value.trim().toLowerCase();
+  const normalizedUrl = (value: string) =>
+    value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/$/, "");
   const byTitle = new Map(
     visible.map((project) => [normalizedTitle(project.title), project]),
   );
   const selected = [...homepageProjects]
     .sort((left, right) => left.order - right.order)
-    .map((item) => byTitle.get(normalizedTitle(item.title)))
+    .map((item) => {
+      const titleMatch = byTitle.get(normalizedTitle(item.title));
+      if (titleMatch) return titleMatch;
+
+      const requestedUrl = normalizedUrl(item.url);
+      return visible.find((project) =>
+        [project.projectUrl, project.liveUrl, project.repoUrl]
+          .filter((url): url is string => Boolean(url))
+          .some((url) => normalizedUrl(url) === requestedUrl),
+      );
+    })
     .filter((project): project is IProjects => Boolean(project));
 
   for (const project of visible) {
