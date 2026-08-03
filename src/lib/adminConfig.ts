@@ -1,47 +1,33 @@
-function getDevOrThrow(
-  value: string | undefined,
-  envKey: string,
-  fallback?: string,
-): string {
-  if (value) {
-    return value;
-  }
+import "server-only";
 
-  if (process.env.NODE_ENV !== "production" && fallback) {
-    return fallback;
+function requiredValue(envKey: string, minimumLength = 1): string {
+  const value = process.env[envKey]?.trim();
+  if (!value || value.length < minimumLength) {
+    throw new Error(`${envKey} is not securely configured`);
   }
-
-  throw new Error(`${envKey} is not configured`);
+  return value;
 }
 
 export function getAdminLoginEmail(): string {
-  return getDevOrThrow(
-    process.env.ADMIN_LOGIN_EMAIL,
-    "ADMIN_LOGIN_EMAIL",
-    "admin@example.com",
-  );
+  const email = requiredValue("ADMIN_LOGIN_EMAIL");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error("ADMIN_LOGIN_EMAIL is not securely configured");
+  }
+  return email.toLowerCase();
 }
 
 export function getAdminLoginPassword(): string {
-  return getDevOrThrow(
-    process.env.ADMIN_LOGIN_PASSWORD,
-    "ADMIN_LOGIN_PASSWORD",
-    "admin123456",
-  );
+  return requiredValue("ADMIN_LOGIN_PASSWORD", 12);
 }
 
 export function getAdminSessionSecret(): string {
-  return getDevOrThrow(
-    process.env.ADMIN_SESSION_SECRET,
-    "ADMIN_SESSION_SECRET",
-    "dev-admin-session-secret-change-me",
-  );
+  return requiredValue("ADMIN_SESSION_SECRET", 32);
 }
 
 export function getAdminApiSecret(): string {
-  return getDevOrThrow(
-    process.env.ADMIN_API_SECRET,
-    "ADMIN_API_SECRET",
-    "dev-admin-api-secret-change-me",
-  );
+  return requiredValue("ADMIN_API_SECRET", 16);
+}
+
+export function getCronSecret(): string {
+  return requiredValue("CRON_SECRET", 16);
 }

@@ -48,29 +48,9 @@ export interface ICertifications {
 export interface IAchievements {
   title: string;
   date: Date | null;
-  link: string | null;
 }
 
 export interface ILanguages {
   name: string;
   level: string;
-}
-
-export interface IscanReports {
-  type: string;
-  commitSha: string | null;
-  runAt: Date;
-  artifactUrl: string | null;
-  summary: ISummary | null;
-}
-
-export interface ISummary{
-  bugs?: number;
-  codeSmells?: number;
-  qualityGate?: string;
-  vulnerabilities?: number;
-  coverage?: number;
-  low?: number;
-  medium?: number;
-  high?: number;
 }

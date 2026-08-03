@@ -31,7 +31,7 @@
   --scrollbar-thumb: #57534a;
   --selection-background: rgba(194, 148, 81, 0.35);
   --selection-text: #ffffff;
-  --profile-portrait-image: url("https://i.postimg.cc/rF9qCtGx/Image-Black.png");
+  --profile-portrait-image: url("./assets/portrait-dark.png");
   --profile-portrait-overlay: rgba(9, 9, 9, 0.94);
   --accent-wash: rgba(194, 148, 81, 0.1);
   --accent-wash-soft: rgba(194, 148, 81, 0.05);
@@ -86,7 +86,7 @@
   --scrollbar-thumb: #a99b86;
   --selection-background: rgba(183, 131, 47, 0.28);
   --selection-text: #1c1b18;
-  --profile-portrait-image: url("https://i.postimg.cc/P5rT6rKQ/Image-Biege.png");
+  --profile-portrait-image: url("./assets/portrait-light.png");
   --profile-portrait-overlay: rgba(255, 249, 238, 0.95);
   --accent-wash: rgba(183, 131, 47, 0.12);
   --accent-wash-soft: rgba(183, 131, 47, 0.06);

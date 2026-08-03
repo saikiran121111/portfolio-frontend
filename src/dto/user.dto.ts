@@ -51,7 +51,6 @@ export interface CertificationDto {
 export interface AchievementDto {
   title: string;
   date: string | null;
-  link: string | null;
 }
 
 export interface LanguageDto {
@@ -59,27 +58,7 @@ export interface LanguageDto {
   level: string;
 }
 
-export interface SummaryDto {
-  bugs?: number;
-  codeSmells?: number;
-  qualityGate?: string;
-  vulnerabilities?: number;
-  coverage?: number;
-  low?: number;
-  medium?: number;
-  high?: number;
-}
-
-export interface ScanReportDto {
-  type: string;
-  commitSha: string | null;
-  runAt: string;
-  artifactUrl: string | null;
-  summary: SummaryDto | null;
-}
-
 export interface SocialsDto {
   github?: string;
   linkedin?: string;
-  portfolio?: string;
 }

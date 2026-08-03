@@ -20,7 +20,13 @@ describe("fetchUserPortfolio", () => {
     });
 
     it("fetches portfolio successfully", async () => {
-        const mockData = { name: "Test User", experiences: [], education: [] };
+        const mockData = {
+            name: "Test User",
+            email: "test@example.com",
+            skills: [],
+            experiences: [],
+            education: [],
+        };
         (global.fetch as jest.Mock).mockResolvedValueOnce({
             ok: true,
             json: async () => mockData,
@@ -31,11 +37,14 @@ describe("fetchUserPortfolio", () => {
         expect(global.fetch).toHaveBeenCalledWith(
             "https://test.com/user",
             expect.objectContaining({
-                headers: expect.objectContaining({
-                    Version: "1",
-                }),
+                credentials: "omit",
+                redirect: "error",
             })
         );
+        const requestHeaders = new Headers(
+            (global.fetch as jest.Mock).mock.calls[0][1].headers,
+        );
+        expect(requestHeaders.get("Version")).toBe("1");
     });
 
     it("throws error on non-ok response", async () => {
@@ -48,7 +57,13 @@ describe("fetchUserPortfolio", () => {
     });
 
     it("passes custom headers", async () => {
-        const mockData = { name: "Test User", experiences: [], education: [] };
+        const mockData = {
+            name: "Test User",
+            email: "test@example.com",
+            skills: [],
+            experiences: [],
+            education: [],
+        };
         (global.fetch as jest.Mock).mockResolvedValueOnce({
             ok: true,
             json: async () => mockData,
@@ -56,13 +71,10 @@ describe("fetchUserPortfolio", () => {
 
         await fetchUserPortfolio({ headers: { "Authorization": "Bearer token" } });
 
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.any(String),
-            expect.objectContaining({
-                headers: expect.objectContaining({
-                    "Authorization": "Bearer token",
-                }),
-            })
+        const requestHeaders = new Headers(
+            (global.fetch as jest.Mock).mock.calls[0][1].headers,
         );
+        expect(requestHeaders.get("Authorization")).toBe("Bearer token");
+        expect(requestHeaders.get("Version")).toBe("1");
     });
 });

@@ -1,56 +1,45 @@
-import { GET } from '@/app/api/wake-up/route';
-import { NextRequest } from 'next/server';
+import { GET } from "@/app/api/wake-up/route";
+import { NextRequest } from "next/server";
 
-// Mock fetch globally
 global.fetch = jest.fn();
 
-// Mock NextResponse
-jest.mock('next/server', () => {
-    return {
-        NextRequest: class {
-            headers: Map<string, string>;
-            constructor(url: string, init?: any) {
-                this.headers = new Map(Object.entries(init?.headers || {}));
-            }
-        },
-        NextResponse: class {
-            body: any;
-            init: any;
-            headers: Map<string, string>;
-            status: number;
-            constructor(body: any, init?: any) {
-                this.body = body;
-                this.init = init;
-                this.headers = new Map(Object.entries(init?.headers || {}));
-                this.status = init?.status || 200;
-            }
-            static json(body: any, init?: any) {
-                return {
-                    json: async () => body,
-                    status: init?.status || 200,
-                    headers: new Map(),
-                };
-            }
-            json() {
-                return Promise.resolve(JSON.parse(JSON.stringify(this.body)));
-            }
-        },
-    };
-});
+jest.mock("next/server", () => ({
+    NextRequest: class {
+        headers: Map<string, string>;
+        constructor(_url: string, init?: { headers?: Record<string, string> }) {
+            this.headers = new Map(Object.entries(init?.headers || {}));
+        }
+    },
+    NextResponse: class {
+        static json(body: unknown, init?: ResponseInit) {
+            return {
+                json: async () => body,
+                status: init?.status || 200,
+                headers: new Map(Object.entries(init?.headers || {})),
+            };
+        }
+    },
+}));
 
-function createRequest(headers: Record<string, string> = {}): NextRequest {
-    return new NextRequest('http://localhost/api/wake-up', { headers });
+const CRON_SECRET = "cron-secret-long-enough";
+
+function createRequest(secret = CRON_SECRET): NextRequest {
+    return new NextRequest("http://localhost/api/wake-up", {
+        headers: { authorization: `Bearer ${secret}` },
+    });
 }
 
-describe('Wake-Up API', () => {
+describe("Wake-Up API", () => {
     const originalEnv = process.env;
 
     beforeEach(() => {
         jest.clearAllMocks();
         jest.useFakeTimers({ legacyFakeTimers: false });
-        process.env = { ...originalEnv };
-        process.env.NEXT_PUBLIC_API_DOMAIN = 'https://test-backend.onrender.com';
-        delete process.env.CRON_SECRET;
+        process.env = {
+            ...originalEnv,
+            API_BASE_URL: "https://test-backend.onrender.com",
+            CRON_SECRET,
+        };
     });
 
     afterEach(() => {
@@ -61,137 +50,94 @@ describe('Wake-Up API', () => {
         process.env = originalEnv;
     });
 
-    it('returns 200 with backend status on first attempt success', async () => {
+    it("returns 200 on the first successful authenticated probe", async () => {
         (global.fetch as jest.Mock).mockResolvedValue({ status: 200, ok: true });
 
         const response = await GET(createRequest());
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
         expect(global.fetch).toHaveBeenCalledWith(
-            'https://test-backend.onrender.com/health',
-            expect.objectContaining({ cache: 'no-store' })
+            "https://test-backend.onrender.com/health",
+            expect.objectContaining({
+                cache: "no-store",
+                credentials: "omit",
+                redirect: "error",
+            }),
         );
         expect(response.status).toBe(200);
         const data = await response.json();
-        expect(data.status).toBe('ok');
+        expect(data.status).toBe("ok");
         expect(data.backendStatus).toBe(200);
-        expect(data.message).toContain('1 attempt');
-        expect(data).toHaveProperty('timestamp');
-        expect(data).toHaveProperty('attempts');
         expect(data.attempts).toHaveLength(1);
     });
 
-    it('retries and succeeds when backend wakes up after failures', async () => {
-        // First 2 calls fail (sleeping), third succeeds (woke up)
+    it("retries twice before succeeding", async () => {
         (global.fetch as jest.Mock)
             .mockResolvedValueOnce({ status: 503, ok: false })
             .mockResolvedValueOnce({ status: 503, ok: false })
             .mockResolvedValueOnce({ status: 200, ok: true });
 
-        // Run the GET call but let timers advance for the delays
         const responsePromise = GET(createRequest());
-
-        // Advance past the first retry delay (15s)
-        await jest.advanceTimersByTimeAsync(15_000);
-        // Advance past the second retry delay (15s)
-        await jest.advanceTimersByTimeAsync(15_000);
-
+        await jest.advanceTimersByTimeAsync(2_000);
+        await jest.advanceTimersByTimeAsync(2_000);
         const response = await responsePromise;
 
         expect(global.fetch).toHaveBeenCalledTimes(3);
         expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.status).toBe('ok');
-        expect(data.backendStatus).toBe(200);
-        expect(data.message).toContain('3 attempt');
-        expect(data.attempts).toHaveLength(3);
-        expect(data.attempts[0].status).toBe(503);
-        expect(data.attempts[1].status).toBe(503);
-        expect(data.attempts[2].status).toBe(200);
+        expect((await response.json()).attempts).toHaveLength(3);
     });
 
-    it('returns 503 after all retries exhausted with non-200 responses', async () => {
+    it("returns 503 after three failed probes", async () => {
         (global.fetch as jest.Mock).mockResolvedValue({ status: 503, ok: false });
 
         const responsePromise = GET(createRequest());
-
-        // Advance timers for all 7 retry delays (between 8 attempts)
-        for (let i = 0; i < 7; i++) {
-            await jest.advanceTimersByTimeAsync(15_000);
-        }
-
+        await jest.advanceTimersByTimeAsync(2_000);
+        await jest.advanceTimersByTimeAsync(2_000);
         const response = await responsePromise;
 
-        expect(global.fetch).toHaveBeenCalledTimes(8);
+        expect(global.fetch).toHaveBeenCalledTimes(3);
         expect(response.status).toBe(503);
-        const data = await response.json();
-        expect(data.status).toBe('error');
-        expect(data.message).toContain('8 attempts');
-        expect(data.attempts).toHaveLength(8);
+        expect((await response.json()).attempts).toHaveLength(3);
     });
 
-    it('returns 503 after all retries exhausted when fetch throws', async () => {
-        (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+    it("records network failures without exposing the backend URL", async () => {
+        (global.fetch as jest.Mock).mockRejectedValue(new Error("Network error"));
 
         const responsePromise = GET(createRequest());
-
-        // Advance timers for all 7 retry delays
-        for (let i = 0; i < 7; i++) {
-            await jest.advanceTimersByTimeAsync(15_000);
-        }
-
+        await jest.advanceTimersByTimeAsync(2_000);
+        await jest.advanceTimersByTimeAsync(2_000);
         const response = await responsePromise;
-
-        expect(global.fetch).toHaveBeenCalledTimes(8);
-        expect(response.status).toBe(503);
         const data = await response.json();
-        expect(data.status).toBe('error');
-        expect(data.attempts).toHaveLength(8);
-        // Network errors should be recorded as status 0
+
+        expect(response.status).toBe(503);
         expect(data.attempts[0].status).toBe(0);
+        expect(JSON.stringify(data)).not.toContain("test-backend.onrender.com");
     });
 
-    it('returns 500 when backend URL is not configured', async () => {
-        delete process.env.NEXT_PUBLIC_API_DOMAIN;
-
+    it("fails closed when backend configuration is missing", async () => {
+        delete process.env.API_BASE_URL;
         const response = await GET(createRequest());
 
-        expect(response.status).toBe(500);
-        const data = await response.json();
-        expect(data).toHaveProperty('error', 'Backend URL not configured');
+        expect(response.status).toBe(503);
+        expect(await response.json()).toEqual({ error: "Service unavailable" });
+        expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    describe('with CRON_SECRET set', () => {
-        beforeEach(() => {
-            process.env.CRON_SECRET = 'my-secret-token';
-        });
+    it("fails closed when cron secret is missing", async () => {
+        delete process.env.CRON_SECRET;
+        const response = await GET(createRequest());
 
-        it('returns 401 when authorization header is missing', async () => {
-            const response = await GET(createRequest());
+        expect(response.status).toBe(503);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
 
-            expect(response.status).toBe(401);
-            const data = await response.json();
-            expect(data).toHaveProperty('error', 'Unauthorized');
-        });
+    it("rejects missing or wrong credentials", async () => {
+        const missing = new NextRequest("http://localhost/api/wake-up");
+        const missingResponse = await GET(missing);
+        const wrongResponse = await GET(createRequest("wrong-secret"));
 
-        it('returns 401 when authorization header is wrong', async () => {
-            const response = await GET(
-                createRequest({ authorization: 'Bearer wrong-token' })
-            );
-
-            expect(response.status).toBe(401);
-        });
-
-        it('returns 200 when authorization header is correct', async () => {
-            (global.fetch as jest.Mock).mockResolvedValue({ status: 200, ok: true });
-
-            const response = await GET(
-                createRequest({ authorization: 'Bearer my-secret-token' })
-            );
-
-            expect(response.status).toBe(200);
-            const data = await response.json();
-            expect(data.status).toBe('ok');
-        });
+        expect(missingResponse.status).toBe(401);
+        expect(wrongResponse.status).toBe(401);
+        expect(global.fetch).not.toHaveBeenCalled();
     });
 });

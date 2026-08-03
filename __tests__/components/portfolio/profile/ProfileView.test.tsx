@@ -21,7 +21,7 @@ const data: IPortfolio = {
   projects: [{ title: "Portfolio Website", description: "Personal portfolio", repoUrl: "https://github.com/sai/portfolio", liveUrl: null, tech: ["NextJS"], highlights: [], startDate: null, endDate: null }],
   education: [{ institution: "University", degree: "Bachelor of Technology", field: "Engineering", startDate: new Date("2017-01-01"), endDate: new Date("2021-01-01") }],
   certifications: [{ title: "Certification", issuer: "Issuer", date: new Date("2024-01-01"), link: null }],
-  achievements: [{ title: "Achievement", date: null, link: null }],
+  achievements: [{ title: "Achievement", date: null }],
   languages: [{ name: "English", level: "Fluent" }],
 };
 

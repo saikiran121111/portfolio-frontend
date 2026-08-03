@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { IAdminPortfolioApi } from "@/interfaces/admin.interface";
 import { fetchBackendAdminProfile, updateBackendAdminProfile } from "@/lib/adminApi";
 import {
@@ -10,8 +10,15 @@ import {
   mapEditorPortfolioToApi,
 } from "@/lib/adminProfileTransforms";
 import { validateAdminProfileUpdate } from "@/lib/adminProfileValidation";
+import {
+  privateJson,
+  readBoundedJson,
+  requireSameOrigin,
+} from "@/lib/adminRequestSecurity";
 
 export const runtime = "nodejs";
+
+const PROFILE_BODY_MAX_BYTES = 512 * 1024;
 
 async function parseBackendJson<T>(response: Response): Promise<T | null> {
   const text = await response.text();
@@ -27,7 +34,7 @@ async function parseBackendJson<T>(response: Response): Promise<T | null> {
 }
 
 function unauthorizedResponse() {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  return privateJson({ error: "Unauthorized" }, { status: 401 });
 }
 
 export async function GET(request: NextRequest) {
@@ -44,30 +51,25 @@ export async function GET(request: NextRequest) {
       )) ?? null;
 
     if (!backendResponse.ok) {
-      return NextResponse.json(
-        {
-          error:
-            (payload as { error?: string } | null)?.error ??
-            "Failed to load admin profile",
-        },
+      return privateJson(
+        { error: "Failed to load admin profile" },
         { status: backendResponse.status },
       );
     }
 
     if (!payload) {
-      return NextResponse.json(
+      return privateJson(
         { error: "No admin profile data was returned by the backend" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json(
+    return privateJson(
       mapAdminPortfolioToEditor(payload as IAdminPortfolioApi),
     );
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to load admin profile";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    console.error("[admin/profile] Profile load failed");
+    return privateJson({ error: "Failed to load admin profile" }, { status: 500 });
   }
 }
 
@@ -77,23 +79,21 @@ export async function PUT(request: NextRequest) {
     return unauthorizedResponse();
   }
 
+  const originFailure = requireSameOrigin(request);
+  if (originFailure) return originFailure;
+
   try {
-    const submittedPayload = await request.json().catch(() => null);
-    if (!submittedPayload) {
-      return NextResponse.json({ error: "Request body must contain valid JSON" }, { status: 400 });
-    }
+    const parsedBody = await readBoundedJson(request, PROFILE_BODY_MAX_BYTES);
+    if (!parsedBody.ok) return parsedBody.response;
+    const submittedPayload = parsedBody.value;
 
     const currentResponse = await fetchBackendAdminProfile();
     const currentPayload =
       (await parseBackendJson<IAdminPortfolioApi | { error?: string }>(currentResponse)) ?? null;
 
     if (!currentResponse.ok || !currentPayload) {
-      return NextResponse.json(
-        {
-          error:
-            (currentPayload as { error?: string } | null)?.error ??
-            "Failed to load current profile before saving",
-        },
+      return privateJson(
+        { error: "Failed to load current profile before saving" },
         { status: currentResponse.ok ? 502 : currentResponse.status },
       );
     }
@@ -101,7 +101,7 @@ export async function PUT(request: NextRequest) {
     const currentEditor = mapAdminPortfolioToEditor(currentPayload as IAdminPortfolioApi);
     const validation = validateAdminProfileUpdate(submittedPayload, currentEditor);
     if (!validation.success || !validation.data) {
-      return NextResponse.json(
+      return privateJson(
         { error: "Profile validation failed", fieldErrors: validation.fieldErrors },
         { status: 400 },
       );
@@ -117,33 +117,24 @@ export async function PUT(request: NextRequest) {
       )) ?? null;
 
     if (!backendResponse.ok) {
-      return NextResponse.json(
-        {
-          error:
-            (payload as { error?: string } | null)?.error ??
-            "Failed to save admin profile",
-        },
+      return privateJson(
+        { error: "Failed to save admin profile" },
         { status: backendResponse.status },
       );
     }
 
     if (!payload) {
-      return NextResponse.json(
+      return privateJson(
         { error: "No updated admin profile data was returned by the backend" },
         { status: 500 },
       );
     }
 
-    return NextResponse.json(
+    return privateJson(
       mapAdminPortfolioToEditor(payload as IAdminPortfolioApi),
     );
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Failed to save admin profile";
-    const status =
-      message.includes("invalid JSON") || message.includes("valid datetime")
-        ? 400
-        : 500;
-    return NextResponse.json({ error: message }, { status });
+  } catch {
+    console.error("[admin/profile] Profile save failed");
+    return privateJson({ error: "Failed to save admin profile" }, { status: 500 });
   }
 }

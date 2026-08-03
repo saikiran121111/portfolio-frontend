@@ -67,6 +67,7 @@ describe("validateAdminProfileUpdate", () => {
       {
         user: {
           admin: true,
+          avatarUrl: "https://user:password@images.example/avatar.png",
           socials: { github: "javascript:alert(1)" },
         },
       },
@@ -75,6 +76,7 @@ describe("validateAdminProfileUpdate", () => {
 
     expect(result.success).toBe(false);
     expect(result.fieldErrors["user.admin"]).toBe("Unsupported field");
+    expect(result.fieldErrors["user.avatarUrl"]).toMatch(/HTTP or HTTPS/);
     expect(result.fieldErrors["user.socials.github"]).toMatch(/HTTP or HTTPS/);
   });
 
@@ -87,5 +89,27 @@ describe("validateAdminProfileUpdate", () => {
     expect(result.success).toBe(false);
     expect(result.fieldErrors["user.email"]).toBe("Must be a valid email address");
     expect(result.fieldErrors.projects).toBe("Must be an array");
+  });
+
+  it("rejects foreign and duplicate record ids", () => {
+    const current = currentProfile();
+    current.skills[0].id = 7;
+
+    const foreign = validateAdminProfileUpdate(
+      { skills: [{ ...current.skills[0], id: 99 }] },
+      current,
+    );
+    const duplicate = validateAdminProfileUpdate(
+      { skills: [
+        { ...current.skills[0], id: 7 },
+        { ...current.skills[0], id: 7, name: "TypeScript", order: 1 },
+      ] },
+      current,
+    );
+
+    expect(foreign.success).toBe(false);
+    expect(foreign.fieldErrors["skills[0].id"]).toBe("Unknown record id");
+    expect(duplicate.success).toBe(false);
+    expect(duplicate.fieldErrors["skills[1].id"]).toBe("Duplicate record id");
   });
 });
