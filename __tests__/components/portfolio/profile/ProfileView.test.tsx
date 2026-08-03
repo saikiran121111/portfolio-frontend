@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import ProfileView from "@/components/portfolio/profile/ProfileView";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 
@@ -30,7 +30,11 @@ describe("ProfileView", () => {
     render(<ProfileView data={data} />);
     expect(screen.getByRole("heading", { name: "Sai Kiran" })).toBeInTheDocument();
     expect(screen.getByText("Software Engineer / Analyst")).toBeInTheDocument();
-    expect(screen.getByText("NestJS")).toBeInTheDocument();
+    expect(
+      within(
+        screen.getByRole("list", { name: "Technologies used at Accenture" }),
+      ).getByText("NestJS"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Portfolio Website")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /download resume/i })).toHaveAttribute("href", "/api/download-resume");
   });
