@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
+import { headers } from "next/headers";
 import Navigation from "@/components/portfolio/navigation/Navigation";
 import { siteContent } from "@/content/site";
 import "./globals.css";
@@ -57,9 +58,11 @@ const themeInitializationScript = `
   }
 `;
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <html
       lang="en"
@@ -68,7 +71,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={`${bodyFont.variable} ${displayFont.variable}`}>
-        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: themeInitializationScript }}
+        />
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>

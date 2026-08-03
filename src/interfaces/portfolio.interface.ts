@@ -6,7 +6,6 @@ import type {
   ILanguages,
   IProjects,
   ISkill,
-  IscanReports,
 } from '@/interfaces/user.interface';
 
 
@@ -16,14 +15,7 @@ export interface IPortfolio {
   headline?: string;
   summary?: string;
   location?: string;
-  phone?: string;
   socials?: ISocials;
-  nestJSGitRepo?: string;
-  nestJSDeployedServer?: string;
-  nestJSSwaggerUrl?: string;
-  nextJSGitRepo?: string;
-  nextJSDeployedServer?: string;
-  postgresDeployedServer?: string;
   skills: ISkill[];
   experiences: IExperience[];
   projects?: IProjects[];
@@ -31,16 +23,13 @@ export interface IPortfolio {
   certifications?: ICertifications[];
   achievements?: IAchievements[];
   languages?: ILanguages[];
-  scanReports?: IscanReports[];
-  bottomHeadline?: string[]; // NEW
-  copyrights?: string; 
+  bottomHeadline?: string[];
   homepageProjects?: IHomepageProject[];
 }
 
 export interface ISocials {
   github?: string;
   linkedin?: string;
-  portfolio?: string;
 }
 
 export interface IHomepageProject {

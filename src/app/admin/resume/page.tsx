@@ -4,6 +4,7 @@ import UpdateProfileClient from "@/components/admin/UpdateProfileClient";
 export const metadata: Metadata = {
   title: "Admin Resume",
   description: "Secure admin editor for updating portfolio resume data",
+  robots: { index: false, follow: false, nocache: true },
 };
 
 export default function AdminResumePage() {

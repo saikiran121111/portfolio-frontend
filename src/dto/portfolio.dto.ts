@@ -7,7 +7,6 @@ import {
   CertificationDto,
   AchievementDto,
   LanguageDto,
-  ScanReportDto,
   SocialsDto
 } from './user.dto';
 
@@ -17,14 +16,7 @@ export interface PortfolioDto {
   headline?: string;
   summary?: string;
   location?: string;
-  phone?: string;
   socials?: SocialsDto;
-  nestJSGitRepo?: string;
-  nestJSDeployedServer?: string;
-  nestJSSwaggerUrl?: string;
-  nextJSGitRepo?: string;
-  nextJSDeployedServer?: string;
-  postgresDeployedServer?: string;
   skills: SkillDto[];
   experiences: ExperienceDto[];
   projects?: ProjectDto[];
@@ -32,9 +24,7 @@ export interface PortfolioDto {
   certifications?: CertificationDto[];
   achievements?: AchievementDto[];
   languages?: LanguageDto[];
-  scanReports?: ScanReportDto[];
   bottomHeadline?: string[];
-  copyrights?: string;
   homepageProjects?: HomepageProjectDto[];
 }
 

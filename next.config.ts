@@ -1,17 +1,36 @@
 import type { NextConfig } from "next";
 
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "no-referrer" },
+  { key: "X-DNS-Prefetch-Control", value: "off" },
+  { key: "X-Download-Options", value: "noopen" },
+  { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+  {
+    key: "Permissions-Policy",
+    value:
+      "camera=(), display-capture=(), geolocation=(), microphone=(), payment=(), usb=()",
+  },
+  ...(process.env.NODE_ENV === "production"
+    ? [{
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      }]
+    : []),
+];
+
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "avatars.githubusercontent.com" },
-      { protocol: "https", hostname: "raw.githubusercontent.com" },
-      { protocol: "https", hostname: "github.com" },
-      { protocol: "https", hostname: "vercel.com" },
-      { protocol: "https", hostname: "assets.vercel.com" },
-      { protocol: "https", hostname: "cdn.jsdelivr.net" },
-      { protocol: "https", hostname: "img.shields.io" },
-      // Add any other known CDNs for logos as needed
-    ],
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
   },
 };
 

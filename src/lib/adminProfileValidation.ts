@@ -52,6 +52,19 @@ const URL_FIELDS = new Set([
   "repoData.postgresDeployedServer",
 ]);
 
+const ID_COLLECTIONS = [
+  "bottomHeadlines",
+  "skills",
+  "experiences",
+  "projects",
+  "education",
+  "certifications",
+  "achievements",
+  "languages",
+  "scanReports",
+  "homepageProjects",
+] as const;
+
 function isRecord(value: unknown): value is UnknownRecord {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
@@ -102,6 +115,44 @@ function checkSubmittedShape(payload: unknown, errors: Record<string, string>) {
     }
     value.forEach((item, index) => {
       rejectUnsupportedFields(item, OBJECT_FIELDS[collection], `${collection}[${index}]`, errors);
+    });
+  }
+}
+
+function checkSubmittedIds(
+  payload: UnknownRecord,
+  current: IAdminPortfolioEditor,
+  errors: Record<string, string>,
+) {
+  if (isRecord(payload.user) && payload.user.id !== undefined) {
+    if (payload.user.id !== current.user.id) {
+      addError(errors, "user.id", "Unknown record id");
+    }
+  }
+
+  for (const collection of ID_COLLECTIONS) {
+    const submittedItems = payload[collection];
+    if (!Array.isArray(submittedItems)) continue;
+
+    const currentIds = new Set(
+      current[collection]
+        .map((item) => item.id)
+        .filter((id): id is number => typeof id === "number"),
+    );
+    const submittedIds = new Set<number>();
+
+    submittedItems.forEach((item, index) => {
+      if (!isRecord(item) || item.id === undefined) return;
+      const path = `${collection}[${index}].id`;
+      if (typeof item.id !== "number" || !currentIds.has(item.id)) {
+        addError(errors, path, "Unknown record id");
+        return;
+      }
+      if (submittedIds.has(item.id)) {
+        addError(errors, path, "Duplicate record id");
+        return;
+      }
+      submittedIds.add(item.id);
     });
   }
 }
@@ -181,7 +232,13 @@ function validateUrl(value: unknown, path: string, errors: Record<string, string
   if (typeof value !== "string" || !value) return;
   try {
     const url = new URL(value);
-    if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error();
+    if (
+      (url.protocol !== "https:" && url.protocol !== "http:") ||
+      url.username ||
+      url.password
+    ) {
+      throw new Error();
+    }
   } catch {
     addError(errors, path, "Must be a valid HTTP or HTTPS URL");
   }
@@ -236,7 +293,8 @@ function validateProfile(data: UnknownRecord, errors: Record<string, string>) {
     if (typeof data.user.email === "string" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.user.email)) {
       addError(errors, "user.email", "Must be a valid email address");
     }
-    for (const field of ["avatarUrl", "headline", "copyrights", "location", "phone"] as const) {
+    validateUrl(data.user.avatarUrl, "user.avatarUrl", errors);
+    for (const field of ["headline", "copyrights", "location", "phone"] as const) {
       validateString(data.user[field], `user.${field}`, errors, { max: field === "headline" ? 180 : 300 });
     }
     validateString(data.user.summary, "user.summary", errors, { max: 5000 });
@@ -351,6 +409,7 @@ export function validateAdminProfileUpdate(
   const fieldErrors: Record<string, string> = {};
   checkSubmittedShape(payload, fieldErrors);
   if (!isRecord(payload)) return { success: false, fieldErrors };
+  checkSubmittedIds(payload, current, fieldErrors);
 
   const sanitized = sanitizeUnknown(mergeWithCurrent(payload, current));
   if (!isRecord(sanitized)) {

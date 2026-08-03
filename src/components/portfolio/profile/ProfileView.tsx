@@ -125,8 +125,6 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
             </div>
             <dl className="profile-snapshot" aria-label="Profile summary">
               {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
-              <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
-              <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
               {aiSkills.length ? <div><dt>Current direction</dt><dd>{aiFocus.title}</dd></div> : null}
             </dl>
           </figcaption>

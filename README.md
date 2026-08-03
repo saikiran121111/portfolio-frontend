@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio frontend
 
-## Getting Started
+Next.js portfolio with server-rendered public data and a protected admin editor.
 
-First, run the development server:
+## Local setup
+
+Copy `.env.example` to `.env.local` and configure every value. No development
+credential or production-host fallback exists; missing security configuration
+fails closed.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Required server-only variables:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `API_BASE_URL`: backend origin. Never prefix this with `NEXT_PUBLIC_`.
+- `RESUME_SOURCE_URL`: HTTPS source used only by the same-origin resume route.
+- `ADMIN_LOGIN_EMAIL`: admin sign-in identity.
+- `ADMIN_LOGIN_PASSWORD`: strong, unique password with at least 12 characters.
+- `ADMIN_SESSION_SECRET`: random secret with at least 32 characters.
+- `ADMIN_API_SECRET`: backend admin API key with at least 16 characters.
+- `CRON_SECRET`: random bearer token with at least 16 characters.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use different secrets per environment. Rotate them after suspected exposure and
+protect production environment access with MFA.
 
-## Learn More
+## Security boundary
 
-To learn more about Next.js, take a look at the following resources:
+- Public pages fetch backend data only in server components.
+- Public DTO mapping uses an explicit allowlist before data reaches HTML/RSC.
+- Admin API keys and session-signing keys are guarded by `server-only` imports.
+- Admin writes require a signed HttpOnly cookie, same-origin request, bounded
+  JSON body, validation, and login throttling.
+- Portraits are bundled into immutable deployment assets; no third-party image
+  origin is contacted by visitors.
+- CSP, framing, MIME-sniffing, referrer, permissions, and transport headers are
+  set at the frontend boundary. Browser source maps stay disabled in production.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The bounded in-process login limiter is defense in depth. On Vercel it keys from
+Vercel's protected forwarded-IP header; elsewhere it deliberately groups clients
+instead of trusting spoofable proxy headers. Production still needs a WAF or
+distributed limiter at the deployment boundary.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Browser-visible HTML, CSS, JavaScript, displayed data, and image bytes cannot be
+secret. Minification is not authorization. Protection comes from keeping write
+credentials server-side and rejecting unauthorized mutation requests.
 
-## Deploy on Vercel
+The backend must independently enforce:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- GET-only public portfolio routes with a minimal public response DTO.
+- Authentication and authorization on every PUT/PATCH/POST/DELETE route.
+- Record ownership checks, transaction boundaries, audit history, and backups.
+- Restricted CORS on admin routes. CORS must never be treated as authentication.
+- Database credentials and network controls unavailable to browsers.
+- Distributed rate limiting for production login traffic.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Verification
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm audit --omit=dev
+```

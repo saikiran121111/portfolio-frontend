@@ -1,5 +1,28 @@
 import "@testing-library/jest-dom";
 
+// JSDOM does not expose the Fetch API request/response classes that NextRequest
+// and NextResponse extend. Reuse Next's own standards-compatible primitives.
+if (typeof globalThis.Request === "undefined" || typeof globalThis.Response === "undefined") {
+    const util = require("node:util");
+    const webStreams = require("node:stream/web");
+    globalThis.TextEncoder = util.TextEncoder;
+    globalThis.TextDecoder = util.TextDecoder;
+    globalThis.ReadableStream = webStreams.ReadableStream;
+    globalThis.WritableStream = webStreams.WritableStream;
+    globalThis.TransformStream = webStreams.TransformStream;
+    globalThis.TextEncoderStream = webStreams.TextEncoderStream;
+    globalThis.TextDecoderStream = webStreams.TextDecoderStream;
+    globalThis.CompressionStream = webStreams.CompressionStream;
+    globalThis.DecompressionStream = webStreams.DecompressionStream;
+    if (typeof globalThis.structuredClone === "undefined") {
+        const v8 = require("node:v8");
+        globalThis.structuredClone = (value) => v8.deserialize(v8.serialize(value));
+    }
+    const edgePrimitives = require("next/dist/compiled/@edge-runtime/primitives");
+    globalThis.Request = edgePrimitives.Request;
+    globalThis.Response = edgePrimitives.Response;
+}
+
 // Set React 19 act environment flag
 // @ts-ignore - Runtime flag for React 19
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;

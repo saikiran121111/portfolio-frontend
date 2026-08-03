@@ -12,17 +12,22 @@ describe("API Config", () => {
         process.env = originalEnv;
     });
 
-    it("uses default domain when env var is not set", () => {
-        delete process.env.NEXT_PUBLIC_API_DOMAIN;
-        // Re-require to pick up the env change
+    it("fails closed when API_BASE_URL is not set", () => {
+        delete process.env.API_BASE_URL;
         const { apiUrl: reRequiredApiUrl } = require("@/config/api.config");
-        expect(reRequiredApiUrl("/test")).toBe("https://portfolio-be-nes-js.onrender.com/test");
+        expect(() => reRequiredApiUrl("/test")).toThrow("Backend API is not configured");
     });
 
-    it("uses NEXT_PUBLIC_API_DOMAIN when set", () => {
-        process.env.NEXT_PUBLIC_API_DOMAIN = "https://custom-domain.com";
+    it("uses private API_BASE_URL when set", () => {
+        process.env.API_BASE_URL = "https://custom-domain.com";
         const { apiUrl: reRequiredApiUrl } = require("@/config/api.config");
         expect(reRequiredApiUrl("/test")).toBe("https://custom-domain.com/test");
+    });
+
+    it("rejects credentials embedded in the backend URL", () => {
+        process.env.API_BASE_URL = "https://user:password@custom-domain.com";
+        const { apiUrl: reRequiredApiUrl } = require("@/config/api.config");
+        expect(() => reRequiredApiUrl("/test")).toThrow("configuration is invalid");
     });
 
     it("export correct API_VERSION", () => {

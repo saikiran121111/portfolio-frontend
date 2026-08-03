@@ -1,12 +1,17 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import "server-only";
+
+import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 import { getAdminSessionSecret } from "./adminConfig";
 
 export const ADMIN_SESSION_COOKIE_NAME = "portfolio_admin_session";
 export const ADMIN_SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 
 interface IAdminSessionPayload {
+  version: 1;
   email: string;
-  exp: number;
+  issuedAt: number;
+  expiresAt: number;
+  sessionId: string;
 }
 
 export interface IVerifiedAdminSession {
@@ -41,68 +46,82 @@ function decodePayload(encodedPayload: string): IAdminSessionPayload | null {
     const parsed = JSON.parse(raw) as Partial<IAdminSessionPayload>;
 
     if (
+      parsed.version !== 1 ||
       typeof parsed.email !== "string" ||
-      typeof parsed.exp !== "number" ||
-      !Number.isFinite(parsed.exp)
+      typeof parsed.issuedAt !== "number" ||
+      typeof parsed.expiresAt !== "number" ||
+      typeof parsed.sessionId !== "string" ||
+      !Number.isFinite(parsed.issuedAt) ||
+      !Number.isFinite(parsed.expiresAt) ||
+      !/^[A-Za-z0-9_-]{20,}$/.test(parsed.sessionId)
     ) {
       return null;
     }
 
-    return {
-      email: parsed.email,
-      exp: parsed.exp,
-    };
+    return parsed as IAdminSessionPayload;
   } catch {
     return null;
   }
 }
 
 export function createAdminSession(email: string) {
-  const exp = Math.floor(Date.now() / 1000) + ADMIN_SESSION_MAX_AGE_SECONDS;
-  const payload = encodePayload({ email, exp });
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const expiresAt = issuedAt + ADMIN_SESSION_MAX_AGE_SECONDS;
+  const payload = encodePayload({
+    version: 1,
+    email: email.toLowerCase(),
+    issuedAt,
+    expiresAt,
+    sessionId: randomBytes(18).toString("base64url"),
+  });
   const signature = signPayload(payload);
 
   return {
     token: `${payload}.${signature}`,
-    expiresAt: new Date(exp * 1000).toISOString(),
+    expiresAt: new Date(expiresAt * 1000).toISOString(),
   };
 }
 
 export function verifyAdminSession(
   token: string | undefined | null,
 ): IVerifiedAdminSession | null {
-  if (!token) {
-    return null;
-  }
+  if (!token) return null;
 
-  const [payload, signature] = token.split(".");
-  if (!payload || !signature) {
-    return null;
-  }
+  const parts = token.split(".");
+  if (parts.length !== 2) return null;
+
+  const [payload, signature] = parts;
+  if (!payload || !signature) return null;
 
   const expectedSignature = signPayload(payload);
-  if (!safeCompare(signature, expectedSignature)) {
-    return null;
-  }
+  if (!safeCompare(signature, expectedSignature)) return null;
 
   const decoded = decodePayload(payload);
-  if (!decoded || decoded.exp <= Math.floor(Date.now() / 1000)) {
+  if (!decoded) return null;
+
+  const now = Math.floor(Date.now() / 1000);
+  if (
+    decoded.expiresAt <= now ||
+    decoded.issuedAt > now + 60 ||
+    decoded.expiresAt - decoded.issuedAt !== ADMIN_SESSION_MAX_AGE_SECONDS
+  ) {
     return null;
   }
 
   return {
     email: decoded.email,
-    expiresAt: new Date(decoded.exp * 1000).toISOString(),
+    expiresAt: new Date(decoded.expiresAt * 1000).toISOString(),
   };
 }
 
 export function getAdminSessionCookieOptions() {
   return {
     httpOnly: true,
-    sameSite: "lax" as const,
+    sameSite: "strict" as const,
     secure: process.env.NODE_ENV === "production",
-    path: "/",
+    path: "/api/admin",
     maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
+    priority: "high" as const,
   };
 }
 

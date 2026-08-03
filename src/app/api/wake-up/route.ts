@@ -1,87 +1,82 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from "next/server";
+import { apiUrl } from "@/config/api.config";
+import { getCronSecret } from "@/lib/adminConfig";
+import { privateJson } from "@/lib/adminRequestSecurity";
+import { credentialsMatch } from "@/lib/adminSession";
+import { fetchWithTimeout } from "@/lib/fetchWithTimeout";
 
-const MAX_RETRIES = 8;
-const RETRY_DELAY_MS = 15_000; // 15 seconds between retries
-const FETCH_TIMEOUT_MS = 30_000; // 30 second timeout per attempt
+export const runtime = "nodejs";
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2_000;
+const FETCH_TIMEOUT_MS = 8_000;
 
 function delay(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function pingBackend(url: string): Promise<{ status: number; ok: boolean }> {
-    try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-
-        const res = await fetch(url, {
-            cache: 'no-store',
-            signal: controller.signal,
-        });
-
-        clearTimeout(timeout);
-        return { status: res.status, ok: res.ok };
-    } catch {
-        return { status: 0, ok: false }; // network error or timeout
-    }
+  try {
+    const response = await fetchWithTimeout(url, {
+      cache: "no-store",
+      credentials: "omit",
+      redirect: "error",
+    }, FETCH_TIMEOUT_MS);
+    return { status: response.status, ok: response.ok };
+  } catch {
+    return { status: 0, ok: false };
+  }
 }
 
 export async function GET(request: NextRequest) {
-    // Optional: verify the secret to prevent public abuse
-    const cronSecret = process.env.CRON_SECRET;
-    if (cronSecret) {
-        const authHeader = request.headers.get('authorization');
-        if (authHeader !== `Bearer ${cronSecret}`) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+  let cronSecret: string;
+  let healthUrl: string;
+  try {
+    cronSecret = getCronSecret();
+    healthUrl = apiUrl("/health");
+  } catch {
+    return privateJson({ error: "Service unavailable" }, { status: 503 });
+  }
+
+  const authorization = request.headers.get("authorization") ?? "";
+  const presentedSecret = authorization.startsWith("Bearer ")
+    ? authorization.slice(7)
+    : "";
+  if (!credentialsMatch(presentedSecret, cronSecret)) {
+    return privateJson({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const attempts: { attempt: number; status: number; timestamp: string }[] = [];
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
+    const result = await pingBackend(healthUrl);
+    attempts.push({
+      attempt,
+      status: result.status,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (result.ok) {
+      return privateJson({
+        status: "ok",
+        message: `Backend is awake (took ${attempt} attempt${attempt > 1 ? "s" : ""})`,
+        backendStatus: result.status,
+        attempts,
+        timestamp: new Date().toISOString(),
+      });
     }
 
-    const backendUrl = process.env.NEXT_PUBLIC_API_DOMAIN;
-    if (!backendUrl) {
-        return NextResponse.json({ error: 'Backend URL not configured' }, { status: 500 });
-    }
+    if (attempt < MAX_RETRIES) await delay(RETRY_DELAY_MS);
+  }
 
-    const healthUrl = `${backendUrl}/health`;
-    const attempts: { attempt: number; status: number; timestamp: string }[] = [];
-
-    for (let i = 1; i <= MAX_RETRIES; i++) {
-        const result = await pingBackend(healthUrl);
-        attempts.push({
-            attempt: i,
-            status: result.status,
-            timestamp: new Date().toISOString(),
-        });
-
-        if (result.ok) {
-            // Backend is awake — return success immediately
-            return NextResponse.json({
-                status: 'ok',
-                message: `Backend is awake (took ${i} attempt${i > 1 ? 's' : ''})`,
-                backendStatus: result.status,
-                attempts,
-                timestamp: new Date().toISOString(),
-            });
-        }
-
-        console.log(
-            `[wake-up] Attempt ${i}/${MAX_RETRIES} — got ${result.status || 'timeout/error'}, retrying in ${RETRY_DELAY_MS / 1000}s...`
-        );
-
-        // Don't delay after the last attempt
-        if (i < MAX_RETRIES) {
-            await delay(RETRY_DELAY_MS);
-        }
-    }
-
-    // All retries exhausted — backend didn't wake up
-    console.error(`[wake-up] Backend failed to wake after ${MAX_RETRIES} attempts`, attempts);
-    return NextResponse.json(
-        {
-            status: 'error',
-            message: `Backend did not respond after ${MAX_RETRIES} attempts`,
-            attempts,
-            timestamp: new Date().toISOString(),
-        },
-        { status: 503 }
-    );
+  console.error("[wake-up] Backend health check failed");
+  return privateJson(
+    {
+      status: "error",
+      message: `Backend did not respond after ${MAX_RETRIES} attempts`,
+      attempts,
+      timestamp: new Date().toISOString(),
+    },
+    { status: 503 },
+  );
 }
-
