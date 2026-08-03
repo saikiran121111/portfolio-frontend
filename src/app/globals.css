@@ -1450,8 +1450,9 @@ canvas {
 }
 .profile-content { min-width: 0; }
 
-.resume-section { padding: 0 0 clamp(40px, 3.5vw, 56px); scroll-margin-top: 100px; }
-.resume-section + .resume-section { padding-top: clamp(40px, 3.5vw, 56px); border-top: 1px solid var(--border); }
+.resume-section { padding: 0 0 16px; scroll-margin-top: 100px; }
+.resume-section + .resume-section { padding-top: clamp(32px, 2.5vw, 40px); border-top: 1px solid var(--border); }
+.resume-section:last-child { padding-bottom: 0; }
 .resume-section-heading {
   position: relative;
   display: grid;
@@ -1511,6 +1512,7 @@ canvas {
 .timeline { display: grid; }
 .timeline-entry { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 24px; padding: 0 0 56px; }
 .timeline-entry + .timeline-entry { padding-top: 56px; border-top: 1px solid var(--border); }
+.timeline-entry:last-child { padding-bottom: 24px; }
 .timeline-meta {
   align-self: start;
   display: grid;
@@ -1544,8 +1546,8 @@ canvas {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.72fr);
   gap: clamp(36px, 7vw, 90px);
-  padding-block: 30px;
-  border-block: 1px solid var(--border-strong);
+  padding: 26px 0 18px;
+  border-top: 1px solid var(--border-strong);
 }
 
 .ai-profile-focus ul { display: grid; margin: 0; padding: 0; list-style: none; }
@@ -1555,7 +1557,7 @@ canvas {
 
 .resume-project-list { display: grid; }
 .resume-project { display: grid; grid-template-columns: 52px minmax(0, 1fr) 44px; gap: 22px; padding: 30px 0; border-top: 1px solid var(--border); }
-.resume-project:last-child { border-bottom: 1px solid var(--border); }
+.resume-project:last-child { border-bottom: 0; }
 .resume-project-index {
   width: 48px;
   min-height: 54px;
@@ -1593,7 +1595,7 @@ canvas {
 
 .education-list { display: grid; }
 .education-list article { padding: 26px 0; border-top: 1px solid var(--border); }
-.education-list article:last-child { border-bottom: 1px solid var(--border); }
+.education-list article:last-child { border-bottom: 0; }
 .education-list article > p:first-child { margin: 0 0 8px; color: var(--accent-bright); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 .education-list span { display: block; margin-top: 6px; color: var(--muted); font-size: 0.78rem; }
 .education-list article > p:last-child:not(:first-child) { margin: 12px 0 0; color: var(--muted); font-size: 0.8rem; }
