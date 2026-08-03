@@ -30,6 +30,7 @@ interface LogoProps {
   animate?: boolean;
   mobileShell?: boolean;
   showBackground?: boolean;
+  ownerName?: string;
 }
 
 interface LogoMarkProps {
@@ -65,9 +66,9 @@ export function LogoMark({ className, size = 48, decorative = false }: LogoMarkP
   );
 }
 
-export function Logo({ className, size = 48 }: LogoProps) {
+export function Logo({ className, size = 48, ownerName }: LogoProps) {
   return (
-    <Link href="/" className="brand-link" aria-label={`${siteContent.identity.shortName}, home`}>
+    <Link href="/" className="brand-link" aria-label={`${ownerName || siteContent.identity.shortName}, home`}>
       <LogoMark className={className} size={size} decorative />
     </Link>
   );

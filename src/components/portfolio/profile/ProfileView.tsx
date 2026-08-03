@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { profileContent } from "@/content/profile";
 import {
+  aiFocusContent,
+  currentRole,
+  experienceLabel,
   groupRecruiterSkills,
   resolveProfessionalSummary,
   selectAiSkills,
@@ -16,7 +19,8 @@ import {
   selectRelevantCertifications,
 } from "@/content/selectors";
 import { siteContent } from "@/content/site";
-import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
+import ProfileSectionIndex from "@/components/portfolio/profile/ProfileSectionIndex";
+import TechnologyList from "@/components/portfolio/skills/TechnologyList";
 import type { IPortfolio } from "@/interfaces/portfolio.interface";
 import type { IProjects } from "@/interfaces/user.interface";
 
@@ -37,9 +41,37 @@ function projectLink(project: IProjects) {
   return project.liveUrl || project.projectUrl || project.repoUrl;
 }
 
+function ProfileSectionHeading({
+  index,
+  label,
+  title,
+  titleId,
+}: {
+  index: string;
+  label: string;
+  title: string;
+  titleId: string;
+}) {
+  return (
+    <div className="resume-section-heading">
+      <p className="section-kicker">
+        <span className="section-kicker-number">{index}</span>
+        <span className="section-kicker-label">{label}</span>
+      </p>
+      <h2 id={titleId}>{title}</h2>
+    </div>
+  );
+}
+
 export default function ProfileView({ data }: { data: IPortfolio }) {
   const skillGroups = groupRecruiterSkills(data.skills);
   const aiSkills = selectAiSkills(data.skills);
+  const aiFocus = aiFocusContent(data.skills);
+  const experience = experienceLabel(data.experiences);
+  const recentExperience = currentRole(data.experiences);
+  const availability = data.bottomHeadline?.find((line) =>
+    /\b(open to|seeking)\b/i.test(line),
+  );
   const certifications = selectRelevantCertifications(data.certifications);
   const achievements = selectRecruiterAchievements(data.achievements);
   const visibleProjects = data.projects?.filter((project) => project.isVisible !== false) ?? [];
@@ -52,14 +84,17 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
         <div className="profile-hero-copy">
           <p className="section-kicker">{profileContent.eyebrow}</p>
           <h1>{data.name}</h1>
-          <p className="profile-headline">{siteContent.identity.professionalTitle}</p>
-          <p className="profile-transition">{siteContent.identity.transitionLabel}</p>
+          {data.headline ? <p className="profile-headline">{data.headline}</p> : null}
+          {recentExperience ? (
+            <p className="profile-transition">{cleanTitle(recentExperience.title)} / {recentExperience.company}</p>
+          ) : null}
           <p className="profile-summary">{resolveProfessionalSummary(data.summary)}</p>
-          {data.headline ? <p className="profile-specialization">{data.headline}</p> : null}
-          <div className="target-role-list" aria-label="Target roles">
-            <span>Target roles</span>
-            <p>{siteContent.targetRoles.join(" · ")}</p>
-          </div>
+          {availability ? (
+            <div className="target-role-list" aria-label="Opportunity focus">
+              <span>Opportunity focus</span>
+              <p>{availability}</p>
+            </div>
+          ) : null}
           <div className="profile-contact-row">
             {data.location ? <span><MapPin aria-hidden="true" /> {data.location}</span> : null}
             <a href={`mailto:${data.email}`}><Mail aria-hidden="true" /> {data.email}</a>
@@ -78,30 +113,24 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
         </div>
 
         <dl className="profile-snapshot" aria-label="Profile summary">
-          <div><dt>Experience</dt><dd>{siteContent.identity.experienceLabel}</dd></div>
+          {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
           <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
           <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
-          <div><dt>Current direction</dt><dd>AI engineering</dd></div>
+          {aiSkills.length ? <div><dt>Current direction</dt><dd>{aiFocus.title}</dd></div> : null}
         </dl>
       </header>
 
       <div className="profile-layout">
-        <aside className="profile-index" aria-label={profileContent.indexLabel}>
-          <p>{profileContent.indexLabel}</p>
-          <SmoothSectionLink href="#experience">{profileContent.sections.experience}</SmoothSectionLink>
-          {aiSkills.length ? <SmoothSectionLink href="#ai-direction">{profileContent.sections.aiDirection}</SmoothSectionLink> : null}
-          <SmoothSectionLink href="#strengths">{profileContent.sections.strengths}</SmoothSectionLink>
-          <SmoothSectionLink href="#profile-projects">{profileContent.sections.projects}</SmoothSectionLink>
-          <SmoothSectionLink href="#education">{profileContent.sections.education}</SmoothSectionLink>
-          <SmoothSectionLink href="#credentials">{profileContent.sections.credentials}</SmoothSectionLink>
-        </aside>
+        <ProfileSectionIndex hasAiSkills={Boolean(aiSkills.length)} />
 
         <div className="profile-content">
           <section className="resume-section" id="experience" aria-labelledby="experience-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">01 / {profileContent.sections.experience}</p>
-              <h2 id="experience-title">Professional experience</h2>
-            </div>
+            <ProfileSectionHeading
+              index="01"
+              label={profileContent.sections.experience}
+              title="Professional experience"
+              titleId="experience-title"
+            />
             <div className="timeline">
               {data.experiences.map((experience) => (
                 <article className="timeline-entry" key={`${experience.company}-${experience.startDate.toISOString()}`}>
@@ -114,7 +143,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
                     <p className="timeline-company">{experience.company}</p>
                     {experience.description ? <p>{experience.description}</p> : null}
                     <ul>{experience.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
-                    <p className="profile-stack"><span>Technologies</span>{experience.techStack.join(" / ")}</p>
+                    <TechnologyList
+                      items={experience.techStack}
+                      label="Technologies used"
+                      ariaLabel={`Technologies used at ${experience.company}`}
+                      compact
+                    />
                   </div>
                 </article>
               ))}
@@ -123,15 +157,17 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
 
           {aiSkills.length ? (
             <section className="resume-section" id="ai-direction" aria-labelledby="ai-direction-title">
-              <div className="resume-section-heading">
-                <p className="section-kicker">02 / {profileContent.sections.aiDirection}</p>
-                <h2 id="ai-direction-title">{siteContent.aiFocus.title}</h2>
-              </div>
+              <ProfileSectionHeading
+                index="02"
+                label={profileContent.sections.aiDirection}
+                title={aiFocus.title}
+                titleId="ai-direction-title"
+              />
               <div className="ai-profile-focus">
                 <div>
                   <p className="direction-label">Positioning</p>
-                  <h3>{siteContent.aiFocus.status}</h3>
-                  <p>{siteContent.aiFocus.summary}</p>
+                  <h3>{aiFocus.status}</h3>
+                  <p>{aiFocus.summary}</p>
                 </div>
                 <ul aria-label="AI engineering technologies listed in profile data">
                   {aiSkills.map((skill) => (
@@ -143,10 +179,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           ) : null}
 
           <section className="resume-section" id="strengths" aria-labelledby="strengths-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">03 / Strengths</p>
-              <h2 id="strengths-title">Technical strengths</h2>
-            </div>
+            <ProfileSectionHeading
+              index="03"
+              label="Strengths"
+              title="Technical strengths"
+              titleId="strengths-title"
+            />
             <div className="skills-groups">
               {skillGroups.map((group) => (
                 <div className="skill-group" key={group.category}>
@@ -159,16 +197,20 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
 
           {visibleProjects.length ? (
             <section className="resume-section" id="profile-projects" aria-labelledby="profile-projects-title">
-              <div className="resume-section-heading">
-                <p className="section-kicker">04 / {profileContent.sections.projects}</p>
-                <h2 id="profile-projects-title">Selected engineering work</h2>
-              </div>
+              <ProfileSectionHeading
+                index="04"
+                label={profileContent.sections.projects}
+                title="Selected engineering work"
+                titleId="profile-projects-title"
+              />
               <div className="resume-project-list">
                 {visibleProjects.map((project, index) => {
                   const href = projectLink(project);
                   return (
                     <article className="resume-project" key={project.title}>
-                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      <span className="resume-project-index" aria-hidden="true">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                       <div>
                         <h3>{cleanProjectTitle(project.title)}</h3>
                         {project.type ? <p className="resume-project-type">{project.type}</p> : null}
@@ -176,7 +218,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
                         {project.highlights.length ? (
                           <ul>{project.highlights.slice(0, 4).map((item) => <li key={item}>{item}</li>)}</ul>
                         ) : null}
-                        <p className="profile-stack"><span>Technologies</span>{project.tech.join(" / ")}</p>
+                        <TechnologyList
+                          items={project.tech}
+                          label="Technologies"
+                          ariaLabel={`Technologies used for ${cleanProjectTitle(project.title)}`}
+                          compact
+                        />
                       </div>
                       {href ? <a href={href} target="_blank" rel="noreferrer" aria-label={`Open ${cleanProjectTitle(project.title)}`}><ArrowUpRight aria-hidden="true" /></a> : null}
                     </article>
@@ -187,10 +234,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           ) : null}
 
           <section className="resume-section" id="education" aria-labelledby="education-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">05 / {profileContent.sections.education}</p>
-              <h2 id="education-title">Education</h2>
-            </div>
+            <ProfileSectionHeading
+              index="05"
+              label={profileContent.sections.education}
+              title="Education"
+              titleId="education-title"
+            />
             <div className="education-list">
               {data.education.map((education) => (
                 <article key={`${education.institution}-${education.degree}`}>
@@ -204,10 +253,12 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           </section>
 
           <section className="resume-section" id="credentials" aria-labelledby="credentials-title">
-            <div className="resume-section-heading">
-              <p className="section-kicker">06 / {profileContent.sections.credentials}</p>
-              <h2 id="credentials-title">Relevant credentials and recognition</h2>
-            </div>
+            <ProfileSectionHeading
+              index="06"
+              label={profileContent.sections.credentials}
+              title="Relevant credentials and recognition"
+              titleId="credentials-title"
+            />
             <div className="credentials-grid">
               <div>
                 <h3>Selected certifications</h3>
