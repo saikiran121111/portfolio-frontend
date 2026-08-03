@@ -29,27 +29,42 @@ async function pingBackend(url: string): Promise<{ status: number; ok: boolean }
 }
 
 export async function GET(request: NextRequest) {
-  let cronSecret: string;
+  let cronSecret: string | null = null;
   let healthUrl: string;
   try {
-    cronSecret = getCronSecret();
     healthUrl = apiUrl("/health");
   } catch {
     return privateJson({ error: "Service unavailable" }, { status: 503 });
+  }
+
+  try {
+    cronSecret = getCronSecret();
+  } catch {
+    cronSecret = null;
   }
 
   const authorization = request.headers.get("authorization") ?? "";
   const presentedSecret = authorization.startsWith("Bearer ")
     ? authorization.slice(7)
     : "";
-  if (!credentialsMatch(presentedSecret, cronSecret)) {
+  if (cronSecret && !credentialsMatch(presentedSecret, cronSecret)) {
     return privateJson({ error: "Unauthorized" }, { status: 401 });
   }
 
   const attempts: { attempt: number; status: number; timestamp: string }[] = [];
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt += 1) {
-    const result = await pingBackend(healthUrl);
+    let result = await pingBackend(healthUrl);
+
+    if (!result.ok && (result.status === 0 || result.status === 404 || result.status === 405)) {
+      const fallbackResult = await pingBackend(apiUrl("/api/health"));
+      if (fallbackResult.ok) {
+        result = fallbackResult;
+      } else if (fallbackResult.status !== 0 && fallbackResult.status !== 404 && fallbackResult.status !== 405) {
+        result = fallbackResult;
+      }
+    }
+
     attempts.push({
       attempt,
       status: result.status,
