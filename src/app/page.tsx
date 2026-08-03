@@ -9,6 +9,7 @@ import ProfileLink from "@/components/portfolio/profile/ProfileLink";
 import ProjectsRadar from "@/components/portfolio/projects/ProjectsRadar";
 import ResumeViewButton from "@/components/portfolio/resume/ResumeViewButton";
 import SmoothSectionLink from "@/components/portfolio/navigation/SmoothSectionLink";
+import TechnologyList from "@/components/portfolio/skills/TechnologyList";
 import {
   aiFocusContent,
   createHomepageSummary,
@@ -153,22 +154,20 @@ export default async function Home() {
           <div>
             <p className="direction-label">Engineering foundation</p>
             <h3>Backend engineering</h3>
-            {strongestSkills.length ? (
-              <p>{strongestSkills.map((skill) => skill.name).join(", ")}.</p>
-            ) : null}
-            <ul className="inline-skill-list" aria-label="Strongest technologies">
-              {strongestSkills.map((skill) => <li key={skill.name}>{skill.name}</li>)}
-            </ul>
+            <TechnologyList
+              items={strongestSkills.map((skill) => skill.name)}
+              label="Core technologies"
+              ariaLabel="Strongest technologies"
+            />
           </div>
           <div>
             <p className="direction-label">AI engineering focus</p>
             <h3>{aiFocus.status}</h3>
-            {aiFocus.summary ? <p>{aiFocus.summary}</p> : null}
-            {aiSkills.length ? (
-              <ul className="inline-skill-list" aria-label="Current AI technologies">
-                {aiSkills.map((skill) => <li key={skill.name}>{skill.name}</li>)}
-              </ul>
-            ) : null}
+            <TechnologyList
+              items={aiSkills.map((skill) => skill.name)}
+              label="Current technologies"
+              ariaLabel="Current AI technologies"
+            />
           </div>
         </div>
       </section>
