@@ -87,6 +87,28 @@ describe("Wake-Up API", () => {
         expect((await response.json()).attempts).toHaveLength(3);
     });
 
+    it("falls back to the backend root when /health is unavailable", async () => {
+        (global.fetch as jest.Mock)
+            .mockResolvedValueOnce({ status: 404, ok: false })
+            .mockResolvedValueOnce({ status: 200, ok: true });
+
+        const response = await GET(createRequest());
+
+        expect(global.fetch).toHaveBeenCalledTimes(2);
+        expect(global.fetch).toHaveBeenNthCalledWith(
+            1,
+            "https://test-backend.onrender.com/health",
+            expect.anything(),
+        );
+        expect(global.fetch).toHaveBeenNthCalledWith(
+            2,
+            "https://test-backend.onrender.com/api/health",
+            expect.anything(),
+        );
+        expect(response.status).toBe(200);
+        expect((await response.json()).backendStatus).toBe(200);
+    });
+
     it("returns 503 after three failed probes", async () => {
         (global.fetch as jest.Mock).mockResolvedValue({ status: 503, ok: false });
 
@@ -123,12 +145,14 @@ describe("Wake-Up API", () => {
         expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it("fails closed when cron secret is missing", async () => {
+    it("allows the wake-up probe when cron secret is missing", async () => {
         delete process.env.CRON_SECRET;
+        (global.fetch as jest.Mock).mockResolvedValue({ status: 200, ok: true });
+
         const response = await GET(createRequest());
 
-        expect(response.status).toBe(503);
-        expect(global.fetch).not.toHaveBeenCalled();
+        expect(response.status).toBe(200);
+        expect(global.fetch).toHaveBeenCalledTimes(1);
     });
 
     it("rejects missing or wrong credentials", async () => {
