@@ -112,12 +112,25 @@ export default function ProfileView({ data }: { data: IPortfolio }) {
           </div>
         </div>
 
-        <dl className="profile-snapshot" aria-label="Profile summary">
-          {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
-          <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
-          <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
-          {aiSkills.length ? <div><dt>Current direction</dt><dd>{aiFocus.title}</dd></div> : null}
-        </dl>
+        <figure
+          className="profile-portrait"
+          role="group"
+          tabIndex={0}
+          aria-label={`Professional portrait and profile summary for ${data.name}`}
+        >
+          <div className="profile-portrait-image" aria-hidden="true" />
+          <figcaption className="profile-portrait-overlay">
+            <div className="profile-portrait-overlay-heading">
+              <span>Profile snapshot</span>
+            </div>
+            <dl className="profile-snapshot" aria-label="Profile summary">
+              {experience ? <div><dt>Experience</dt><dd>{experience}</dd></div> : null}
+              <div><dt>Professional roles</dt><dd>{data.experiences.length}</dd></div>
+              <div><dt>Selected projects</dt><dd>{visibleProjects.length}</dd></div>
+              {aiSkills.length ? <div><dt>Current direction</dt><dd>{aiFocus.title}</dd></div> : null}
+            </dl>
+          </figcaption>
+        </figure>
       </header>
 
       <div className="profile-layout">
